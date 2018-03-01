@@ -1,0 +1,119 @@
+# Ligand [name]_[conformer]_[binding mode]: ZINC00171204_0001
+# SLIDE Version: 3.3.5
+# Time stamp: Tue Jul  7 17:36:05 2009
+# Affiscore (kcal/mol), for ranking ligand candidates: -8.793
+# Ligand Efficiency ((Affinity Score - Constant Term) / # non-H atoms): -0.170
+# ===========================================================================
+# Weighted term values
+# hydrophobic complementarity term (kcal/mol)       : -3.913 
+# polar term (kcal/mol)                             : -0.332 
+# unsatisfied polar term (kcal/mol)                 : 0.670 
+# constant term (kcal/mol)                          : -5.218 
+# ===========================================================================
+# protein-ligand hydrophobic contacts         : 61
+# protein-ligand H-bond count                 : 4
+# protein-ligand salt-bridge count            : 0
+# metal-ligand interactions count             : 0
+# unsatisfied interfacial polar atom count    : 5
+# unsatisfied interfacial charged atom count  : 0
+# buried carbons (x 100%)          : 1.000
+# remaining vdW collisions         : 5
+# total vdW overlap (A)            : 1.111
+# anchor fragment translations     : 1
+# side-chain mean-field iterations : 10
+# ligand side-chain rotations      : 0
+# protein side-chain rotations     : 10
+# Orientscore (kcal/mol), used by SLIDE to select binding mode: -7.409
+# ===========================================================================
+# Anchor fragment atoms matched to template:
+# ligand atom    9  O1   O.2   to template point 14 A
+# ligand atom   21  O2   O.3   to template point 34 D
+# ligand hydrophobic center  0 to template point 118 H
+# ===========================================================================
+#          |Ligand Atom -- Protein Atom|
+#          |   #  type  -- RES   # type|
+# hbond   1:   9  O.2   -- GLY  216  N   (dist: 2.934, D-H-A angle: 157.2)
+# hbond   2:  11  N.pl3 -- SER  195  OG  (dist: 2.708, D-H-A angle: 148.4)
+# hbond   3:  21  O.3   -- ALA  190  O   (dist: 3.191, D-H-A angle: 160.4)
+# hbond   4:  21  O.3   -- GLY  219  O   (dist: 2.751, D-H-A angle: 158.5)
+# ===========================================================================
+@<TRIPOS>MOLECULE
+ZINC00171204
+   35    37     0     0     0
+SMALL
+USER_CHARGES
+@<TRIPOS>ATOM
+      1 C1         20.6130  -15.8529   22.3570 C.ar      1 <0>       -0.1284 
+      2 C2         20.4373  -15.5488   21.0114 C.ar      1 <0>       -0.1217 
+      3 C3         19.4875  -14.5985   20.6217 C.ar      1 <0>       -0.1187 
+      4 C4         18.6997  -13.9302   21.5704 C.ar      1 <0>        0.0468 
+      5 C5         18.8819  -14.2638   22.9231 C.ar      1 <0>       -0.1256 
+      6 C6         19.8331  -15.2117   23.3131 C.ar      1 <0>       -0.1222 
+      7 N1         17.7186  -12.9654   21.1881 N.am      1 <0>       -0.3891 
+      8 C7         16.5051  -12.8216   21.8633 C.2       1 <0>        0.6925 
+      9 O1         16.0822  -13.4438   22.8287 O.2       1 <0>       -0.5506 
+     10 C8         15.7071  -11.7393   21.1485 C.3       1 <0>        0.0229 
+     11 N2         16.5950  -11.3325   20.1151 N.pl3     1 <0>       -0.5503 
+     12 C9         17.7938  -12.0431   20.1432 C.2       1 <0>        0.5548 
+     13 S1         19.0283  -11.6460   19.0945 S.2       1 <0>       -0.4561 
+     14 C10        14.3958  -12.2853   20.5619 C.3       1 <0>       -0.0301 
+     15 C11        13.3001  -12.4614   21.5856 C.ar      1 <0>       -0.1329 
+     16 C12        12.6329  -11.3444   22.1100 C.ar      1 <0>       -0.0908 
+     17 C13        11.6219  -11.5036   23.0585 C.ar      1 <0>       -0.1555 
+     18 C14        11.2745  -12.7816   23.4852 C.ar      1 <0>        0.1332 
+     19 C15        11.9236  -13.9033   22.9758 C.ar      1 <0>       -0.2092 
+     20 C16        12.9341  -13.7413   22.0264 C.ar      1 <0>       -0.0628 
+     21 O2         10.2814  -12.9036   24.4154 O.3       1 <0>       -0.4955 
+     22 H1         16.4194  -10.5667   19.4722 H         1 <0>        0.3613 
+     23 H2         10.1308  -13.8329   24.6034 H         1 <0>        0.4215 
+     24 H3         21.3502  -16.5908   22.6587 H         1 <0>        0.1358 
+     25 H4         21.0307  -16.0597   20.2581 H         1 <0>        0.1374 
+     26 H5         19.3492  -14.4420   19.5564 H         1 <0>        0.1602 
+     27 H6         18.3172  -13.7670   23.7077 H         1 <0>        0.1522 
+     28 H7         19.9653  -15.4435   24.3663 H         1 <0>        0.1364 
+     29 H8         15.4947  -10.9179   21.8464 H         1 <0>        0.0981 
+     30 H9         14.0225  -11.6024   19.7862 H         1 <0>        0.0615 
+     31 H10        14.5783  -13.2384   20.0473 H         1 <0>        0.0645 
+     32 H11        12.8972  -10.3425   21.7806 H         1 <0>        0.1303 
+     33 H12        11.1124  -10.6314   23.4579 H         1 <0>        0.1528 
+     34 H13        11.6565  -14.9025   23.3067 H         1 <0>        0.1382 
+     35 H14        13.4389  -14.6221   21.6366 H         1 <0>        0.1390 
+@<TRIPOS>BOND
+    1     1     6 ar
+    2     1     2 ar
+    3     1    24 1
+    4     2     3 ar
+    5     2    25 1
+    6     3     4 ar
+    7     3    26 1
+    8     4     5 ar
+    9     4     7 1
+   10     5     6 ar
+   11     5    27 1
+   12     6    28 1
+   13     7    12 1
+   14     7     8 am
+   15     8     9 2
+   16     8    10 1
+   17    10    11 1
+   18    10    14 1
+   19    10    29 1
+   20    11    12 1
+   21    11    22 1
+   22    12    13 2
+   23    14    15 1
+   24    14    30 1
+   25    14    31 1
+   26    15    20 ar
+   27    15    16 ar
+   28    16    17 ar
+   29    16    32 1
+   30    17    18 ar
+   31    17    33 1
+   32    18    19 ar
+   33    18    21 1
+   34    19    20 ar
+   35    19    34 1
+   36    20    35 1
+   37    21    23 1
+@<TRIPOS>SUBSTRUCTURE

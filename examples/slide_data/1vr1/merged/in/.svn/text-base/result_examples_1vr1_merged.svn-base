@@ -1,0 +1,182 @@
+
+Command-Line Args: /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//bin/slide 1vr1 merged mixed_sample 
+
+SLIDE Version: 3.3.5
+
+started on arbol.bch.msu.edu at Tue Jul  7 17:35:58 2009
+SLIDE_DIR = /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5/
+SLIDE_DATA_DIR = /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data/
+
+
+Reading the default parameters set:
+reading parameter-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//params/slide.parameters
+> DME_THRESHOLD (A):              0.30
+> RMS_THRESHOLD (A):              0.30
+> ANCHOR_TRANSLATION (A):         0.30
+> ANCHOR_OVERLAP (A):             0.30
+> SIDE_CHAIN_OVERLAP (A):         0.30
+> INTRA_OVERLAP (A):              0.10
+> INTERMEDIATE_OVERLAP (A):       2.00
+> FINALLY_TOLERATED_MAX_BUMP (A): 0.50
+> FINALLY_TOLERATED_OVERLAP (A):  2.00
+> SCORE_CUTOFF (kcal/mol):        0.00
+> MAX_TEMPLATE_TRIANGLES (#):     1500000
+NOTE: Only the best conformer of a ligand will be output.
+
+Compile-time parameters as defined in: /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//src/slide/inc/params.h
+> TRIANGLE_MIN_PERIMETER (A):           7.00
+> TRIANGLE_MAX_PERIMETER (A):          30.00
+> TRIANGLE_MIN_SHORTEST_SIDE (A):       2.00
+> TRIANGLE_MAX_SHORTEST_SIDE (A):      10.00
+> TRIANGLE_MAX_LONGEST_SIDE (A):       12.00
+> SMALL_TRIANGLE_MIN_LONGEST_SIDE (A):  3.00
+> LARGE_TRIANGLE_MIN_LONGEST_SIDE (A):  5.00
+> SMALL_LIGAND_DIAMETER (A):           10.00
+
+reading flex-bond definition file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//params/flex.defn
+reading target-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/merged/in/1vr1.rad
+reading template-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/merged/in/template
+
+Template Parameters:
+# SLIDE template; version: 3.3.5
+# Command-Line Args:
+#   Target :                             1vr1
+#   Template type :                      unbiased template
+#   Hydrogen bond points density :       dense
+#   Grid spacing :                       0.50 (A)
+#   Hydrophobic clustering threshold :   3.50 (A)
+#
+#
+# Local start time: Tue Jul  7 15:50:37 2009
+# SLIDE template; version: 3.3.5
+# Command-Line Args:
+# Target :                             1vr1
+# Template type :                      ligand based (biased) template
+# Hydrophobic clustering threshold :   2.00 (A)
+#
+# Local start time: Tue Jul  7 15:43:13 2009
+#
+# Ligands:
+#   /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//ligands_to_be_docked/1a46_ligand.mol2
+#   /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//ligands_to_be_docked/1a61_ligand.mol2
+
+CHECK: template file read
+   0: ACCEPTOR    13.657  -16.522   23.107
+   1: ACCEPTOR    14.026  -18.670   23.374
+   2: ACCEPTOR    14.479  -18.630   24.311
+Water handling disabled in current version of SLIDE => #waters = 0
+
+target: 100 residues, 806 atoms, 0 waters
+template: 145 points, 11 key points
+database: 22 total input molecules or conformers
+internal H-bonds: 77 intra-target, 0 to water
+
+multi-level hashing:
+50785 template triangles
+1309737 triangle pointers
+472941 empty buckets
+56979 non-empty buckets
+22 triangles per bucket on average
+196 maximal number of triangles
+
+reading database-definition file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//databases/mixed_sample/mixed_sample.db
+
+********************************************************************************
+1)  [Ligand Name]_[Conformer]_[Orientation]
+2)  Orientation Score
+3)  Affinity Score / # Heavy Ligand Atoms (Ligand Efficiency)
+4)  Affinity Score
+5)  Buried Protein Hydrophobic Term
+6)  Hydrophobic Complementarity Term
+7)  Polar Component Term
+8)  Number of Protein-Ligand Hydrophobic Contacts
+9)  Number of Protein-Ligand H-bonds
+10) Number of Protein-Ligand Salt-bridges
+11) Number of Metal-Ligand Bonds
+12) Number of Interfacial Unsatisfied Polar Atoms
+13) Number of Interfacial Unsatisfied Charged Atoms
+14) Buried Carbons
+15) Remaining van der Waals Collisions
+16) Remaining van der Waals Overlap
+********************************************************************************
+
+  1                  2      3       4      5       6   7   8   9  10  11  12    13  14
+ZINC00000036
+Small ligand
+ZINC00000036: failed side-chain unbumping
+ZINC00000048
+Small ligand
+ZINC00000048: failed anchor unbumping
+ZINC00000052
+Small ligand
+ZINC00000052: failed anchor unbumping
+ZINC00000053
+Small ligand
+ZINC00000053: failed anchor unbumping
+ZINC00000111
+Small ligand
+ZINC00000111: failed anchor unbumping
+ZINC00000181
+Large ligand
+ZINC00000181: failed anchor unbumping
+ZINC00000185
+Large ligand
+ZINC00000185_0000: O: -8.061 A/N: -0.131 A: -8.488 [-3.927 -0.415 1.072]   68   3   2   0   7   1 0.857   8 1.840
+ZINC00000199
+Small ligand
+ZINC00000199: failed side-chain unbumping
+ZINC00000204
+Small ligand
+ZINC00000204: failed anchor unbumping
+ZINC00000212
+Small ligand
+ZINC00000212: failed anchor unbumping
+1a2c_ligand
+Large ligand
+1a2c_ligand: failed side-chain unbumping
+1a46_ligand
+Large ligand
+1a46_ligand_0000: O: -9.207 A/N: -0.124 A: -9.948 [-5.540 -0.664 1.474]   82   8   0   0  10   1 0.964   3 0.731
+1a4w_ligand
+Large ligand
+1a4w_ligand_0000: O: -8.994 A/N: -0.123 A: -10.377 [-5.567 -0.664 1.072]   81   6   2   0   6   2 0.862   4 0.345
+1a61_ligand
+Large ligand
+1a61_ligand_0000: O: -9.994 A/N: -0.141 A: -10.298 [-5.073 -1.079 1.072]   71   9   4   0   7   1 1.000   3 1.743
+1ad8_ligand
+Large ligand
+1ad8_ligand: failed side-chain unbumping
+1dwc_ligand
+Large ligand
+1dwc_ligand_0000: O: -8.832 A/N: -0.104 A: -8.848 [-3.687 -0.747 0.804]   68   7   2   0   5   1 0.870  11 1.293
+1tbz_ligand
+Large ligand
+1tbz_ligand_0000: O: -10.839 A/N: -0.146 A: -10.757 [-6.234 -0.913 1.608]  115   7   4   0  11   1 1.000   6 1.535
+ZINC00000024
+Small ligand
+ZINC00000024: failed anchor unbumping
+ZINC00000025
+Small ligand
+ZINC00000025: failed side-chain unbumping
+ZINC00092235
+Large ligand
+ZINC00092235_0000: O: -6.507 A/N: -0.086 A: -7.443 [-3.699 -0.000 1.474]   63   0   0   0   9   2 0.773   0 0.000
+ZINC00171204
+Large ligand
+ZINC00171204_0000: O: -7.409 A/N: -0.170 A: -8.793 [-3.913 -0.332 0.670]   61   4   0   0   5   0 1.000   5 1.111
+ZINC00538219
+Large ligand
+ZINC00538219: failed side-chain unbumping
+
+writing log-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/merged/log/mixed_sample.log
+
+For each ligand that passed the testing criteria the top scoring orientation was saved.
+
+Please check the error file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/merged/log/mixed_sample.err to identify any problems with the current run.
+
+run finished at Tue Jul  7 17:36:05 2009
+Screening time for 22 molecules (22 conformers)
+	Wall Clock Time:  		    6.21 sec
+	System Time:      		    6.05 sec
+	User Space Time:  		    6.00 sec
+	Kernel Space Time:		    0.05 sec

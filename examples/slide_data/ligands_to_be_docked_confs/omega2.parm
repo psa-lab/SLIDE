@@ -1,0 +1,53 @@
+#Interface settings
+#-pvmconf (Not set, no default)
+
+#File Options :   
+    -commentEnergy  true
+    -in  ligands_to_be_docked/ZINC_ligands.mol2
+    -includeInput  true
+    #-log (Not set, no default)
+    -out  junk/conf_ZINC_ligands.mol2
+    #-param (Not set, no default)
+    -prefix  omega2 (default) 
+    -rotorOffsetCompress  false (default) 
+    -sdEnergy  false (default) 
+    #-status (Not set, no default)
+    -verbose  false (default) 
+    -warts  true
+
+#3D Construction Parameters :   
+    -buildff  mmff94s
+    -canonOrder  true (default) 
+    -deleteFixHydrogens  true (default) 
+    #-dielectric (Not set, no default)
+    #-exponent (Not set, no default)
+    #-fixfile (Not set, no default)
+    -fixrms  0.150000 (default) 
+    -fraglib  /soft/linux64/openeye/data/omega2/fraglib.oeb.gz
+    -fromCT  true (default) 
+    -maxmatch  10 (default) 
+    -umatch  true (default) 
+
+#Structure Enumeration :   
+    -enumNitrogen  true (default) 
+    -enumRing  true (default) 
+
+#Torsion Driving Parameters :   
+    #-erange (Not set, no default)
+    -ewindow  25.000000 (default) 
+    #-maxConfRange (Not set, no default)
+    -maxconfgen  30000 (default) 
+    -maxconfs  400 (default) 
+    -maxpoolsize  10000 (default) 
+    -maxrot  -1 (default) 
+    -maxtime  30.000000 (default) 
+    -rangeIncrement  5 (default) 
+    -rms  0.800000 (default) 
+    #-rmsrange (Not set, no default)
+    -searchff  mmff94s_NoEstat (default) 
+    -tordrive  true (default) 
+    #-torlib (Not set, no default)
+
+#PVM Parameters :   
+    -pvmdebug  false (default) 
+    -pvmpass  10 (default) 

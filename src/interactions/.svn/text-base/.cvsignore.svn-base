@@ -1,0 +1,8 @@
+*~
+*.o
+.deps
+Makefile.in
+check_connectivity
+compute_interaction_centers
+generate_rasmol_script
+split_mol2

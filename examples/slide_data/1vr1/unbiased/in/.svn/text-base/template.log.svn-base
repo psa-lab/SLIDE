@@ -1,0 +1,22 @@
+# SLIDE template; version: 3.3.5
+# Command-Line Args:
+#   Target :                             1vr1
+#   Template type :                      unbiased template
+#   Hydrogen bond points density :       dense
+#   Grid spacing :                       0.50 (A)
+#   Hydrophobic clustering threshold :   3.50 (A)
+#
+#
+# Local start time: Tue Jul  7 15:50:37 2009
+/psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//bin/template 1vr1 unbiased dense 0.5 3.5
+31104 grid points generated
+Running in box mode.
+12036 close surface points
+## Using plusminus hphobic method ##
+6459 hydrophobic surface points
+133 H-bonding surface points (37 A, 70 D, 26 N)
+147 hydrophobic cluster points
+37 acceptor cluster points
+70 donor cluster points
+26 doneptor cluster points
+72 unbumped hydrophobic cluster points

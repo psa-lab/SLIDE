@@ -1,0 +1,82 @@
+*****************************
+vanvoor4 Week of March 16, 2009
+src/slide/write_ligand_mol2.c
+Print the version number of SLIDE in the comment header
+
+src/slide/basics.c
+src/slide/main.c
+src/slide/err_handle.c
+Added slide_fopen.  This function prints out a useful comment to stderr if
+the file could not be opened.
+
+src/slide/err_handle.c
+The functions now check the return value of fopen -- they should have been
+doing this all along.  
+*****************************
+vanvoor4 March 12, 2009
+src/slide/read_pdb.c
+OXT did not have a correct hydro value assigned (was 0); this has been changed
+to the default O value of 530.  A better place to change this would be 
+inc/hydro.h, but it is very easy to mess up the columns and would require
+an entry for each residue.
+*****************************
+vanvoor4 Early March 2009
+Numerous modifications to condense the code but keep the scoring and docking
+results exactly the same as SLIDE 3.0.2.  One of the main objectives is to
+attempt to extricate slide from the global structure.  The advantage is
+code reuse (1 function can serve multiple purposes in many cases--that is 
+if we can generalize ideas, we don't need a function for water hbonds, a
+function for protein hbonds, a function for ligand hbonds, etc. but only 1
+function for hbonds).  Additional advantages are saving multiple top scoring
+dockings in memory is easier, and it is easier to extend and debug the
+SLIDE code base. 
+
+Added:
+src/slide/distance_array.c
+src/slide/inc/distance_array.h
+Modified:
+src/slide/main.c
+src/slide/main_score.c
+src/slide/bump_check.c
+src/slide/unbump_side_chains.c
+Divides the protein space into overlapping cubes (bins).  Each bin is currently
+4.0 (A) cubed and contains all protein atoms in the cube with the same center
+as the bin with side length 4.0 + 5.0 + 5.0 = 14.0 (A) cubed.  Currently, this
+is restricted to distance calculations before sidechain rotation (of protein
+and/or ligand).  This has helped reduce the computational cost of checking
+for anchor bumping, initial buried carbon check, and initialization of the
+inter protein-ligand squared distances matrix.
+
+Most important change in terms of computational speed:
+src/slide/inc/dist_funs.h
+many other source files
+Added an inline function to compute the square of the distance between two
+3D points.  Replaced tolerances with squared tolerances and delayed computation
+of sqrt() till it is needed for computation.
+
+src/slide/main_score.c
+src/slide/bump_check.c
+src/slide/match_triangles.c
+src/slide/score_complex.c
+inc/defs.h
+Added inc/atom.h
+the required header file changes
+Modified slide_score to use popt for commandline options and allow 
+slide_score to work as done previously (i.e. no flags for prot lig scoring if
+scripts expect this functionality).  Added the ability to create a table
+of protein hydrogen bonding atoms and protein hydrophobic sidechains 
+that made favorable interactions with 1 or more ligands.  In this table 
+each row (matchprint) represents the protein interactions satisifed by that
+particular ligand.
+*****************************
+toneroma 2009_02_02
+src/slide/bump_check.c
+src/slide/find_all_bumps.c
+changed bump handling of metals so now any ligand atom can be as close as MIN_METAL_{1/2}_HBOND_LENGTH to a metal (previously only ACCEPTOR & DONEPTOR could)
+
+src/slide/inc/vdwrad.h
+Metal vdw radii no longer matter with the above changes
+
+src/slide/main.c
+changed version number to 3.0.2
+*****************************

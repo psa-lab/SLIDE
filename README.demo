@@ -1,0 +1,54 @@
+########################################################
+
+       Protein Structure Analysis and Design Lab
+       Michigan State University
+       April 15, 2003
+
+########################################################
+
+SLIDE runs on various Unix systems (Sun SPARC running Solaris 2.5-2.7, 
+Intel running Solaris 2.7 and 2.8, SGI Octane running Irix64 and different
+linux distributions linux kernel 2.4.7-10). 
+
+Before installing and compiling the demo version of SLIDE, the tar file has 
+to be placed in the directory that will contain the root directory of the 
+global SLIDE installation (e.g. /usr/soft/). 
+
+To install SLIDE:
+
+1. Set the environment variable SLIDE_DIR to the root directory of 
+   the global SLIDE installation (e.g. /usr/soft/slide).
+
+	setenv SLIDE_DIR /usr/soft/slide
+
+2. Unzip and untar the demoslidev2.30.tar.gz using the commands:
+
+	gunzip demoslidev2.30.tar.gz
+	tar xfv demoslidev2.30.tar
+
+   The untarred directory name would be demoslidev2.30 and it contains all
+   the binaries needed for SLIDE to run. You would have to rename this 
+   directory to slide or just change the SLIDE_DIR accordingly.
+
+	mv demoslidev2.30 slide
+
+   Before you do this, please remember to backup any existing versions of slide
+   you might be having in the directory.
+
+3. Check the location of your system's Perl executable using the command:
+
+	 which perl
+
+   Edit the first line of the  install_demo_slide.pl file from the directory 
+   SLIDE_DIR to point to the correct location for your system's Perl 
+   executable. If you don't have Perl, you can download it free of charge
+   from www.cpan.org.
+
+4. Run install_demo_slide.pl in the directory SLIDE_DIR. It would install the
+   scripts and binaries in place.
+
+Note: For the software to run properly, you have to place a file called 
+slide.key (containing the demo license key) in your $SLIDE_DIR. The 
+slide.key file will be emailed to you on the day your demo license begins. 
+This license in valid for 45 days and the SLIDE software would stop 
+functioning after the end of trial period.

@@ -1,0 +1,105 @@
+# Ligand [name]_[conformer]_[binding mode]: ZINC00000048_0001
+# SLIDE Version: 3.3.5
+# Time stamp: Tue Jul  7 15:44:35 2009
+# Affiscore (kcal/mol), for ranking ligand candidates: -6.693
+# Ligand Efficiency ((Affinity Score - Constant Term) / # non-H atoms): -0.092
+# ===========================================================================
+# Weighted term values
+# hydrophobic complementarity term (kcal/mol)       : -2.464 
+# polar term (kcal/mol)                             : -0.083 
+# unsatisfied polar term (kcal/mol)                 : 1.072 
+# constant term (kcal/mol)                          : -5.218 
+# ===========================================================================
+# protein-ligand hydrophobic contacts         : 25
+# protein-ligand H-bond count                 : 1
+# protein-ligand salt-bridge count            : 0
+# metal-ligand interactions count             : 0
+# unsatisfied interfacial polar atom count    : 8
+# unsatisfied interfacial charged atom count  : 0
+# buried carbons (x 100%)          : 1.000
+# remaining vdW collisions         : 0
+# total vdW overlap (A)            : 0.000
+# anchor fragment translations     : 1
+# side-chain mean-field iterations : 2
+# ligand side-chain rotations      : 0
+# protein side-chain rotations     : 2
+# Orientscore (kcal/mol), used by SLIDE to select binding mode: -5.319
+# ===========================================================================
+# Anchor fragment atoms matched to template:
+# ligand hydrophobic center  0 to template point  5 H
+# ligand hydrophobic center  2 to template point  9 H
+# ligand atom    9  O2   O.3   to template point 11 A
+# ===========================================================================
+#          |Ligand Atom -- Protein Atom|
+#          |   #  type  -- RES   # type|
+# hbond   1:  12  O.3   -- LYS   60F NZ  (dist: 2.758, D-H-A angle: 151.8)
+# ===========================================================================
+@<TRIPOS>MOLECULE
+ZINC00000048
+   30    31     0     0     0
+SMALL
+USER_CHARGES
+@<TRIPOS>ATOM
+      1 C1         13.3166  -11.4019   19.0399 C.3       1 <0>        0.1138 
+      2 O1         14.4903  -12.1600   19.3067 O.3       1 <0>       -0.3068 
+      3 C2         15.3815  -12.2965   18.2822 C.ar      1 <0>        0.1141 
+      4 C3         15.2555  -11.7632   16.9988 C.ar      1 <0>       -0.1642 
+      5 C4         16.2554  -11.9713   16.0143 C.ar      1 <0>       -0.0642 
+      6 C5         17.4005  -12.7445   16.3132 C.ar      1 <0>        0.1218 
+      7 C6         17.5013  -13.2601   17.5963 C.ar      1 <0>        0.0081 
+      8 C7         16.5196  -13.0378   18.5442 C.ar      1 <0>        0.0541 
+      9 O2         16.8058  -13.6297   19.7410 O.3       1 <0>       -0.3140 
+     10 C8         18.0688  -14.2477   19.4528 C.3       1 <0>        0.3203 
+     11 O3         18.5126  -14.0200   18.1055 O.3       1 <0>       -0.3421 
+     12 O4         18.2934  -12.9006   15.2906 O.3       1 <0>       -0.3208 
+     13 C9         19.4452  -13.7009   15.5108 C.3       1 <0>        0.1155 
+     14 C10        16.0376  -11.3761   14.6362 C.3       1 <0>       -0.0035 
+     15 C11        15.3561  -12.3329   13.7017 C.2       1 <0>       -0.1533 
+     16 C12        14.1456  -12.1264   13.1698 C.2       1 <0>       -0.2265 
+     17 H1         12.7132  -11.3886   19.9526 H         1 <0>        0.0705 
+     18 H2         13.5648  -10.3650   18.7898 H         1 <0>        0.0316 
+     19 H3         12.7167  -11.8674   18.2509 H         1 <0>        0.0330 
+     20 H4         14.3835  -11.1750   16.7242 H         1 <0>        0.1472 
+     21 H5         18.8217  -13.8510   20.1433 H         1 <0>        0.0704 
+     22 H6         17.9786  -15.3278   19.6159 H         1 <0>        0.0704 
+     23 H7         20.0159  -13.7240   14.5771 H         1 <0>        0.0624 
+     24 H8         20.0909  -13.2616   16.2774 H         1 <0>        0.0454 
+     25 H9         19.1715  -14.7328   15.7521 H         1 <0>        0.0444 
+     26 H10        15.4618  -10.4460   14.7322 H         1 <0>        0.0480 
+     27 H11        16.9968  -11.0687   14.2021 H         1 <0>        0.0738 
+     28 H12        15.8937  -13.2400   13.4358 H         1 <0>        0.1301 
+     29 H13        13.7102  -12.8549   12.4942 H         1 <0>        0.1124 
+     30 H14        13.5697  -11.2358   13.3962 H         1 <0>        0.1077 
+@<TRIPOS>BOND
+    1     1     2 1
+    2     1    17 1
+    3     1    18 1
+    4     1    19 1
+    5     2     3 1
+    6     3     8 ar
+    7     3     4 ar
+    8     4     5 ar
+    9     4    20 1
+   10     5     6 ar
+   11     5    14 1
+   12     6     7 ar
+   13     6    12 1
+   14     7    11 1
+   15     7     8 ar
+   16     8     9 1
+   17     9    10 1
+   18    10    11 1
+   19    10    21 1
+   20    10    22 1
+   21    12    13 1
+   22    13    23 1
+   23    13    24 1
+   24    13    25 1
+   25    14    15 1
+   26    14    26 1
+   27    14    27 1
+   28    15    16 2
+   29    15    28 1
+   30    16    29 1
+   31    16    30 1
+@<TRIPOS>SUBSTRUCTURE

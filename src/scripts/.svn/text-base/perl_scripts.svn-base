@@ -1,0 +1,3445 @@
+____FILE_START: add_consolv_occupancy.pl
+#!/usr/bin/perl
+#
+# Time-stamp: <Paul Sanschagrin -- Thu Dec 20 11:00:37 EST 2001>
+# add_consolv_occupancy.pl -- add Consolv results to a pdb file as 
+#      the occupancy values for its waters as votes[conserved]/total 
+#      number of votes Waters not predicted on will be set to 0.00.
+# Usage: add_consolv_occupancy.pl [-a] <PDB Code>
+#             -a: include all waters, default is only those with
+#                 predictions > 0.50 (50%)
+#
+#
+
+use File::Basename;
+use Getopt::Std;
+
+# The following is a hash to hold the valid water residue names
+# These correspond to the water names in Consolv
+%watnames = ("HOH" => 1,
+	    "H2O" => 1,
+	    "DOD" => 1,
+	    "D20" => 1,
+	    "WAT" => 1);
+sub bynum {$a <=> $b}
+sub usage () {
+  $this = basename ($0);
+  print "Usage: $this [-a] <PDB code>\n";
+  print "       -a: include all waters, default is only those with\n";
+  print "           predictions > 0.50 (50%)\n";
+  print "*** This is run AFTER Consolv ***\n";
+  exit 1;
+}
+
+# Usage check and CL arg parsing
+usage() if (getopts('a') == false);
+usage() unless @ARGV == 1;
+
+$pdbcode = $ARGV[0];
+
+# Set some filenames based on the PDB code
+$pdbfile = "$pdbcode.pdb";
+$hitsfile = "$pdbfile.hits";
+$envfile = "$pdbcode.env";
+$predfile = "$pdbcode.pred";
+$outfile = "$pdbcode.predwats.pdb";
+
+# check that we can open each of the necessary files
+open PDB, $pdbfile or die "Unable to open PDB file: $pdbfile\n";
+open HITS, $hitsfile or die "Unable to open hits file: $hitsfile\n";
+open ENV, $envfile or die "Unable to open env file: $envfile\n";
+open PRED, $predfile or die "Unable to open pred file: $predfile\n";
+open OUT, ">$outfile" or die "Unable to open output file: $outfile\n";
+
+# parse the env file (we need to do this since Consolv only predicts on
+#   waters in the first shell, i.e. those with ADN > 0.0
+$count = 0;
+$numwats = 0;
+while (<ENV>) {
+  next if $_ =~ /^\#/; # skip comment lines
+  s/^\s+//g,$_;
+  ($code, $resnum, $adn) = split(/\s+/,$_);
+  $adnarr{$resnum} = $adn;
+  $newocc{$resnum} = 0.0;
+  if ($adn > 0.0) { # here we can extract the index of the predicted water
+    $resarr{$count} = $resnum;
+    $count++;
+  }
+  $numwats ++;
+}
+close ENV;
+
+
+# Now we must parse the prediction file
+while (<PRED>) {
+  next if $_ !~ /predicted/;
+  ($junk,$index,$junk,$junk,$pred,$junk,$votesdisp, $votescons) = split(/\s+/,$_);
+  if (exists ($resarr{$index})) {
+    $newocc{$resarr{$index}} = $votescons/($votescons+$votesdisp);
+  }
+}
+
+close PRED;
+
+# Now we must parse the actual PDB file
+while (<PDB>) {
+  if ($_ !~ /^HETATM/) { # Can't be a water as it's not a HETATM
+    print OUT $_;
+    next;
+  }
+  $resname = substr($_,17,3);
+  $resnum = substr($_,22,4)+0;
+  if (! exists $watnames{$resname}) { # check if this HETATM is a water
+    print OUT $_; # not a water, so print as is
+    next;
+  }
+  # Now we've hit a waters and must output with the corrected occupancy
+  if ($opt_a) { # we're outputting them all
+    printf(OUT "%54s%6.2f%14s\n",substr($_,0,54),$newocc{$resnum},substr($_,60,14));
+  } elsif ($newocc{$resnum} > 0.50) { # output only those predicted to be conserved
+    printf(OUT "%54s%6.2f%14s\n",substr($_,0,54),$newocc{$resnum},substr($_,60,14));
+  }
+}
+
+close PDB;
+close OUT;
+____FILE_END
+____FILE_START: binding_site_residues.pl
+#!/usr/bin/perl
+#
+# binding_site_residues.pl    Matt Tonero      Thu Feb 08, 2007
+#                             Volker Schnecke  Wed Sep 15 15:04:03 EDT 1999
+#
+# Usage: binding_site_residues.pl target template distance
+#
+# This script reads the PDB-file <target>.pdb, which should be
+# located in the base directory for this target protein (which is
+# $SLIDE_DATA_DIR/<target>/) and the corresponding template file, and 
+# outputs a PDB file <target>.rad in the input directory for this 
+# template (which is $SLIDE_DATA_DIR/<target>/<template>/in/)
+# that includes only those residues of the target protein that have 
+# at least one atom within the distance <distance> from any template point.
+
+if ( $#ARGV != 2 )
+{
+    die "Usage: $0 <target> <template> <distance>\n";
+}
+
+$target = $ARGV[0];
+$template = $ARGV[1];
+$distance = $ARGV[2];
+
+$marker = 0;
+$marker2 = 1;
+$TARGET_BASE = $ENV{SLIDE_DATA_DIR}."/".$target."/";
+$TEMPLATE_BASE = $TARGET_BASE.$template."/";
+
+$target_file = $TARGET_BASE.$target.".pdb";
+$template_file = $TEMPLATE_BASE."in/"."template";
+$binding_site = $TEMPLATE_BASE."in/".$target.".rad";
+
+# get all template points
+open IN, $template_file;
+$number_of_template_points = 0;
+while ( <IN> )
+{
+    if ( /^\#/ )
+    {			
+	# skip comment lines
+	next;
+    }
+    @line = split;
+    $t_x[$number_of_template_points] = $line[1];
+    $t_y[$number_of_template_points] = $line[2];
+    $t_z[$number_of_template_points] = $line[3];
+    $number_of_template_points++;
+}
+close IN;
+
+# now read through the target PDB file and compute the distance of its
+# atoms to the template points
+open IN, $target_file;
+open OUT, ">$binding_site";
+
+WHILE:
+while ( <IN> )		       
+{
+    if ( /^ATOM/ || ( /HETATM/ && ! /^HETATM.{11}HOH/ && ! /^HETATM.{11}WAT/ ) )
+    {
+	$record_name = substr $_, 0, 6;  # extract the record name field
+	$atom_num = substr $_, 6, 5;  # extract the atom number field
+	$atom_name = substr $_, 12, 4;  # extract the atom name field
+	$altLoc = substr $_, 16, 1;  # extract the alternate location field
+	$resName = substr $_, 17, 3;  # extract the residue name field
+	$chainID = substr $_, 21, 1;  # extract the chain ID field
+	$resNum = substr $_, 22, 4;  # extract the residue number field
+	if ($resNum < 0)
+	{
+	    $resNum = 1000000 + $resNum;
+	}
+	$iCode = substr $_, 26, 1;  # extract the code for insertion of residues field
+	$X_coord = substr $_, 30, 8;  # extract the X coordinate field
+	$Y_coord = substr $_, 38, 8;  # extract the Y coordinate field
+	$Z_coord = substr $_, 46, 8;  # extract the Z coordinate field
+	$occupancy = substr $_, 54, 6;  # extract the Occupancy field
+	$tempFactor = substr $_, 60, 6;  # extract the Temperature factor field
+	$segID = substr $_, 72, 4;  # extract the segment ID (left justified) field
+	$element = substr $_, 76, 2;  # extract the element symbol (right justified) field
+	$charge = substr $_, 78, 2;  # extract the charge on the atom field
+	if (($resmark[$chainID][$resNum] == 1 ) && ($oldRes == $resNum) && ($oldChain == $chainID))
+	{
+#	    print "$chainID $resNum\n";
+	    next;
+	}
+	for ( $i = 0; $i < $number_of_template_points; $i++ )
+	{
+	    $distance2 = ( sqrt ( ( $X_coord - $t_x[$i] ) * ( $X_coord - $t_x[$i] )
+				  + ( $Y_coord - $t_y[$i] ) * ( $Y_coord - $t_y[$i] )
+				  + ( $Z_coord - $t_z[$i] ) * ( $Z_coord - $t_z[$i] ) ));
+	    if ($distance2 < $distance)
+	    {
+		$resmark[$chainID][$resNum] = 1;
+		$oldRes = $resNum;
+		$oldChain = $chainID;
+		# reopen the target PDB file and output all residues that have at least
+# one atom close to any template point				
+		open IN2, $target_file;
+	      WHILE:
+		while ( <IN2> )		       
+		{
+		    if ( /ATOM/ || ( /HETATM/ && ! /^HETATM.{11}HOH/ && ! /^HETATM.{11}WAT/ ) )
+		    {	
+			$record_name2 = substr $_, 0, 6;  # extract the record name field
+			$atom_num2 = substr $_, 6, 5;  # extract the atom number field
+			$atom_name2 = substr $_, 12, 4;  # extract the atom name field
+			$altLoc2 = substr $_, 16, 1;  # extract the alternate location field
+			$resName2 = substr $_, 17, 3;  # extract the residue name field
+			$chainID2 = substr $_, 21, 1;  # extract the chain ID field
+			$resNum2 = substr $_, 22, 4;  # extract the residue number field
+			if ($resNum2 < 0)
+			{
+			    $resNum2 = 1000000 + $resNum2;
+			}
+			$iCode2 = substr $_, 26, 1;  # extract the code for insertion of residues field
+			$X_coord2 = substr $_, 30, 8;  # extract the X coordinate field
+			$Y_coord2 = substr $_, 38, 8;  # extract the Y coordinate field
+			$Z_coord2 = substr $_, 46, 8;  # extract the Z coordinate field
+			$occupancy2 = substr $_, 54, 6;  # extract the Occupancy field
+			$tempFactor2 = substr $_, 60, 6;  # extract the Temperature factor field
+			$segID2 = substr $_, 72, 4;  # extract the segment ID (left justified) field
+			$element2 = substr $_, 76, 2;  # extract the element symbol (right justified) field
+			$charge2 = substr $_, 78, 2;  # extract the charge on the atom field
+			# get the residue number
+#	/.{22}(.{4})/;	
+			if (($chainID2 eq $chainID) && ($resNum2 == $resNum))
+			{
+			    print OUT $_;
+			}
+		    }
+		}
+		last;
+	    }
+
+	}
+    }
+    
+#    if ( /HETATM/ && ! /^HETATM.{11}HOH/ && ! /^HETATM.{11}WAT/ )
+ #   {	
+	# if the target PDB file includes heteroatoms, which are no waters,
+	# we assume that they are located in the binding site and directly
+	# copy the line after removing the chain ID
+	#s/(.{21})./$1 /;
+	#print OUT $_;
+    #}
+}
+
+
+close IN;
+close OUT;
+close IN2;
+____FILE_END
+____FILE_START: binding_site_waters.pl
+#!/usr/bin/perl
+#
+# binding_site_waters.pl    Volker Schnecke  Wed Sep 15 15:26:34 EDT 1999
+#
+# Usage:  binding_site_waters.pl target template distance
+#
+# This script extracts all water molecules from the PDB file 
+# $SLIDE_DATA_DIR/<target>/<target>.pdb that are within <distance> 
+# Angstrom from any of the template points specified in 
+# $SLIDE_DATA_DIR/<target>/<template>/in/. These waters are
+# all HETATM entries with residue name HOH or WAT.
+# The water molecules are then stored in the file 
+# $SLIDE_DATA_DIR/<target>/<template>/in/waters.pdb
+# and read by SLIDE during screening.
+
+if ( $#ARGV != 2 )
+{
+    die "Usage: $0 <target> <template> <distance>\n";
+}
+
+$target = $ARGV[0];
+$template = $ARGV[1];
+$distance = $ARGV[2];
+
+$TARGET_BASE = $ENV{SLIDE_DATA_DIR}."/".$target."/";
+$INPUT_DIRECTORY = $TARGET_BASE.$template."/in/";
+
+$pdb_file = $TARGET_BASE.$target.".pdb";
+$template_file = $INPUT_DIRECTORY."template";
+$water_file = $INPUT_DIRECTORY."waters.pdb";
+
+# get all template points
+open IN, $template_file;
+$number_of_template_points = 0;
+while ( <IN> )
+{
+    if ( /^\#/ )
+    {			
+	# skip comment lines
+	next;
+    }
+    @line = split;
+    $t_x[$number_of_template_points] = $line[1];
+    $t_y[$number_of_template_points] = $line[2];
+    $t_z[$number_of_template_points] = $line[3];
+    $number_of_template_points++;
+}
+close IN;
+
+# now open the target PDB file and find all waters close to template points
+open IN, $pdb_file;
+open OUT, ">$water_file";
+WHILE:
+while ( <IN> )		       
+{
+    if ( /^HETATM.{11}HOH/ || /^HETATM.{11}WAT/ )
+    {
+	# all waters need as the residue specifier either HOH or WAT
+	/.{30}(.{8})(.{8})(.{8})/;		
+	$x = $1;
+	$y = $2;
+	$z = $3;
+	for ( $i = 0; $i < $number_of_template_points; $i++ )
+	{
+	    if ( sqrt ( ( $x - $t_x[$i] ) * ( $x - $t_x[$i] )
+		       + ( $y - $t_y[$i] ) * ( $y - $t_y[$i] )
+		       + ( $z - $t_z[$i] ) * ( $z - $t_z[$i] ) ) < $distance )
+	    {
+		# this water is close to the current template point, so
+		# write the atom line into the output file and read the
+		# next water from the PDB file
+		print OUT "$_";
+		next WHILE;
+	    }
+	}
+    }
+}
+close IN;
+close OUT;
+____FILE_END
+____FILE_START: check_number_of_atoms_mol2.pl
+#!/usr/bin/perl
+
+# Usage: check_number_of_atoms_mol2.pl <directory> <min_atoms> <max_atoms>
+#
+# Volker Schnecke   Tue Feb 24 18:09:00 EST 1998
+#
+# This script checks each mol2-files in a directory and checks its
+# number of atoms. If there are less than a minimal number or more
+# than a maximal number of atoms, the file is deleted.
+# 20-Dec-2001 PCS: Modified to examine only heavy atoms
+
+if ( $#ARGV != 2 )
+{
+  die "Usage: $0 <directory> <min_atoms> <max_atoms>\n";
+}
+
+$dirname = $ARGV[0];
+$min_atoms = $ARGV[1];
+$max_atoms = $ARGV[2];
+
+opendir DIR, $dirname;
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+foreach $file ( @files )
+  {
+    next unless open IN, "$dirname/$file";
+    print "$file: ";
+    $numheavy = $numhydrogen = 0;
+    while (<IN>) {
+      chop;
+      if ($_ =~ /\<TRIPOS\>ATOM/) { # we've reached the atom section
+	$atomflag = 1;
+      }
+      if (($_ =~ /\<TRIPOS\>/) && ($_ !~ /ATOM/)) {
+	# we've reached the next section
+	$atomflag = 0;
+      }
+      if ($atomflag && ($_ !~ /ATOM/)) { # read the atoms and check for H's
+	s/^\s+//g;
+	($atomnum, $atomname, $x, $y, $z, $orbital, $res, $resname, 
+	 $potential) = split(/\s+/,$_);
+	if ($orbital ne "H") {
+	  $numheavy++;
+	} else {
+	  $numhydrogen++;
+	}
+      }
+    }
+    $numtotal = $numheavy + $numhydrogen;
+    print "nonH: $numheavy, H: $numhydrogen, Total: $numtotal\n";
+    close IN;
+    if ( $numheavy < $min_atoms || $numheavy > $max_atoms )
+      {
+	unlink $dirname."/".$file;
+	print "deleting $file ($numheavy nonH atoms)\n";
+      }
+  }
+____FILE_END
+____FILE_START: count_template_points.pl
+#!/usr/bin/perl
+#
+# Time-stamp: <Paul Sanschagrin -- Wed Jul 18 10:41:11 EDT 2001>
+#
+# count_template_points.pl: count the number of each type of point and the
+#   number of key/nonkey points in a slide template
+# Usage: count_template_points.pl [-s] <template file>
+
+use Getopt::Std;
+use File::Basename;
+
+# Check usage
+sub usage {
+    $this = basename ($0);
+    print "Usage: $this [-s] <template file>\n".
+        "Options:  -s:  simplified output (A/D/N/H/Total)\n";
+    exit 1;
+}
+if (getopts('s') == false) {
+  usage();
+}
+if ($opt_s) {
+  $simpleflag = 1;
+}
+usage() unless @ARGV == 1;
+
+# set some defaults
+%typenames = (A => "Acceptor",
+	      D => "Donor",
+	      N => "Doneptor",
+	      H => "Hydrophobic");
+@typelist = (A,D,N,H);
+%typecount = (A => 0,
+	      D => 0,
+	      N => 0,
+	      H => 0);
+
+# Parse CL args and open file
+$fn = $ARGV[0];
+open FILE, $fn or die "Unable to open file: $fn\n";
+
+# Process the file
+while (<FILE>) {
+  next if ($_ =~ /^\#/); # Skip comments
+  $type = substr($_,0,1);
+  $typecount{$type}++;
+  if (substr($_,1,1) eq "*") {
+    $key{$type}++;
+    $key++;
+  }
+  $num++;
+}
+
+# Output
+if (!$opt_s) {
+  print "# Type        K    NK   Total\n";
+  foreach $type (@typelist) {
+    printf ("%-12s  %3d  %3d  %3d\n",$typenames{$type},$key{$type},
+	    $typecount{$type}-$key{$type},$typecount{$type});
+  }
+  printf ("%-12s  %3d  %3d  %3d\n","Total",$key,$num-$key,$num);
+} else {
+   foreach $type (@typelist) {
+     print "$typecount{$type}/";
+   }
+   print "$num (A/D/N/H/Total)\n";
+}
+
+____FILE_END
+____FILE_START: create_dbase.pl
+#!/usr/bin/perl
+
+# -- RSK < Thu Dec 12 12:05:17 EST 2002 >
+# create_dbase.pl - script for computing interaction centers from mol2 files
+# spread over a lot of directories. The root dir is assumed to be $dblocn.
+# dbase is the name of the database being created. maxno is the maximum number
+# of mol2 files in a directory slide can handle (see notes below)
+
+# usage: $0 [dblocn] [dbase] [slide_dir] [slide_data_dir] [maxno]
+
+# As you can see, its easy to remove the passing of slide_dir and
+# slide_data_dir as arguments and read them from env variables. I am not 
+# doing it since I had to write this code in a hurry. Its safe since this
+# script is only called internally from setup_dbase.
+
+# The variable maxno is same as MAX_NUMBER_OF_PTS_COMPOUNDS defined in
+# $SLIDE_DIR/src/slide/inc/def.h. If maxno is more than this variable,
+# slide will probably crash.
+
+use File::Basename;
+use File::Find;
+
+# Check usage
+sub usage {
+	$this = basename ($0);
+	print "Usage: $this <dblocn> <dbase> <slide_dir> <slide_data_dir> <maxno>\n";
+	exit 1;
+}
+
+usage() unless @ARGV == 5;
+
+$dblocn = $ARGV[0];
+$dbase = $ARGV[1];
+$slide_dir = $ARGV[2];
+$slide_data_dir = $ARGV[3];
+$maxno = $ARGV[4];
+
+# printf("%s\n%s\n%s\n%s\n%d\n", $dblocn, $dbase, $slide_dir, $slide_data_dir, $maxno);
+
+$dbfile = $slide_data_dir."/databases/".$dbase."/".$dbase.".db";
+print "Creating ", $dbfile, " ...\n";
+open DBOUT, ">$dbfile";
+
+#find all directories within dblocn containing mol2 files
+find sub
+{
+	$fname = $File::Find::name;
+	if (-d $fname )
+	{ push(@dirarray, $fname); }
+}, $dblocn;
+
+# fileidx keeps a count of mol2 files read, its reset to 0 if it exceeds
+# maxno and then filecount is incremented by 1
+$fileidx = 0;
+$filecount = 0;
+$num = 0;
+$total_molecules = 0;
+
+foreach $dir (@dirarray)
+{
+	chdir $dir;
+	opendir(DIR, $dir) or die "Cannot open $dir : $!";
+	while(defined($file = readdir DIR))
+	{
+		if($file =~ /\.mol2$/)
+		{
+
+#if its not a multimol2 file, store it in an array to deal with later.
+			$check = `grep \"^@<TRIPOS>MOLECULE\" $file|wc -l`;
+			if($check==1)
+			{
+				push(@mol2files, $file);
+			}
+			else
+			{
+			$newfile =1;
+			$fileidx = 0;
+
+###################################################		
+			open IN, "<$file" or die "Cannot open $file : $!";
+			chdir "/tmp";
+			$ligand_name = $file;
+			#print "The file name is $ligand_name and the newfile var is $newfile", "\n";
+			$ligand_name =~ s/\.mol2$//;
+
+			while($buf = <IN>)
+			{
+				if(substr($buf, 0, 17) eq "@<TRIPOS>MOLECULE")
+				{
+					if($num!=0)
+					{
+						close TMPOUT;
+
+####################
+						if($fileidx == 0 && $newfile == 1)
+						{
+							if ($filecount!=0) { close PTSOUT;}
+							$outfile = $ligand_name.'_'.$filecount.".pts";
+							$fulloutfile = $slide_data_dir."/databases/".$dbase."/".$outfile;
+							print "Creating ",$fulloutfile, " ...\n";
+							open PTSOUT, ">$fulloutfile";
+
+							print DBOUT $dir, " ", $outfile, "\n";
+							$filecount++;
+							$newfile = 0;
+	
+						}
+
+						$sb = stat($tmpfilename);
+						if($sb!=0)
+						{
+						  $out = `$slide_dir/bin/compute_interaction_centers $tmpfilename`;
+						  print PTSOUT $out;
+						  $fileidx++;
+						  $total_molecules++;
+						}
+
+						if($fileidx==$maxno) {$fileidx=0; $newfile=1;}
+####################
+
+						unlink $tmpfilename;
+					}
+					
+					$buf=<IN>;
+					chomp($buf);
+					$tmpfilename = $buf.".mol2";
+					$num++;
+					#print "Creating $tmpfilename\n";
+					open TMPOUT, ">$tmpfilename";
+					print TMPOUT "@<TRIPOS>MOLECULE\n";
+					$buf.="\n";
+				}
+
+				if($buf !~ /^#/)
+				{
+					print TMPOUT $buf;
+				}
+			}
+			
+			close TMPOUT;
+
+####################
+			if($fileidx == 0)
+			{
+				if ($filecount!=0) 
+						{close PTSOUT;} 
+						$outfile = $ligand_name.'_'.$filecount.".pts";
+						$fulloutfile = $slide_data_dir."/databases/".$dbase."/".$outfile;
+						print "Creating ",$fulloutfile, " ...\n";
+						open PTSOUT, ">$fulloutfile";
+
+						print DBOUT $dir, " ", $outfile, "\n";
+						$filecount++;
+					
+			}
+
+			$out = `$slide_dir/bin/compute_interaction_centers $tmpfilename`;
+				print PTSOUT $out;
+				
+				$fileidx++;
+				$total_molecules++;
+			
+			if($fileidx==$maxno) {$fileidx=0;}
+####################
+
+			unlink $tmpfilename;
+			print "$num mol2 files found.\n";
+			close IN;
+
+			chdir $dir;
+		}
+
+		}
+	}
+# now handle the single mol2 files, put "singleton" in place of mmol2 filenames
+	$fileidx=0;
+	foreach $mfile (@mol2files)
+	{
+####################
+		if($fileidx == 0)
+		{
+			if ($filecount!=0) {close PTSOUT;}
+			$outfile = "singleton_".$filecount.".pts";
+			$fulloutfile = $slide_data_dir."/databases/".$dbase."/".$outfile;
+			print "Creating ",$fulloutfile, " ...\n";
+			open PTSOUT, ">$fulloutfile";
+
+			print DBOUT $dir," ", $outfile, "\n";
+			$filecount++;
+		}
+
+		$out = `$slide_dir/bin/compute_interaction_centers $mfile`;
+		print PTSOUT $out;
+
+		$fileidx++;
+		$total_molecules++;
+
+		if($fileidx==$maxno) {$fileidx=0;}
+####################
+	}
+	splice @mol2files, 0, $#mol2files+1;
+	closedir(DIR);
+	$fileidx=0;
+}
+	print "Total molecules: $total_molecules\n";
+	$number_of_inputs_file =  $slide_data_dir."/databases/".$dbase."/number_of_mol2_entries";
+	open NUMBER_OF_INPUTS, ">$number_of_inputs_file";
+	print NUMBER_OF_INPUTS "$total_molecules\n";
+	close NUMBER_OF_INPUTS;
+close DBOUT;
+close PTSOUT;
+____FILE_END
+____FILE_START: create_pts_files.pl
+#!/usr/bin/perl
+#
+# create_pts_files.pl      Volker Schnecke Thu Nov 18 14:38:01 EST 1999
+#
+# Usage: create_pts_files.pl
+#
+# This script computes the interaction centers in all mol2 files in the
+# subdirectories of the current directories <dir1>..<dirN> and lists them
+# in files "<dir1>/<dir1>.pts" to "<dirN>/<dirN>.pts" together with the 
+# filenames of the corresponding mol2 files. For each mol2 file the program 
+# "compute_interaction_centers" is run. If a molecule has less than
+# three interaction centers, then its mol2 file is not used.
+
+
+$program = $ENV{SLIDE_DIR}."/bin/compute_interaction_centers";
+
+opendir DIR, ".";
+@subdirs = grep -d, ( grep !/\./, readdir DIR );
+close DIR;
+
+foreach $dir ( @subdirs )
+{
+    chdir $dir;
+    opendir DIR, ".";
+    @files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+    close DIR;
+    
+    $filename = $ENV{SLIDE_DATA_DIR}."/databases/".$dir.".pts";
+    unlink "$filename";
+
+    open OUT, ">$filename";
+    foreach $file ( @files )
+    {
+	system "$program $file > /tmp/__tmp.pts";
+	open IN, "/tmp/__tmp.pts";
+	$count = 0;
+	while ( <IN> )
+	{
+	    $line[$count] = $_;
+	    $count++;
+	}
+	close IN;
+	if ( $count < 3 )
+	{			
+	    print "ignoring $file ($count interactions)\n";
+	}
+	else
+	{
+	    $total_count++;
+	    for ( $i = 0; $i < $count; $i++ )
+	    {
+		print OUT "$line[$i]";
+	    }
+	}
+    }
+    close OUT;
+    chdir "..";
+}
+unlink "/tmp/__tmp.pts";
+print "$total_count ligands\n";
+
+____FILE_END
+____FILE_START: cut_mol2.pl
+#!/usr/bin/perl
+#
+# cut_mol2.pl
+# Time-stamp: <Paul Sanschagrin -- Fri May 18 09:46:45 EDT 2001>
+# Usage: cut_mol2.pl file
+#
+# This script cuts a mol2 file into into separate files containing 
+# individual molecules. The files are named 'MOLNAME_#.mol2'.
+
+
+if ( $#ARGV != 0 )
+{
+    die "Usage: $0 <mol2-file>\n";
+}
+
+$num_molecules = 0;
+open IN, "$ARGV[0]";
+while ( <IN> )
+{
+    if ( /@<TRIPOS>MOLECULE/ )
+    {
+	$_ = <IN>;
+	chop;
+	if ($num_molecules < 10) {
+	  $numstring = "00".$num_molecules;
+	} elsif ($num_molecules < 100) {
+	  $numstring = "0".$num_molecules;
+	} else {
+	  $numstring = $num_molecules;
+	}
+	$filename = $_."_".$numstring;
+	$num_molecules++;
+	# we do not explicitely have to close OUT, since close is
+	# automatcally done when we open an existing filehandle again
+	open OUT, ">$filename.mol2";
+	print OUT "@<TRIPOS>MOLECULE\n";
+	print OUT "$filename\n";
+    }
+    else
+    {
+	print OUT "$_";
+    }
+}
+close OUT;
+close IN;
+
+
+
+____FILE_END
+____FILE_START: extract_mol2_residues.pl
+#!/usr/bin/perl
+#
+# extract_mol2_residues.pl  Volker Schnecke   Tue Feb 24 16:58:16 EST 1998
+#
+# Usage: extract_mol2_residues.pl directory
+#
+# This script reads all mol2 files in <directory> and checks if there
+# are more than one residue in a file. If so, these are extracted 
+# and stored in files <basename>_1.mol2, <basename>_2.mol2, ...
+
+if ( $#ARGV != 0 )
+{
+    die "Usage: $0 <directory>\n";
+}
+ 
+opendir DIR, $ARGV[0];
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+foreach $file ( @files )
+{
+    $file =~ s/.mol2//;
+
+    open IN, "$ARGV[0]/$file.mol2";
+    $_ = <IN>;	        # this should be "@<TRIPOS>MOLECULE"
+    $compound = <IN>;	# read line containing compound name
+    $_ = <IN>;		# this line includes numbers of atoms and bonds
+    chop;
+    @line = split;
+    $number_of_atoms = $line[0];
+    $number_of_bonds = $line[1];
+    $number_of_residues = $line[2];
+
+    if ( $number_of_residues == 1 )
+    # nothing to do, so exit
+    {
+	close IN;
+	next;
+    }
+
+    # read all lines up to the beginning of the atom definition and store
+    # them in an array, this header will be included in each of the new files
+    # note that the last line in this array is "@<TRIPOS>ATOM"
+    $number_of_header_lines = 0;
+    $header[$number_of_header_lines] = <IN>;
+    while ( not $header[$number_of_header_lines] =~ /^@<TRIPOS>ATOM/ )
+    {				
+	$number_of_header_lines++;
+	$header[$number_of_header_lines] = <IN>;
+    }
+
+    for ( $i = 1; $i <= $number_of_residues; $i++ )
+    {
+	$number_of_residue_atoms[$i] = 0;
+	$number_of_residue_bonds[$i] = 0;
+    }
+
+    # read atom definitions
+    # arrays from 1..n, since atoms and bonds are numbered this way
+    for ( $i = 1; $i <= $number_of_atoms; $i++ )
+    {
+	$atoms[$i] = <IN>;
+	$atoms[$i] =~ s/^\s+//;		# remove leading spaces
+	@line = split /\s+/, $atoms[$i];
+	$residue = $line[6];
+	$atom_residue[$i] = $residue;
+	# atom_index contains the new index of this atom in the 
+	# particular residue
+	$atom_index[$i] = $number_of_residue_atoms[$residue] + 1;
+	$number_of_residue_atoms[$residue]++;
+    }
+    
+    $_ = <IN>;			# this should be "@<TRIPOS>BOND", skip it
+    # read bond definitions
+    for ( $i = 1; $i <= $number_of_bonds; $i++ )
+    {
+	$bonds[$i] = <IN>;
+	$bonds[$i] =~ s/^\s+//;
+	@line = split /\s+/, $bonds[$i];
+	$residue = $atom_residue[$line[1]];
+	# new indices for both atoms adjacent to this bond
+	$atom1[$i] = $atom_index[$line[1]];
+	$atom2[$i] = $atom_index[$line[2]];
+	$bond_type[$i] = $line[3];
+	$bond_residue[$i] = $residue;
+	$bond_index[$i] = $number_of_residue_bonds[$residue] + 1;
+	$number_of_residue_bonds[$residue]++;
+    }
+    
+    # skip the substructure part
+    while ( <IN> )
+    {
+	last if /^@<TRIPOS>CRYSIN/;
+    }
+
+    # read the remaining lines
+    $number_of_tail_lines = 1;
+    $tail[0] = $_;
+    while ( <IN> )
+    {
+	$tail[$number_of_tail_lines] = $_;
+	$number_of_tail_lines++;
+    }
+
+    close IN;
+
+    print "creating files ";
+    for ( $res = 1; $res <= $number_of_residues; $res++ )
+    {
+      print "$file\_$res.mol2 ";
+      # open file <basename>_$res.mol2 for this residue
+      open OUT, ">$ARGV[0]/$file\_$res.mol2" or 
+	die "Can't open output file: $ARGV[0]/$file\_$res.mol2\n";
+      # write the header
+      print OUT "@<TRIPOS>MOLECULE\n$compound";
+      printf OUT "%6d %5d     1\n", 
+	$number_of_residue_atoms[$res],
+	  $number_of_residue_bonds[$res];
+      for ( $i = 0; $i <= $number_of_header_lines; $i++ )
+	{			
+	  print OUT $header[$i];
+	}
+      # write the atom definitions
+      for ( $i = 1; $i <= $number_of_atoms; $i++ )
+	{
+	  if ( $atom_residue[$i] == $res )
+	    # only those atoms that are in this residue
+	    {
+	      $atoms[$i] =~ s/.\d RES\d./ 1 RES1 /;
+	      $atoms[$i] =~ s/\s*\d*//;
+	      printf OUT "%6d%s", $atom_index[$i], $atoms[$i];
+	    }
+	}
+      # write the bond definitions
+      print OUT "@<TRIPOS>BOND\n";
+      for ( $i = 1; $i <= $number_of_bonds; $i++ )
+	{
+	  if ( $bond_residue[$i] == $res )
+	    {
+	      printf OUT "%6d%6d%6d    %s\n", 
+		$bond_index[$i], 
+		$atom1[$i],
+		$atom2[$i],
+		$bond_type[$i];
+	    }
+	}
+      # of course, only one substructure
+      print OUT "@<TRIPOS>SUBSTRUCTURE\n    1 RES1       1\n";
+      # write tail of the file
+      for ( $i = 0; $i < $number_of_tail_lines; $i++ )
+	{
+	  print OUT $tail[$i];
+	}
+      close OUT;
+    }
+    print "\n";
+    unlink "$ARGV[0]/$file.mol2";
+}
+____FILE_END
+____FILE_START: filter_ligands.pl
+#!/usr/bin/perl
+#
+# filter_ligands.pl        Volker Schnecke   Wed Sep 15 16:13:00 EDT 1999
+#
+# Usage: filter_ligands.pl target template db  cutoff
+#
+# This script checks SLIDE's score for all ligands found in database
+# <db> when screening for target <target> with template <template>.
+# The command-line parameter <cutoff> defines the lower bound for
+# the score, all ligands with the corresponding target and water files
+# in the directories <db>_targets and <db>_waters, respectively,
+# that have a lower score than <cutoff> are deleted.
+
+if ( $#ARGV != 3 )
+{
+    die "Usage: $0 <target> <template> <db> <score_cutoff>\n";
+}
+
+$base_name = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/".$ARGV[2];
+
+$ligand_dir = $base_name."_ligands";
+$target_dir = $base_name."_targets";
+$water_dir = $base_name."_waters";
+
+opendir DIR, $ligand_dir;
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    open IN, "$ligand_dir/$files[$i]";
+    while ( <IN> )
+    {
+	if ( /^# affiscore/ )
+	    {		
+		chop;
+		/\s([\-0-9.]*)$/;
+		$score = $1;
+		if ( $score > $ARGV[3] )
+		{
+		    print "deleting $files[$i] (score $score)\n";
+		    unlink "$ligand_dir/$files[$i]";
+		    $files[$i] =~ s/.mol2$/.pdb/;
+		    unlink "$target_dir/$files[$i]";
+		    unlink "$water_dir/$files[$i]";
+		}
+		last;
+	    }
+    }
+    close IN;
+}
+
+
+____FILE_END
+____FILE_START: gen_sph_box.pl
+#!/usr/bin/perl
+#
+# -- Rajesh Korde Wed Apr 17 11:45:03 EDT 2002
+# Usage: gen_sph_box.pl <x> <y> <z> <r>
+# make a cube around a sphere
+#
+
+# Usage check
+if (@ARGV != 4) {
+  die "Usage: $0 <x> <y> <z> <r>\n";
+}
+
+$x=$ARGV[0];
+$y=$ARGV[1];
+$z=$ARGV[2];
+$r=$ARGV[3];
+
+printf("%8.2f %8.2f %8.2f\n", $x-$r, $y-$r, $z-$r);
+printf("%8.2f %8.2f %8.2f\n", $x+$r, $y-$r, $z-$r);
+printf("%8.2f %8.2f %8.2f\n", $x-$r, $y+$r, $z-$r);
+printf("%8.2f %8.2f %8.2f\n", $x+$r, $y+$r, $z-$r);
+printf("%8.2f %8.2f %8.2f\n", $x-$r, $y-$r, $z+$r);
+printf("%8.2f %8.2f %8.2f\n", $x+$r, $y-$r, $z+$r);
+printf("%8.2f %8.2f %8.2f\n", $x-$r, $y+$r, $z+$r);
+printf("%8.2f %8.2f %8.2f\n", $x+$r, $y+$r, $z+$r);
+____FILE_END
+____FILE_START: make_box.pl
+#!/usr/bin/perl
+#
+# Time-stamp: <Paul Sanschagrin -- Thu Aug  2 10:31:49 EDT 2001>
+# make_box.pl: Make a box in a PDB formatted file given a set of 6 corners
+# Usage: make_box.pl <x1> <y1> <z1> <x2> <y2> <z2>
+
+# Usage check
+if (@ARGV != 6) {
+  die "Usage: $0 <x1> <y1> <z1> <x2> <y2> <z2>\n";
+}
+
+# Set some referencing keys
+$x = 0;
+$y = 1;
+$z = 2;
+
+# Output the box
+printf ("HETATM    1  O   XXX     1    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+0], $ARGV[$y+0], $ARGV[$z+0]);
+printf ("HETATM    2  O   XXX     2    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+3], $ARGV[$y+0], $ARGV[$z+0]);
+printf ("HETATM    3  O   XXX     3    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+0], $ARGV[$y+3], $ARGV[$z+0]);
+printf ("HETATM    4  O   XXX     4    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+3], $ARGV[$y+3], $ARGV[$z+0]);
+printf ("HETATM    5  O   XXX     5    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+0], $ARGV[$y+0], $ARGV[$z+3]);
+printf ("HETATM    6  O   XXX     6    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+3], $ARGV[$y+0], $ARGV[$z+3]);
+printf ("HETATM    7  O   XXX     7    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+0], $ARGV[$y+3], $ARGV[$z+3]);
+printf ("HETATM    8  O   XXX     8    %8.3f%8.3f%8.3f\n",
+	$ARGV[$x+3], $ARGV[$y+3], $ARGV[$z+3]);
+print "CONECT    1    2\n";
+print "CONECT    1    3\n";
+print "CONECT    1    4\n";
+print "CONECT    1    5\n";
+print "CONECT    1    6\n";
+print "CONECT    1    7\n";
+print "CONECT    2    3\n";
+print "CONECT    2    4\n";
+print "CONECT    2    5\n";
+print "CONECT    2    6\n";
+print "CONECT    2    8\n";
+print "CONECT    3    4\n";
+print "CONECT    3    5\n";
+print "CONECT    3    7\n";
+print "CONECT    3    8\n";
+print "CONECT    4    6\n";
+print "CONECT    4    7\n";
+print "CONECT    4    8\n";
+print "CONECT    5    6\n";
+print "CONECT    5    7\n";
+print "CONECT    5    8\n";
+print "CONECT    6    7\n";
+print "CONECT    6    8\n";
+print "CONECT    7    8\n";
+
+____FILE_END
+____FILE_START: merge_pdb_target.pl
+#!/usr/bin/perl
+#
+# Time-stamp: <Paul Sanschagrin -- Thu Jul 19 14:34:03 EDT 2001>
+# merge_pdb_target.pl: replace the atoms coords in a base pdb file (i.e.
+#   that used as a base for a slide run) with the coords for side-chains
+#   rotated during the run
+# Usage: merge_pdb_target.pl [-n] <rotation file> <base PDB file>
+#       -n:  no chain IDs used for the SLIDE run (older versions)
+
+use File::Basename;
+use Getopt::Std;
+
+sub usage {
+  $this = basename ($0);
+  print "Usage:    $this [-n] <rotation file> <base PDB file>\n".
+    "Options:  -n:  no chain IDs used for the SLIDE run ".
+      "(older versions of SLIDE\n";
+    exit 1;
+}
+
+
+# Usage check and Parse CL args
+if (getopts('n') == false) {
+  usage();
+}
+usage() unless @ARGV == 2;
+
+
+$rotfn = $ARGV[0];
+$pdbfn = $ARGV[1];
+
+# Process the rotation file
+
+open ROT, $rotfn or die "Unable to open rotation file: $rotfn\n";
+while (<ROT>) {
+  next if $_ =~ /^REMARK/; # skip comment lines
+  if ($opt_n) {
+    # older verisons of  SLIDE do _NOT_ output chain info for the target files
+    $newcoords{substr($_,12,9)." ".substr($_,22,8)} = substr($_,30,24);
+  } else {
+    $newcoords{substr($_,12,18)} = substr($_,30,24);
+  }
+}
+
+close ROT;
+
+# Process the base PDB file
+open PDB, $pdbfn or die "Unable to open base PDB file: $pdbfn\n";
+while (<PDB>) {
+  if ($opt_n) { # Pre-ChainID output versions
+    $key = substr($_,12,9)." ".substr($_,22,8);
+  } else { # new versions with ChainID (& AltLoc, InsCode)
+    $key = substr($_,12,18);
+  }
+  if (exists ($newcoords{$key})) {
+    print substr($_,0,30).$newcoords{$key}.substr($_,54,27);
+  } else {
+    print $_;
+  }
+}
+____FILE_END
+____FILE_START: mol2_dehydrogen.pl
+#!/usr/bin/perl
+#
+# mol2dehydrogen -- remove hydrogens from a mol2 file, including necessary
+#   changes to atom and bond counts
+#
+# 23-Jan-01: This does NOT handle multiple substructure moelcules correctly 
+#   in that the SUBSTRUCTURE section is left unchanged. - PCS
+
+@ARGV == 1 || die "Usage: $0 <mol2file>\n";
+$fn = $ARGV[0];
+open IN, $fn or die "Unable to open input: $fn\n";
+$atomcount = $bondcount = 0;
+$numheavy = $numheavybonds = 0;
+$numH = $numHbonds = 0;
+
+while (<IN>) {
+    if ($_ =~ /\<TRIPOS\>MOLECULE/) { # We've reached the molecule tag
+	$_ = <IN>; # next line is the molname
+	$_ = <IN>; # next line is the atom count line
+	s/^\s+//g;
+	($numatoms, $numbonds, $numsubstrs) = split(/\s+/,$_);
+#	print "$numatoms, $numbonds, $numsubstrs\n";
+    }
+    if ($_ =~ /\<TRIPOS\>ATOM/) {
+	$atomflag = 1;
+    }
+    if ($_ =~ /\<TRIPOS\>BOND/) {
+	$atomflag = 0;
+	$bondflag = 1;
+    }
+    if ($_ =~ /\<TRIPOS\>SUBSTRUCTURE/) {
+	$bondflag = 0;
+    }
+    if ($atomflag && ($_ !~ /ATOM/)) {
+	s/^\s+//g;
+	($atomnum, $atomname, $x, $y, $z, $orbital, $res, $resname, 
+	 $potential) = split(/\s+/,$_);
+#	print "$atomnum, $atomname, $x, $y, $z, $orbital, $res, $resname, $potential\n";
+	$atomcount ++;
+	if ($orbital =~ /H/) {
+#	    print "$atomnum, $atomname, $x, $y, $z, $orbital, $res, $resname, $potential\n";
+	    $Hnums[$atomnum] = 1;
+	    $numH++;	    
+	} else {
+	    $heavyatoms[$numheavy] = $atomnum;
+	    $atomnums[$atomnum] = $numheavy+1;
+	    $atomnames[$atomnum] = $atomname;
+	    $xs[$atomnum] = $x;
+	    $ys[$atomnum] = $y;
+	    $zs[$atomnum] = $z;
+	    $orbitals[$atomnum] = $orbital;
+	    $ress[$atomnum] = $res;
+	    $resnames[$atomnum] = $resname;
+	    $potentials[$atomnum] = $potential;	    
+	    $numheavy++;
+	}
+    }
+    if ($bondflag && ($_ !~ /BOND/)) {
+	s/^\s+//g;
+	($bondnum, $bond1, $bond2, $bondorder) = split(/\s+/,$_);
+#	print "$bondnum, $bond1, $bond2, $bondorder\n";
+	$bondcount ++;
+	if ($Hnums[$bond1] == 1 || $Hnums[$bond2] == 1) {
+#	    print "$bondnum, $bond1, $bond2, $bondorder\n";
+	    $numHbonds++;
+	} else {
+	    $heavybonds[$numheavybonds] = $bondnum;
+	    $bondnums[$bondnum] = $numheavybonds+1;
+	    $bond1s[$bondnum] = $bond1;
+	    $bond2s[$bondnum] = $bond2;
+	    $bondorders[$bondnum] = $bondorder;
+	    $numheavybonds++;
+	}
+    }
+}
+#print "$numatoms, $numbonds\n";
+if ($atomcount != $numatoms) {
+    print "ERROR: Number of atoms (count: $atomcount, entry: $numatoms)\n";
+    exit;
+}
+if ($bondcount != $numbonds) {
+    print "ERROR: Number of bonds (count: $bondcount, entry: $numbonds)\n";
+    exit;
+}
+if (($atomcount-$numH) != $numheavy) {
+    print "ERROR: Num H (Total-H: ".($atomcount-$numH).", Count: $numheavy)\n";
+    exit;
+}
+if (($bondcount-$numHbonds) != $numheavybonds) {
+    print "ERROR: Num H (Total-H: ".($bondcount-$numHbonds).
+	", Count: $numheavybonds)\n";
+    exit;
+}
+
+if (0) {
+    for ($i=0; $i<$numheavy;$i++) {
+	$atomnum = $heavyatoms[$i];
+	print "$atomnum:  ";
+	print $atomnums[$atomnum].", ".
+	  $atomnames[$atomnum].", ".
+	  $xs[$atomnum].", ".
+	  $ys[$atomnum].", ".
+	  $zs[$atomnum].", ".
+	  $orbitals[$atomnum].", ".
+	  $ress[$atomnum].", ".
+	  $resnames[$atomnum].", ".
+	  $potentials[$atomnum]."\n";
+    }
+    for ($i=0; $i<$numheavybonds;$i++) {
+	$bondnum=$heavybonds[$i];
+	print "$bondnum: ";
+	print $bondnums[$bondnum].", ".
+	  $bond1s[$bondnum].", ".
+	  $bond2s[$bondnum].", ".
+	  $bondorders[$bondnum]." :: ";
+	print $bondnums[$bondnum].", ".
+	  $atomnums[$bond1s[$bondnum]].", ".
+	  $atomnums[$bond2s[$bondnum]].", ".
+	  $bondorders[$bondnum]."\n";
+    }
+}
+# Close and reopen the input file to do the reading with the correct output
+close IN;
+open IN, $fn;
+
+while (<IN>) {
+    if ($_ =~ /MOLECULE/) {
+	print $_; # print the MOLECULE line
+	$_ = <IN>;
+	print $_; # print the molecule name line
+	$_ = <IN>; # we are now at the atoms/bonds/substrs lines
+	print "$numheavy   $numheavybonds   $numsubstrs\n";
+	next;
+	
+    }
+    if ($_ =~ /\<TRIPOS\>ATOM/) {
+	print $_;
+	$atomflag = 1;
+    }
+    if ($_ =~ /\<TRIPOS\>BOND/) { # we have reached the end of the atoms -- 
+                                  # output the stored atoms
+	$atomflag = 0;
+	$bondflag = 1;
+	for ($i=0; $i<$numheavy;$i++) {
+	    $atomnum = $heavyatoms[$i];
+	    printf("%5d %-8s %9.4f %9.4f %9.4f %-9s %2d %5s %7.4f ****\n",
+		   $atomnums[$atomnum], 
+		   $atomnames[$atomnum], 
+		   $xs[$atomnum], 
+		   $ys[$atomnum], 
+		   $zs[$atomnum], 
+		   $orbitals[$atomnum], 
+		   $ress[$atomnum], 
+		   $resnames[$atomnum], 
+		   $potentials[$atomnum]);
+	}
+	print $_;
+	next;
+    }
+    if ($_ =~ /\<TRIPOS\>/ && $bondflag) { # we have reached the end of the bonds -- 
+	                        # output the stored bonds
+	$bondflag = 0;
+	for ($i=0; $i<$numheavybonds;$i++) {
+	    $bondnum=$heavybonds[$i];
+	    printf ("%5d %5d %5d %s\n",
+		    $bondnums[$bondnum], 
+		    $atomnums[$bond1s[$bondnum]], 
+		    $atomnums[$bond2s[$bondnum]], 
+		    $bondorders[$bondnum]);
+	}
+    }	
+    if (!$atomflag && !$bondflag) { # print the rest of the mol2 file
+	print $_;
+    }
+}
+____FILE_END
+____FILE_START: mol2_rename.pl
+#!/usr/bin/perl
+
+if ( $#ARGV != 1 )
+{
+    die "Usage: $0 <mol2-file1> <new name>\n";
+}
+
+open IN, $ARGV[0] or die "Unable to open <mol2-file1>: $ARGV[0]\n";
+while ( <IN> )
+{
+    print $_;
+    last if /^@<TRIPOS>MOLECULE/;
+}
+print "$ARGV[1]\n";
+$count = 0;
+while ( <IN> )
+{
+    if ($count>0)
+    {
+	print $_;
+    }
+    $count++;
+}
+close IN;
+____FILE_END
+____FILE_START: pdb_to_template.pl
+#!/usr/bin/perl
+# Usage: pdb_to_template.pl <pdb file> > <template file>
+#
+# This script reads the PDB-file, which has water molecules
+# at the positions of template points and outputs a template-file,
+# the types of the template points in that file are based on the 
+# temperature factor listed for each water and the key designation
+# (key or nonkey) is based on the occupancy
+
+@ARGV == 1 || die "Usage: <pdb file> > <template file>\n";
+
+$fn = $ARGV[0];
+open ( IN, $fn )
+    or die "couldn't open file `$fn` for reading";
+
+%TypeHash = (100 => "H", # Hydrophobic point
+	     50 => "D",  # Donor point
+	     0 => "A",  # Acceptor point
+	     25 => "N");  # Doneptor point
+
+%KeyHash = (1.00 => "*",  # '*' indicates a key point (occ = 1.0)
+	    0.50 => " "); # ' ' indicates a nonkey point (occ = 0.5)
+
+$count = 0;
+while ( <IN> )
+{
+    /.{30}(.{8})(.{8})(.{8})(.{6})(.{6})/;
+    printf "%1s%1s  %8.3f %8.3f %8.3f\n", 
+    $TypeHash{$5+0},
+    $KeyHash{$4+0},
+    $1, $2, $3;
+
+
+}
+
+close IN;
+____FILE_END
+____FILE_START: prune_template.pl
+#!/usr/bin/perl
+
+if ( $#ARGV < 2 )
+{
+    die "Usage: $0 <max ligand-template distance> <template file> <pdb file> <ligand mol2 file #1> ... <ligand mol2 file #n>\n";
+    }
+
+$threshold = $ARGV[0];
+$extended_threshold = $ARGV[0] * 2;
+$template_extend_threshold = $threshold;
+$buried_thresh = 4.5;
+$neighbor_thresh = 10;
+$pass = 1;
+$fail = 0;
+
+sub dist
+{
+    my (  $a, @points ) = @_;
+    
+    $distance = sqrt ( ( $points[$a][0] - $points[$b][0] )
+		       * ( $points[$a][0] - $points[$b][0] )
+		       + ( $points[$a][1] - $points[$b][1] )
+		       * ( $points[$a][1] - $points[$b][1] )
+		       + ( $points[$a][2] - $points[$b][2] )
+		       * ( $points[$a][2] - $points[$b][2] ) );
+}
+
+$count1 = $count2 = $count3 = 0;
+
+open TEMPLATE, $ARGV[1] or die "Unable to open <template file>: $ARGV[1]\n";
+while ( <TEMPLATE> )
+{
+    s/^\s+//;
+    @line = split;
+    if ($line[1] == '#')
+    {
+	printf $_;
+    }
+    $atoms1[$count1][0] = $line[1];
+    $atoms1[$count1][1] = $line[2];
+    $atoms1[$count1][2] = $line[3];
+    $atoms1[$count1][3] = $line[0];
+    $count1++;
+}
+close TEMPLATE;
+
+open PDB, $ARGV[2] or die "Unable to open <pdb-file>: $ARGV[2]\n";
+#    print "opening $lig_done $ARGV[$lig_done]\n";
+while ( <PDB> )
+{
+    $record_name = substr $_, 0, 6;  # extract the record name field
+    $atom_num = substr $_, 6, 5;  # extract the atom number field
+    $atom_name = substr $_, 12, 4;  # extract the atom name field
+    $altLoc = substr $_, 16, 1;  # extract the alternate location field
+    $resName = substr $_, 17, 3;  # extract the residue name field
+    $chainID = substr $_, 21, 1;  # extract the chain ID field
+    $resNum = substr $_, 22, 4;  # extract the residue number field
+    $iCode = substr $_, 26, 1;  # extract the code for insertion of residues field
+    $X_coord = substr $_, 30, 8;  # extract the X coordinate field
+    $Y_coord = substr $_, 38, 8;  # extract the Y coordinate field
+    $Z_coord = substr $_, 46, 8;  # extract the Z coordinate field
+    $occupancy = substr $_, 54, 6;  # extract the Occupancy field
+    $tempFactor = substr $_, 60, 6;  # extract the Temperature factor field
+    $segID = substr $_, 72, 4;  # extract the segment ID (left justified) field
+    $element = substr $_, 76, 2;  # extract the element symbol (right justified) field
+    $charge = substr $_, 78, 2;  # extract the charge on the atom field
+    
+    if (($record_name eq 'ATOM  ') || ($record_name eq 'HETATM'))
+    {
+	$atoms3[$count3][0] = $X_coord;
+	$atoms3[$count3][1] = $Y_coord;
+	$atoms3[$count3][2] = $Z_coord;
+	$atoms3[$count3][3] = $atom_name;
+	$count3++;
+    }
+}
+close PDB;
+
+$lig_done = 3;
+while ($lig_done <=  $#ARGV)
+{
+    open LIGAND, $ARGV[$lig_done] or die "Unable to open <mol2-file>: $ARGV[$lig_done]\n";
+#    print "opening $lig_done $ARGV[$lig_done]\n";
+    while ( <LIGAND> )
+    {
+	last if /^@<TRIPOS>ATOM/;
+    }
+    while ( <LIGAND> )
+    {
+	last if /@<TRIPOS>BOND/;
+	s/^\s+//;
+	@line = split;
+	next if ($line[5] eq "H") || ($line[5] eq "H_ADD");
+	$atoms2[$count2][0] = $line[2];
+	$atoms2[$count2][1] = $line[3];
+	$atoms2[$count2][2] = $line[4];
+	$atoms2[$count2][3] = $line[0];
+	$count2++;
+    }
+    close LIGAND;
+    $lig_done++;
+}
+
+$err = 0.0;
+$max = 0.0;
+$min = 100.0;
+$closest = 9999.0;
+$k = $l = 0;
+$count_new = $count_far = 0;
+
+# compare ligand-template distance and keep templates within <threshold> distance of ligand atoms (label new_temp).  Label the remaining template points far_temp 
+for ( $i = 0; $i < $count1; $i++)
+{
+    $closest = 9999.0;
+    for ( $j = 0; $j < $count2; $j++)
+    {
+	$distance = sqrt ( ( $atoms1[$i][0] - $atoms2[$j][0] )
+			   * ( $atoms1[$i][0] - $atoms2[$j][0] )
+			   + ( $atoms1[$i][1] - $atoms2[$j][1] )
+			   * ( $atoms1[$i][1] - $atoms2[$j][1] )
+			   + ( $atoms1[$i][2] - $atoms2[$j][2] )
+			   * ( $atoms1[$i][2] - $atoms2[$j][2] ) );
+	#print "$i: $distance\n";
+	#$err += $distance * $distance;  
+#	printf ("%d %s -- %d %s : %0.3f %0.3f\n", $i+1, $atoms1[$i][3], $j+1, $atoms2[$j][3], $distance, $closest);
+	
+	if ($distance < $closest){
+	    $closest = $distance;}
+	if ($distance > $max){
+	    $max = $distance;}
+	if ($distance < $min){
+	    $min = $distance;}
+    }
+    if ($closest <= $threshold)
+    {
+	$new_temp[$k][0] = $atoms1[$i][0];
+	$new_temp[$k][1] = $atoms1[$i][1];
+	$new_temp[$k][2] = $atoms1[$i][2];
+	$new_temp[$k][3] = $atoms1[$i][3];
+	printf("%s %0.3f %0.3f %0.3f\n", $atoms1[$i][3], $atoms1[$i][0], $atoms1[$i][1], $atoms1[$i][2]);
+	$k++;
+	$count_new++;
+    }
+    if (($closest > $threshold) && ($closest <= $extended_threshold))
+    {
+	$far_temp[$l][0] = $atoms1[$i][0];
+	$far_temp[$l][1] = $atoms1[$i][1];
+	$far_temp[$l][2] = $atoms1[$i][2];
+	$far_temp[$l][3] = $atoms1[$i][3];
+#	printf("%s %0.3f %0.3f %0.3f\n", $atoms1[$i][3], $atoms1[$i][0], $atoms1[$i][1], $atoms1[$i][2]);
+	$l++;
+	$count_far++;
+    }
+}
+
+#this part of the code finds pockets near the known ligands in the active site that may be possible to exploit in ligand docking
+
+$added = $count_new;
+$k = 0;
+while ($added != 0) #stop iterating when no new template points found
+{
+    $added = 0;
+    for ( $i = 0; $i < $count_far; $i++)
+    {
+	$neighbors[$i] = 0;
+	for ( $j = 0; $j < $count3; $j++)
+	{
+	    $distance = sqrt ( ( $far_temp[$i][0] - $atoms3[$j][0] )
+			       * ( $far_temp[$i][0] - $atoms3[$j][0] )
+			       + ( $far_temp[$i][1] - $atoms3[$j][1] )
+			       * ( $far_temp[$i][1] - $atoms3[$j][1] )
+			       + ( $far_temp[$i][2] - $atoms3[$j][2] )
+			       * ( $far_temp[$i][2] - $atoms3[$j][2] ) );
+	    if ($distance <= $buried_thresh)
+	    {
+		$neighbors[$i]++; # find how many protein atoms are within <buried_thresh> of the far_temp points
+	    }
+	}
+	if ($neighbors[$i] >= $neighbor_thresh)
+	{
+	    $smallest_gap = 9999.0;
+	    $status = $fail;
+#	    print "cn $count_new\n";
+	    for ( $l=0; $l < $count_new; $l++)
+	    {   # for far_temp points with enough close protein points, find distance between the far_temp and the new_temp points
+		$distance_a = sqrt ( ( $far_temp[$i][0] - $new_temp[$l][0] )
+				     * ( $far_temp[$i][0] - $new_temp[$l][0] )
+				     + ( $far_temp[$i][1] - $new_temp[$l][1] )
+				     * ( $far_temp[$i][1] - $new_temp[$l][1] )
+				     + ( $far_temp[$i][2] - $new_temp[$l][2] )
+				     * ( $far_temp[$i][2] - $new_temp[$l][2] ) );
+#		print "a= $distancs_a\n";
+		$smallest_gap = (($distance_a*$distance_a)/2.0 + 2.0*(1.5 * 1.5)); # this ensures that the closest pdb atom between the new and far template points is at least 1.5 A perpendicular to the line connecting new_temp and far_temp points (basically that the 2 points have a "line of sight" to each other)
+#		print "a= $distance_a, smallest_gap = $smallest_gap\n";
+#		print "status = $status\n";
+		if ($distance_a <= $template_extend_threshold)
+		{
+		    for ( $m=0; $m < $count3; $m++)
+		    {
+			$distance_b = sqrt ( ( $far_temp[$i][0] - $atoms3[$m][0] )
+					     * ( $far_temp[$i][0] - $atoms3[$m][0] )
+					     + ( $far_temp[$i][1] - $atoms3[$m][1] )
+					     * ( $far_temp[$i][1] - $atoms3[$m][1] )
+					     + ( $far_temp[$i][2] - $atoms3[$m][2] )
+					     * ( $far_temp[$i][2] - $atoms3[$m][2] ) );
+			#	print "b= $distancs_b\n";
+			$distance_c = sqrt ( ( $new_temp[$l][0] - $atoms3[$m][0] )
+					     * ( $new_temp[$l][0] - $atoms3[$m][0] )
+					     + ( $new_temp[$l][1] - $atoms3[$m][1] )
+					     * ( $new_temp[$l][1] - $atoms3[$m][1] )
+					     + ( $new_temp[$l][2] - $atoms3[$m][2] )
+					     * ( $new_temp[$l][2] - $atoms3[$m][2] ) );
+			#print "c= $distancs_c\n";
+			if ($distance_b * $distance_b + $distance_c * $distance_c >= $smallest_gap) # see prior comment about smallest_gap
+			{
+#			print "$distance_a\n";
+			    if ($distance_a <= $template_extend_threshold) # this makes sure that only far_temp points that are within reasonable distance are accepted as new_temp points
+			    {
+				$status = $pass;
+				next;
+			    }
+			}
+		    }
+		}
+	    }
+	    if ($status == $pass)
+	    {
+		$count_new++;
+		$new_temp[$count_new][0] = $far_temp[$i][0];
+		$new_temp[$count_new][1] = $far_temp[$i][1];
+		$new_temp[$count_new][2] = $far_temp[$i][2];
+		$new_temp[$count_new][3] = $far_temp[$i][3];
+		$far_temp[$i][0]*=10000;
+		$far_temp[$i][1]*=10000;
+		$far_temp[$i][2]*=10000;
+		printf("%s %0.3f %0.3f %0.3f\n", $new_temp[$count_new][3], $new_temp[$count_new][0], $new_temp[$count_new][1], $new_temp[$count_new][2]);
+		$k++;
+#		$count_new++;
+#		printf("new %s %0.3f %0.3f %0.3f\n", $far_temp[$i][3], $far_temp[$i][0], $far_temp[$i][1], $far_temp[$i][2]);
+		$added++;
+	    }
+	}
+	
+#    if ($neighbors[$i] >= $neighbor_thresh)
+#    {
+#	$buried_temp[$k][0] = $far_temp[$i][0];
+#	$buried_temp[$k][1] = $far_temp[$i][1];
+#	$buried_temp[$k][2] = $far_temp[$i][2];
+#	$buried_temp[$k][3] = $far_temp[$i][3];
+#	printf("%s %0.3f %0.3f %0.3f\n", $far_temp[$i][3], $far_temp[$i][0], $far_temp[$i][1], $far_temp[$i][2]);
+#	$k++;
+#	$count_buried++;
+#    }
+    }
+}
+
+for ( $i = 0; $i < $count1; $i++)
+{
+    $neighbors[$i]=0;
+    $closest = 9999.0;
+    for ( $j = 0; $j < $count3; $j++)
+    {
+	$distance = sqrt ( ( $atoms1[$i][0] - $atoms3[$j][0] )
+			   * ( $atoms1[$i][0] - $atoms3[$j][0] )
+			   + ( $atoms1[$i][1] - $atoms3[$j][1] )
+			   * ( $atoms1[$i][1] - $atoms3[$j][1] )
+			   + ( $atoms1[$i][2] - $atoms3[$j][2] )
+			   * ( $atoms1[$i][2] - $atoms3[$j][2] ) );
+	if ($distance <= $buried_thresh)
+	{
+	    $neighbors[$i]++;
+	}
+    }
+#3    printf("template point %d has %d pdb neighbors within %.2f Angstroms.\n",$i+1, $neighbors[$i], $buried_thresh );
+}
+
+____FILE_END
+____FILE_START: renum_pdb_atoms.pl
+#!/usr/bin/perl
+#
+# renum_pdb_atoms.pl       Volker Schnecke    Wed Sep 15 16:18:39 EDT 1999
+#
+# Usage: renum_pdb_atoms pdb_file type
+#
+# This script renumbers the atoms in the PDB-file <pdb_file> and is
+# especially used for preparing the binding site and ligand file for the
+# web interface.  The command-line parameter <type> has to be one of the
+# keywords "TARGET" or "LIGAND", when renumbering the atoms for the
+# binding site or the ligand, respectively.  The main purpose is to
+# assign a chain ID to these files so that they can be easily
+# distinguished in Rasmol when using the web interface.
+
+if ( $#ARGV != 1 )
+{
+    die "Usage: $0 <pdb file> <LIGAND|TARGET>\n";
+}
+
+$number = 0;
+open IN, $ARGV[0];
+while ( <IN> )
+{
+    if ( /^ATOM/ || /^HETATM/ )	
+    {
+	# assign a new atom number
+	substr ( $_, 7, 4 ) = sprintf "%4d", $number;
+	if ( $ARGV[1] eq "LIGAND" )
+	{
+	    # if we are renumbering a ligand file, then set the chain ID to "K"
+	    # and the temperature factor to 100.00
+	    substr ( $_, 21, 1 ) = "K";
+	    substr ( $_, 60, 6 ) = "100.00";
+	}
+	else
+	{
+	    # if we are renumbering a binding site file, then set chain ID to
+	    # "T" and temperature factor to 0.00
+	    substr ( $_, 21, 1 ) = "T";
+	    substr ( $_, 60, 6 ) = "  0.00";
+	}
+	$number++;
+    }
+    print $_;
+}
+close IN;
+____FILE_END
+____FILE_START: replace_score.pl
+#!/usr/bin/perl
+#
+# Time-stamp: <Paul Sanschagrin -- Wed Jul 11 15:43:34 EDT 2001>
+# replace_score.pl: replace the score in a slide mol2 output file
+# Usage: replace_score.pl <file> <new score>
+#
+
+# Usage Check and CL parsing
+die "Usage: $0 <file> <new score>\n" unless @ARGV == 2;
+$fn = $ARGV[0];
+$newscore = $ARGV[1];
+die "ERROR: score should consist only of [+-.0123456789]\n" 
+  if $newscore =~ /[^\+\.\-\d]/;
+
+# Open file
+open FILE, $fn or die "Unable to open file: $fn\n";
+
+while (<FILE>) {
+    if ($_ =~ Affinity score) 
+    {
+	$_ = "# Affinity score (kcal/mol): $newscore\n";
+    }
+    print $_;
+    if ($_ =~ affiscore) 
+    {
+	$_ = "# affiscore (kcal/mol) : $newscore\n";
+    }
+    print $_;
+}
+
+close FILE;
+
+____FILE_END
+____FILE_START: results_table_del.pl
+#!/usr/bin/perl
+#
+# results_table.pl
+#
+# modified version of the below cited perl scripts
+#                            Maria Zavodszky Thu Jan 27 2005
+#
+# create_global_genericDB_results_table.pl
+#                            Paul Sanschagrin Wed Mar 15 2000
+# modified version of create_global_csd_results_table.pl (written by)
+#                            Volker Schnecke  Wed Sep 15 15:46:25 EDT 1999
+#
+# Usage: create_global_genericDB_results_table.pl target template database number
+#
+# This script creates a table listing all important data for the top potential
+# ligands that SLIDE has identified.
+                                                                                
+                                                                             
+                                                                                if ( $#ARGV < 3 )
+{
+#    die "Usage: $0 <target> <template> <database> <# displayed results> [-confs/-confb/-bumps]\n\nOption:\n[-confs] Groups all conformations of a ligand, separating bumped & unbumped\n[-confb] Groups all conformations without separating bumped & unbumped\n[-bumps] Doesn't group conformations together, but groups bumped & unbumped\n";
+    die "Usage: $0 <target> <template> <database> <number> [-conf]\n";
+}
+                                                                                
+sub sort_by_best_orientscore {
+    $best_scores{$a} <=> $best_scores{$b};
+}
+
+sub sort_by_best_affiscore {
+    $best_affiscore{$a} <=> $best_affiscore{$b};
+}
+                                                                                
+$ligand_dir = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/".$ARGV[2]."_ligands";
+$param_file = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/in/slide.parameters";
+$conformers = $ARGV[4];
+                                                                                
+opendir DIR, $ligand_dir;
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    $base[$i] = $files[$i];
+    $base_a[$i] = $files[$i];
+    $base_b[$i] = $files[$i];
+    
+    if ($conformers =~ /^-confs/){
+	$base_a[$i] =~ s/_\d+_\D?_\d+.mol2$//; 
+	$base_b[$i] =~ s/_\d+.mol2$//;
+	$length_bb = length($base_b[$i]);
+	$base_c[$i] = substr($base_b[$i], $length_bb-1, 1);
+	$base[$i] = "$base_a[$i]_$base_c[$i]";
+#    print "ba = $base_a[$i]\n";
+#    print "bb = $base_b[$i]\n";
+#    print "bc = $base_c[$i]\n";
+#    print "basei = $base[$i]\n";
+    }
+#    elsif ($conformers =~ /^-confb/){
+    elsif ($conformers =~ /^-conf/){
+	$base[$i] =~ s/_\d+_\d+.mol2$//;  # for: ligandname_<conformation>b_<orientation>.mol2
+    }
+    elsif ($conformers =~ /^-bumps/){
+	$base[$i] =~ s/_\D?_\d+.mol2$//; 
+    }
+    else {
+	$base[$i] =~ s/_\d+.mol2$//;      # for: ligandname_<orientation>.mol2
+    }
+#    print "$base[$i]\n";
+    $best_score{$base[$i]} = 0.0;
+    $binding_modes{$base[$i]} = 0;
+}
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    open IN, "$ligand_dir/$files[$i]";
+    while ( <IN> )
+    {
+        if ( /^# Affiscore \(kcal/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affiscore = $1;
+        }
+
+        if ( /^# hydrophobic complementarity term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $hphob_comp = $1;
+        }
+        if ( /^# polar term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $polar_component = $1;
+        }
+        if ( /^# unsatisfied polar term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $unsat_polar_component = $1;
+        }
+
+        if ( /^# constant term/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affinity_const = $1;
+        }
+        if ( /^# protein-ligand hydrophobic contacts/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hphob = $1;
+        }
+        if ( /^# protein-ligand H-bond count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hbond = $1;
+        }
+        if ( /^# protein-ligand salt-bridge count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_saltbridge = $1;
+        }
+        if ( /^# metal-ligand interactions count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $ml_interactions = $1;
+        }
+        if ( /^# unsatisfied interfacial polar atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_polar = $1;
+        }
+        if ( /^# unsatisfied interfacial charged atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_charged = $1;
+        }
+        if ( /^# buried carbons/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $buried = $1;
+        }
+        if ( /^# remaining vdW collisions/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $final_bumps = $1;
+        }
+        if ( /^# total vdW overlap/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $final_overlap = $1;
+        }
+        if ( /^# anchor fragment translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $anchor_translate = $1;
+        }
+        if ( /^# side-chain mean-field iterations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $iter = $1;
+        }
+        if ( /^# ligand side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $lig_side_chain = $1;
+        }
+        if ( /^# protein side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $prot_side_chain = $1;
+        }
+        if ( /^# number of water translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_trans = $1;
+        }
+        if ( /^# number of conserved waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_cons = $1;
+        }
+        if ( /^# number of displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_disp = $1;
+        }
+        if ( /^# number of polar displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_pol_disp = $1;
+        }
+#       if ( /^# conserved waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_conserved_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# water translations/ && $score == $best_scores{$base[$i]} )
+#       {
+#           chop;
+#           /\s([0-9]*)$/;
+#           $best_water_translations{$base[$i]} = $1;
+#       }
+#       if ( /^# displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_displaced_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# polar displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_polar_displaced_waters{$base[$i]} = $#line - 4;
+#           last;
+#       }
+        if ( /^# Orientscore/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $orientscore = $1;
+        }
+        if ( /^# Orientscore/ )
+            {
+                chop;
+                /\s([\-0-9.]*)$/;
+                $score = $1;
+                $binding_modes{$base[$i]}++;
+                if ( $score < $best_scores{$base[$i]} )
+                {
+                    $best_scores{$base[$i]} = $score;
+                    $best_affiscore{$base[$i]} = $affiscore;
+                    $best_buried_hphob{$base[$i]} = $buried_hphob;
+                    $best_hphob_comp{$base[$i]} = $hphob_comp;
+                    $best_polar_component{$base[$i]} = $polar_component;
+                    $best_unsat_polar_component{$base[$i]} = $unsat_polar_component;
+                    $best_affinity_const{$base[$i]} = $affinity_const;
+                    $best_pl_hphob{$base[$i]} = $pl_hphob;
+                    $best_pl_hbond{$base[$i]} = $pl_hbond;
+                    $best_pl_saltbridge{$base[$i]} = $pl_saltbridge;
+                    $best_ml_interactions{$base[$i]} = $ml_interactions;
+                    $best_unsat_interfacial_polar{$base[$i]} = $unsat_interfacial_polar;
+                    $best_unsat_interfacial_charged{$base[$i]} = $unsat_interfacial_charged;
+                    $best_buried{$base[$i]} = $buried;
+                    $best_final_bumps{$base[$i]} = $final_bumps;
+                    $best_final_overlap{$base[$i]} = $final_overlap;
+                    $best_orientscore{$base[$i]} = $orientscore;
+                    $best_anchor_translate{$base[$i]} = $anchor_translate;
+                    $best_iter{$base[$i]} = $iter;
+                    $best_lig_side_chain{$base[$i]} = $lig_side_chain;
+                    $best_prot_side_chain{$base[$i]} = $prot_side_chain;
+                    $best_wat_trans{$base[$i]} = $wat_trans;
+                    $best_wat_cons{$base[$i]} = $wat_cons;
+                    $best_wat_disp{$base[$i]} = $wat_disp;
+                    $best_wat_pol_disp{$base[$i]} = $wat_pol_disp;
+                    $best_file{$base[$i]} = $files[$i];
+                    $best_file{$base[$i]} =~ s/.mol2$//;
+                }
+            }
+    }
+    close IN;
+}
+
+                                                                                
+$total_ligands = scalar ( keys %best_affiscore );
+$max_ligands = $ARGV[3];
+$max_ligands = $total_ligands if $total_ligands < $max_ligands;
+$title = "TOP ".$max_ligands." LIGANDS (OUT OF ".$total_ligands.") FOR ".$ARGV[0]." (TEMPLATE ".$ARGV[1].")";
+             print "$title\n\n";
+	     if ($conformers =~ /^-confs/){
+#		 print "You grouped ligands by conformation, keeping bumped and unbumbed dockings separate.\n"
+		 }
+	     elsif ($conformers =~ /^-conf/){
+#		 print "You grouped ligands by conformation.\n"
+		 }
+	     else
+	     {
+#		 print "You treated each ligand separately.\n"
+	     }
+ #            print "  slide.parameters\n(those currently in your in/ directory, not necessarily the ones used for the run)\n\n";
+                                                                                
+#open IN, "$param_file";
+#             while  ( <IN> ){
+#                 print "$_";
+#             }
+#close IN;
+	     print "\nFields:   1  Rank\n";
+             print "          2  Ligand name\n";
+             print "          3  Affinity score\n";
+             print "          4  Hydrophobic complementarity term\n";
+             print "          5  Polar component term\n";
+             print "          6  Unsatisfied polar component term\n";
+             print "          7  Protein-ligand hydrophobic contact count\n";
+             print "          8  Protein-ligand H-bond count\n";
+             print "          9  Protein-ligand salt-bridge count\n";
+             print "         10  Metal-Ligand interaction count\n";
+             print "         11  Unsatisfied Interfacial Polar Atom count\n";
+             print "         12  Unsatisfied Interfacial Charged Atom count\n";
+             print "         13  Buried Carbons\n";
+             print "         14  Remaining van der Waals collisions\n";
+             print "         15  Remaining van der Waals overlap\n";
+             print "         16  Ligand side-chain rotations\n";
+             print "         17  Protein side-chain rotations\n";
+             print "         18  Top scoring orientation\n";
+             print "         19  Binding modes\n\n";
+             print "Affinity Constant = -5.218\n
+                  Affinity Score = (4) +  (5) + (6) + (Affinity Constant)\n\n";
+	     
+#23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+             print "
+  1      2                  3       4      5      6      7  8  9 10 11 12   13   14   15  16 17       18             19\n\n";
+                                                                                
+                                                                                
+$rank = 1;
+foreach $key ( sort sort_by_best_affiscore keys %best_affiscore )
+{
+    $code = $key;
+    printf "%-3d ", $rank;
+    printf "%-20s ", $code;
+#   printf "%6.3f ", $best_orientscore{$key};
+    printf "%6.3f ", $best_affiscore{$key};
+    printf "[%6.3f ", $best_hphob_comp{$key};
+    printf "%6.3f ", $best_polar_component{$key};
+    printf "%6.3f] ", $best_unsat_polar_component{$key};
+    printf "%3d ", $best_pl_hphob{$key};
+    printf "%2d ", $best_pl_hbond{$key};
+    printf "%2d ", $best_pl_saltbridge{$key};
+    printf "%2d ", $best_ml_interactions{$key};
+    printf "%2d ", $best_unsat_interfacial_polar{$key};
+    printf "%2d ", $best_unsat_interfacial_charged{$key};
+    printf "%6.3f ", $best_buried{$key};
+    printf "%2d ", $best_final_bumps{$key};
+    printf "%5.3f ", $best_final_overlap{$key};
+    printf "%2d ", $best_lig_side_chain{$key};
+    printf "%2d ", $best_prot_side_chain{$key};
+#   printf "%2d ", $best_wat_trans{$key};
+#   printf "%2d ", $best_wat_cons{$key};
+#   printf "%2d ", $best_wat_disp{$key};
+#   printf "%3d ", $best_wat_pol_disp{$key};
+    printf "%-20s ", $best_file{$key};
+    printf "%2d\n", $binding_modes{$key};
+    $rank++;
+    last if $rank > $max_ligands;
+}
+                                                                          
+$rank = 1;
+foreach $key ( sort sort_by_best_affiscore keys %best_affiscore ) {
+    if ($rank >$max_ligands) {
+#       print "deleting orientations of $key (rank $rank score $best_scores{$key})\n";
+        unlink <$ligand_dir/$key*.mol2>;
+        unlink <$target_dir/$key*.pdb>;
+        unlink <$water_dir/$key*.pdb>;
+    }
+    $rank++;
+}
+
+____FILE_END
+____FILE_START: results_table_ligefficient.pl
+#!/usr/bin/perl
+#
+# results_table.pl
+#
+# modified version to work with changes made in slide v3.0
+#                            Matt Tonero Tue Mar 28 2006
+#
+# modified version of the below cited perl scripts
+#                            Maria Zavodszky Thu Jan 27 2005
+#
+# create_global_genericDB_results_table.pl
+#                            Paul Sanschagrin Wed Mar 15 2000
+# modified version of create_global_csd_results_table.pl (written by)
+#                            Volker Schnecke  Wed Sep 15 15:46:25 EDT 1999
+#
+# Usage: create_global_genericDB_results_table.pl target template database number
+#
+# This script creates a table listing all important data for the top potential
+# ligands that SLIDE has identified.
+                                                                                
+if ( $#ARGV < 3 )
+{
+#    die "Usage: $0 <target> <template> <database> <# displayed results> [-confs/-confb/-bumps]\n\nOption:\n[-confs] Groups all conformations of a ligand, separating bumped & unbumped\n[-confb] Groups all conformations without separating bumped & unbumped\n[-bumps] Doesn't group conformations together, but groups bumped & unbumped\n";
+    die "Usage: $0 <target> <template> <database> <number> [-conf]\n";
+}
+                                                                                
+sub sort_by_best_orientscore {
+    $best_scores{$a} <=> $best_scores{$b};
+}
+
+sub sort_by_best_affiscore {
+    $best_affiscore{$a} <=> $best_affiscore{$b};
+}
+                                                                                
+$ligand_dir = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/".$ARGV[2]."_ligands";
+$param_file = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/in/slide.parameters";
+$conformers = $ARGV[4];
+                                                                                
+opendir DIR, $ligand_dir;
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    $base[$i] = $files[$i];
+    $base_a[$i] = $files[$i];
+    $base_b[$i] = $files[$i];
+    
+    if ($conformers =~ /^-confs/){
+	$base_a[$i] =~ s/_\d+_\D?_\d+.mol2$//; 
+	$base_b[$i] =~ s/_\d+.mol2$//;
+	$length_bb = length($base_b[$i]);
+	$base_c[$i] = substr($base_b[$i], $length_bb-1, 1);
+	$base[$i] = "$base_a[$i]_$base_c[$i]";
+#    print "ba = $base_a[$i]\n";
+#    print "bb = $base_b[$i]\n";
+#    print "bc = $base_c[$i]\n";
+#    print "basei = $base[$i]\n";
+    }
+#    elsif ($conformers =~ /^-confb/){
+    elsif ($conformers =~ /^-conf/){
+	$base[$i] =~ s/_\d+_\d+.mol2$//;  # for: ligandname_<conformation>b_<orientation>.mol2
+    }
+    elsif ($conformers =~ /^-bumps/){
+	$base[$i] =~ s/_\D?_\d+.mol2$//; 
+    }
+    else {
+	$base[$i] =~ s/_\d+.mol2$//;      # for: ligandname_<orientation>.mol2
+    }
+#    print "$base[$i]\n";
+    $best_score{$base[$i]} = 0.0;
+    $binding_modes{$base[$i]} = 0;
+}
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    open IN, "$ligand_dir/$files[$i]";
+    while ( <IN> )
+    {
+        if ( /^# Ligand Efficiency/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affiscore = $1;
+        }
+
+        if ( /^# hydrophobic complementarity term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $hphob_comp = $1;
+        }
+        if ( /^# polar term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $polar_component = $1;
+        }
+        if ( /^# unsatisfied polar term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $unsat_polar_component = $1;
+        }
+
+        if ( /^# constant term/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affinity_const = $1;
+        }
+        if ( /^# protein-ligand hydrophobic contacts/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hphob = $1;
+        }
+        if ( /^# protein-ligand H-bond count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hbond = $1;
+        }
+        if ( /^# protein-ligand salt-bridge count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_saltbridge = $1;
+        }
+        if ( /^# metal-ligand interactions count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $ml_interactions = $1;
+        }
+        if ( /^# unsatisfied interfacial polar atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_polar = $1;
+        }
+        if ( /^# unsatisfied interfacial charged atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_charged = $1;
+        }
+        if ( /^# buried carbons/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $buried = $1;
+        }
+        if ( /^# remaining vdW collisions/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $final_bumps = $1;
+        }
+        if ( /^# total vdW overlap/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $final_overlap = $1;
+        }
+        if ( /^# anchor fragment translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $anchor_translate = $1;
+        }
+        if ( /^# side-chain mean-field iterations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $iter = $1;
+        }
+        if ( /^# ligand side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $lig_side_chain = $1;
+        }
+        if ( /^# protein side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $prot_side_chain = $1;
+        }
+        if ( /^# number of water translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_trans = $1;
+        }
+        if ( /^# number of conserved waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_cons = $1;
+        }
+        if ( /^# number of displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_disp = $1;
+        }
+        if ( /^# number of polar displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_pol_disp = $1;
+        }
+#       if ( /^# conserved waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_conserved_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# water translations/ && $score == $best_scores{$base[$i]} )
+#       {
+#           chop;
+#           /\s([0-9]*)$/;
+#           $best_water_translations{$base[$i]} = $1;
+#       }
+#       if ( /^# displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_displaced_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# polar displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_polar_displaced_waters{$base[$i]} = $#line - 4;
+#           last;
+#       }
+        if ( /^# Orientscore/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $orientscore = $1;
+        }
+        if ( /^# Orientscore/ )
+            {
+                chop;
+                /\s([\-0-9.]*)$/;
+                $score = $1;
+                $binding_modes{$base[$i]}++;
+                if ( $score < $best_scores{$base[$i]} )
+                {
+                    $best_scores{$base[$i]} = $score;
+                    $best_affiscore{$base[$i]} = $affiscore;
+                    $best_buried_hphob{$base[$i]} = $buried_hphob;
+                    $best_hphob_comp{$base[$i]} = $hphob_comp;
+                    $best_polar_component{$base[$i]} = $polar_component;
+                    $best_unsat_polar_component{$base[$i]} = $unsat_polar_component;
+                    $best_affinity_const{$base[$i]} = $affinity_const;
+                    $best_pl_hphob{$base[$i]} = $pl_hphob;
+                    $best_pl_hbond{$base[$i]} = $pl_hbond;
+                    $best_pl_saltbridge{$base[$i]} = $pl_saltbridge;
+                    $best_ml_interactions{$base[$i]} = $ml_interactions;
+                    $best_unsat_interfacial_polar{$base[$i]} = $unsat_interfacial_polar;
+                    $best_unsat_interfacial_charged{$base[$i]} = $unsat_interfacial_charged;
+                    $best_buried{$base[$i]} = $buried;
+                    $best_final_bumps{$base[$i]} = $final_bumps;
+                    $best_final_overlap{$base[$i]} = $final_overlap;
+                    $best_orientscore{$base[$i]} = $orientscore;
+                    $best_anchor_translate{$base[$i]} = $anchor_translate;
+                    $best_iter{$base[$i]} = $iter;
+                    $best_lig_side_chain{$base[$i]} = $lig_side_chain;
+                    $best_prot_side_chain{$base[$i]} = $prot_side_chain;
+                    $best_wat_trans{$base[$i]} = $wat_trans;
+                    $best_wat_cons{$base[$i]} = $wat_cons;
+                    $best_wat_disp{$base[$i]} = $wat_disp;
+                    $best_wat_pol_disp{$base[$i]} = $wat_pol_disp;
+                    $best_file{$base[$i]} = $files[$i];
+                    $best_file{$base[$i]} =~ s/.mol2$//;
+                }
+            }
+    }
+    close IN;
+}
+                                                                                
+                                                                                
+                                                                                
+$total_ligands = scalar ( keys %best_affiscore );
+$max_ligands = $ARGV[3];
+$max_ligands = $total_ligands if $total_ligands < $max_ligands;
+$title = "TOP ".$max_ligands." LIGANDS (OUT OF ".$total_ligands.") FOR ".$ARGV[0]." (TEMPLATE ".$ARGV[1].")";
+             print "$title\n\n";
+	     if ($conformers =~ /^-confs/){
+#		 print "You grouped ligands by conformation, keeping bumped and unbumbed dockings separate.\n"
+		 }
+	     elsif ($conformers =~ /^-conf/){
+#		 print "You grouped ligands by conformation.\n"
+		 }
+	     else
+	     {
+#		 print "You treated each ligand separately.\n"
+	     }
+ #            print "  slide.parameters\n(those currently in your in/ directory, not necessarily the ones used for the run)\n\n";
+                                                                                
+#open IN, "$param_file";
+#             while  ( <IN> ){
+#                 print "$_";
+#             }
+#close IN;
+	     print "\nFields:   1  Rank\n";
+             print "          2  Ligand name\n";
+             print "          3  Affinity score\n";
+             print "          4  Hydrophobic complementarity term\n";
+             print "          5  Polar component term\n";
+             print "          6  Unsatisfied polar component term\n";
+             print "          7  Protein-ligand hydrophobic contact count\n";
+             print "          8  Protein-ligand H-bond count\n";
+             print "          9  Protein-ligand salt-bridge count\n";
+             print "         10  Metal-Ligand interaction count\n";
+             print "         11  Unsatisfied Interfacial Polar Atom count\n";
+             print "         12  Unsatisfied Interfacial Charged Atom count\n";
+             print "         13  Buried Carbons\n";
+             print "         14  Remaining van der Waals collisions\n";
+             print "         15  Remaining van der Waals overlap\n";
+             print "         16  Ligand side-chain rotations\n";
+             print "         17  Protein side-chain rotations\n";
+             print "         18  Top scoring orientation\n";
+             print "         19  Binding modes\n\n";
+             print "Affinity Constant = -5.218\n
+                  Affinity Score = (4) +  (5) + (6) + (Affinity Constant)\n\n";
+	     
+#23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+             print "
+  1      2                  3       4      5      6      7  8  9 10 11 12   13   14   15  16 17       18             19\n\n";
+                                                                                
+                                                                                
+$rank = 1;
+foreach $key ( sort sort_by_best_affiscore keys %best_affiscore )
+{
+    $code = $key;
+    printf "%-3d ", $rank;
+    printf "%-20s ", $code;
+#   printf "%6.3f ", $best_orientscore{$key};
+    printf "%6.3f ", $best_affiscore{$key};
+    printf "[%6.3f ", $best_hphob_comp{$key};
+    printf "%6.3f ", $best_polar_component{$key};
+    printf "%6.3f] ", $best_unsat_polar_component{$key};
+    printf "%3d ", $best_pl_hphob{$key};
+    printf "%2d ", $best_pl_hbond{$key};
+    printf "%2d ", $best_pl_saltbridge{$key};
+    printf "%2d ", $best_ml_interactions{$key};
+    printf "%2d ", $best_unsat_interfacial_polar{$key};
+    printf "%2d ", $best_unsat_interfacial_charged{$key};
+    printf "%6.3f ", $best_buried{$key};
+    printf "%2d ", $best_final_bumps{$key};
+    printf "%5.3f ", $best_final_overlap{$key};
+    printf "%2d ", $best_lig_side_chain{$key};
+    printf "%2d ", $best_prot_side_chain{$key};
+#   printf "%2d ", $best_wat_trans{$key};
+#   printf "%2d ", $best_wat_cons{$key};
+#   printf "%2d ", $best_wat_disp{$key};
+#   printf "%3d ", $best_wat_pol_disp{$key};
+    printf "%-20s ", $best_file{$key};
+    printf "%2d\n", $binding_modes{$key};
+    $rank++;
+    last if $rank > $max_ligands;
+}
+____FILE_END
+____FILE_START: results_table.pl
+#!/usr/bin/perl
+#
+# results_table.pl
+#
+# modified version to work with changes made in slide v3.0
+#                            Matt Tonero Tue Mar 28 2006
+#
+# modified version of the below cited perl scripts
+#                            Maria Zavodszky Thu Jan 27 2005
+#
+# create_global_genericDB_results_table.pl
+#                            Paul Sanschagrin Wed Mar 15 2000
+# modified version of create_global_csd_results_table.pl (written by)
+#                            Volker Schnecke  Wed Sep 15 15:46:25 EDT 1999
+#
+# Usage: create_global_genericDB_results_table.pl target template database number
+#
+# This script creates a table listing all important data for the top potential
+# ligands that SLIDE has identified.
+                                                                                
+if ( $#ARGV < 3 )
+{
+#    die "Usage: $0 <target> <template> <database> <# displayed results> [-confs/-confb/-bumps]\n\nOption:\n[-confs] Groups all conformations of a ligand, separating bumped & unbumped\n[-confb] Groups all conformations without separating bumped & unbumped\n[-bumps] Doesn't group conformations together, but groups bumped & unbumped\n";
+    die "Usage: $0 <target> <template> <database> <number> [-conf]\n";
+}
+                                                                                
+sub sort_by_best_orientscore {
+    $best_scores{$a} <=> $best_scores{$b};
+}
+
+sub sort_by_best_affiscore {
+    $best_affiscore{$a} <=> $best_affiscore{$b};
+}
+                                                                                
+$ligand_dir = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/".$ARGV[2]."_ligands";
+$param_file = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/in/slide.parameters";
+$conformers = $ARGV[4];
+                                                                                
+opendir DIR, $ligand_dir;
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    $base[$i] = $files[$i];
+    $base_a[$i] = $files[$i];
+    $base_b[$i] = $files[$i];
+    
+    if ($conformers =~ /^-confs/){
+	$base_a[$i] =~ s/_\d+_\D?_\d+.mol2$//; 
+	$base_b[$i] =~ s/_\d+.mol2$//;
+	$length_bb = length($base_b[$i]);
+	$base_c[$i] = substr($base_b[$i], $length_bb-1, 1);
+	$base[$i] = "$base_a[$i]_$base_c[$i]";
+#    print "ba = $base_a[$i]\n";
+#    print "bb = $base_b[$i]\n";
+#    print "bc = $base_c[$i]\n";
+#    print "basei = $base[$i]\n";
+    }
+#    elsif ($conformers =~ /^-confb/){
+    elsif ($conformers =~ /^-conf/){
+	$base[$i] =~ s/_\d+_\d+.mol2$//;  # for: ligandname_<conformation>b_<orientation>.mol2
+    }
+    elsif ($conformers =~ /^-bumps/){
+	$base[$i] =~ s/_\D?_\d+.mol2$//; 
+    }
+    else {
+	$base[$i] =~ s/_\d+.mol2$//;      # for: ligandname_<orientation>.mol2
+    }
+#    print "$base[$i]\n";
+    $best_score{$base[$i]} = 0.0;
+    $binding_modes{$base[$i]} = 0;
+}
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    open IN, "$ligand_dir/$files[$i]";
+    while ( <IN> )
+    {
+        if ( /^# Affiscore \(kcal/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affiscore = $1;
+        }
+
+        if ( /^# hydrophobic complementarity term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $hphob_comp = $1;
+        }
+        if ( /^# polar term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $polar_component = $1;
+        }
+        if ( /^# unsatisfied polar term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $unsat_polar_component = $1;
+        }
+
+        if ( /^# constant term/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affinity_const = $1;
+        }
+        if ( /^# protein-ligand hydrophobic contacts/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hphob = $1;
+        }
+        if ( /^# protein-ligand H-bond count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hbond = $1;
+        }
+        if ( /^# protein-ligand salt-bridge count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_saltbridge = $1;
+        }
+        if ( /^# metal-ligand interactions count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $ml_interactions = $1;
+        }
+        if ( /^# unsatisfied interfacial polar atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_polar = $1;
+        }
+        if ( /^# unsatisfied interfacial charged atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_charged = $1;
+        }
+        if ( /^# buried carbons/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $buried = $1;
+        }
+        if ( /^# remaining vdW collisions/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $final_bumps = $1;
+        }
+        if ( /^# total vdW overlap/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $final_overlap = $1;
+        }
+        if ( /^# anchor fragment translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $anchor_translate = $1;
+        }
+        if ( /^# side-chain mean-field iterations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $iter = $1;
+        }
+        if ( /^# ligand side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $lig_side_chain = $1;
+        }
+        if ( /^# protein side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $prot_side_chain = $1;
+        }
+        if ( /^# number of water translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_trans = $1;
+        }
+        if ( /^# number of conserved waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_cons = $1;
+        }
+        if ( /^# number of displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_disp = $1;
+        }
+        if ( /^# number of polar displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_pol_disp = $1;
+        }
+#       if ( /^# conserved waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_conserved_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# water translations/ && $score == $best_scores{$base[$i]} )
+#       {
+#           chop;
+#           /\s([0-9]*)$/;
+#           $best_water_translations{$base[$i]} = $1;
+#       }
+#       if ( /^# displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_displaced_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# polar displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_polar_displaced_waters{$base[$i]} = $#line - 4;
+#           last;
+#       }
+        if ( /^# Orientscore/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $orientscore = $1;
+        }
+        if ( /^# Orientscore/ )
+            {
+                chop;
+                /\s([\-0-9.]*)$/;
+                $score = $1;
+                $binding_modes{$base[$i]}++;
+                if ( $score < $best_scores{$base[$i]} )
+                {
+                    $best_scores{$base[$i]} = $score;
+                    $best_affiscore{$base[$i]} = $affiscore;
+                    $best_buried_hphob{$base[$i]} = $buried_hphob;
+                    $best_hphob_comp{$base[$i]} = $hphob_comp;
+                    $best_polar_component{$base[$i]} = $polar_component;
+                    $best_unsat_polar_component{$base[$i]} = $unsat_polar_component;
+                    $best_affinity_const{$base[$i]} = $affinity_const;
+                    $best_pl_hphob{$base[$i]} = $pl_hphob;
+                    $best_pl_hbond{$base[$i]} = $pl_hbond;
+                    $best_pl_saltbridge{$base[$i]} = $pl_saltbridge;
+                    $best_ml_interactions{$base[$i]} = $ml_interactions;
+                    $best_unsat_interfacial_polar{$base[$i]} = $unsat_interfacial_polar;
+                    $best_unsat_interfacial_charged{$base[$i]} = $unsat_interfacial_charged;
+                    $best_buried{$base[$i]} = $buried;
+                    $best_final_bumps{$base[$i]} = $final_bumps;
+                    $best_final_overlap{$base[$i]} = $final_overlap;
+                    $best_orientscore{$base[$i]} = $orientscore;
+                    $best_anchor_translate{$base[$i]} = $anchor_translate;
+                    $best_iter{$base[$i]} = $iter;
+                    $best_lig_side_chain{$base[$i]} = $lig_side_chain;
+                    $best_prot_side_chain{$base[$i]} = $prot_side_chain;
+                    $best_wat_trans{$base[$i]} = $wat_trans;
+                    $best_wat_cons{$base[$i]} = $wat_cons;
+                    $best_wat_disp{$base[$i]} = $wat_disp;
+                    $best_wat_pol_disp{$base[$i]} = $wat_pol_disp;
+                    $best_file{$base[$i]} = $files[$i];
+                    $best_file{$base[$i]} =~ s/.mol2$//;
+                }
+            }
+    }
+    close IN;
+}
+                                                                                
+                                                                                
+                                                                                
+$total_ligands = scalar ( keys %best_affiscore );
+$max_ligands = $ARGV[3];
+$max_ligands = $total_ligands if $total_ligands < $max_ligands;
+$title = "TOP ".$max_ligands." LIGANDS (OUT OF ".$total_ligands.") FOR ".$ARGV[0]." (TEMPLATE ".$ARGV[1].")";
+             print "$title\n\n";
+	     if ($conformers =~ /^-confs/){
+#		 print "You grouped ligands by conformation, keeping bumped and unbumbed dockings separate.\n"
+		 }
+	     elsif ($conformers =~ /^-conf/){
+#		 print "You grouped ligands by conformation.\n"
+		 }
+	     else
+	     {
+#		 print "You treated each ligand separately.\n"
+	     }
+ #            print "  slide.parameters\n(those currently in your in/ directory, not necessarily the ones used for the run)\n\n";
+                                                                                
+#open IN, "$param_file";
+#             while  ( <IN> ){
+#                 print "$_";
+#             }
+#close IN;
+	     print "\nFields:   1  Rank\n";
+             print "          2  Ligand name\n";
+             print "          3  Affinity score\n";
+             print "          4  Hydrophobic complementarity term\n";
+             print "          5  Polar component term\n";
+             print "          6  Unsatisfied polar component term\n";
+             print "          7  Protein-ligand hydrophobic contact count\n";
+             print "          8  Protein-ligand H-bond count\n";
+             print "          9  Protein-ligand salt-bridge count\n";
+             print "         10  Metal-Ligand interaction count\n";
+             print "         11  Unsatisfied Interfacial Polar Atom count\n";
+             print "         12  Unsatisfied Interfacial Charged Atom count\n";
+             print "         13  Buried Carbons\n";
+             print "         14  Remaining van der Waals collisions\n";
+             print "         15  Remaining van der Waals overlap\n";
+             print "         16  Ligand side-chain rotations\n";
+             print "         17  Protein side-chain rotations\n";
+             print "         18  Top scoring orientation\n";
+             print "         19  Binding modes\n\n";
+             print "Affinity Constant = -5.218\n
+                  Affinity Score = (4) +  (5) + (6) + (Affinity Constant)\n\n";
+	     
+#23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+             print "
+  1      2                  3       4      5      6      7  8  9 10 11 12   13   14   15  16 17       18             19\n\n";
+                                                                                
+                                                                                
+$rank = 1;
+foreach $key ( sort sort_by_best_affiscore keys %best_affiscore )
+{
+    $code = $key;
+    printf "%-3d ", $rank;
+    printf "%-20s ", $code;
+#   printf "%6.3f ", $best_orientscore{$key};
+    printf "%6.3f ", $best_affiscore{$key};
+    printf "[%6.3f ", $best_hphob_comp{$key};
+    printf "%6.3f ", $best_polar_component{$key};
+    printf "%6.3f] ", $best_unsat_polar_component{$key};
+    printf "%3d ", $best_pl_hphob{$key};
+    printf "%2d ", $best_pl_hbond{$key};
+    printf "%2d ", $best_pl_saltbridge{$key};
+    printf "%2d ", $best_ml_interactions{$key};
+    printf "%2d ", $best_unsat_interfacial_polar{$key};
+    printf "%2d ", $best_unsat_interfacial_charged{$key};
+    printf "%6.3f ", $best_buried{$key};
+    printf "%2d ", $best_final_bumps{$key};
+    printf "%5.3f ", $best_final_overlap{$key};
+    printf "%2d ", $best_lig_side_chain{$key};
+    printf "%2d ", $best_prot_side_chain{$key};
+#   printf "%2d ", $best_wat_trans{$key};
+#   printf "%2d ", $best_wat_cons{$key};
+#   printf "%2d ", $best_wat_disp{$key};
+#   printf "%3d ", $best_wat_pol_disp{$key};
+    printf "%-20s ", $best_file{$key};
+    printf "%2d\n", $binding_modes{$key};
+    $rank++;
+    last if $rank > $max_ligands;
+}
+____FILE_END
+____FILE_START: rmsd_mol2.pl
+#!/usr/bin/perl
+                                                                                
+if ( $#ARGV != 1 )
+{
+    die "Usage: $0 <Candidate mol2-file1> <Reference mol2-file2>\n";
+}
+                                                                                
+sub dist
+{
+    my (  $a, @points ) = @_;
+                                                                                
+    $distance = sqrt ( ( $points[$a][0] - $points[$b][0] )
+                        * ( $points[$a][0] - $points[$b][0] )
+                      + ( $points[$a][1] - $points[$b][1] )
+                        * ( $points[$a][1] - $points[$b][1] )
+                      + ( $points[$a][2] - $points[$b][2] )
+                         * ( $points[$a][2] - $points[$b][2] ) );
+}
+                                                                                
+$count1 = $count = 0;
+                                                                                
+open IN, $ARGV[0] or die "Unable to open <mol2-file1>: $ARGV[0]\n";
+while ( <IN> )
+{
+    last if /^@<TRIPOS>ATOM/;
+}
+while ( <IN> )
+{
+    last if /@<TRIPOS>BOND/;
+    s/^\s+//;
+    @line = split;
+    next if $line[5] eq "H";
+    $atoms1[$count1][0] = $line[2];
+    $atoms1[$count1][1] = $line[3];
+    $atoms1[$count1][2] = $line[4];
+    $count1++;
+}
+close IN;
+                                                                                
+open IN, $ARGV[1] or die "Unable to open <mol2-file2>: $ARGV[1]\n";
+while ( <IN> )
+{
+    last if /^@<TRIPOS>ATOM/;
+}
+while ( <IN> )
+{
+    last if /@<TRIPOS>BOND/;
+    s/^\s+//;
+    @line = split;
+    next if $line[5] eq "H";
+    $atoms2[$count2][0] = $line[2];
+    $atoms2[$count2][1] = $line[3];
+    $atoms2[$count2][2] = $line[4];
+    $count2++;
+}
+close IN;
+                                                                                
+if ( $count1 != $count2 )
+{
+    die "$0: Different number of atoms in both files $ARGV[0]<->$ARGV[1] ($count1<->$count2) \n";
+}
+                                                                                
+$err = 0.0;
+for ( $i = 0; $i < $count1; $i++)
+{
+    $distance = sqrt ( ( $atoms1[$i][0] - $atoms2[$i][0] )
+                        * ( $atoms1[$i][0] - $atoms2[$i][0] )
+                      + ( $atoms1[$i][1] - $atoms2[$i][1] )
+                        * ( $atoms1[$i][1] - $atoms2[$i][1] )
+                      + ( $atoms1[$i][2] - $atoms2[$i][2] )
+                         * ( $atoms1[$i][2] - $atoms2[$i][2] ) );
+    #print "$i  $distance\n";
+    $err += $distance * $distance;
+}
+$err /= $count1;
+$err = sqrt ( $err );
+                                                                                
+$outname = $ARGV[0];
+if ($outname =~ /\.mol2/) {
+  $outname =~ s/\.mol2//g;
+}
+ print "$outname  $err\n";
+
+____FILE_END
+____FILE_START: show_ligands.pl
+#!/usr/bin/perl
+#
+# show_ligands.pl        Volker Schnecke   Wed Sep 15 15:59:56 EDT 1999
+#
+# Usage: show_ligands.pl target template db
+#
+# This script generates a Rasmol script that can be used to browse
+# through the ligands that SLIDE found in database <db> for protein 
+# <target> using binding-site template <template>.
+# The script reads in all corresponding mol2 files based on their ranking,
+# shows the ligands in rasmol, and outputs the score and other relevant
+# information in the terminal window in which Rasmol was started.
+
+# This variable has to point to the directory including the *.data files
+# which lists name, formula, and publication information for all entries
+# in the screening database. These files were created using the script
+# 'create_csd_set_data.pl'
+$CSD_SET_DATA_DIR = "/psa/db/csd-select/names";
+
+if ( $#ARGV != 2 )
+{
+    die "Usage: $0 <target> <template> <db>\n";
+}
+
+sub sort_by_best_orientscore {
+    $best_scores{$a} <=> $best_scores{$b};
+}
+
+sub sort_by_best_affiscore {
+    $best_affiscore{$a} <=> $best_affiscore{$b};
+}
+                                                                                
+$ligand_dir = $ENV{SLIDE_DATA_DIR}."/".$ARGV[0]."/".$ARGV[1]."/".$ARGV[2]."_ligands";
+
+opendir DIR, $ligand_dir;
+@files = grep ( /.mol2$/, grep ( !/^.\.?$/, readdir ( DIR ) ) );
+close DIR;
+
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    $base[$i] = $files[$i];
+    $best_score{$base[$i]} = 0.0;
+    $binding_modes{$base[$i]} = 0;
+}
+                                                                               
+for ( $i = 0; $i <= $#files; $i++ )
+{
+    open IN, "$ligand_dir/$files[$i]";
+    while ( <IN> )
+    {
+        if ( /^# Affinity score/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affiscore = $1;
+        }
+
+        if ( /^# buried protein hydrophobic term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $buried_hphob = $1;
+        }
+        if ( /^# hydrophobic complementarity term/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $hphob_comp = $1;
+        }
+        if ( /^# polar component/ )
+        {
+            chop;
+            /\s([\-\0-9.]*)$/;
+            $polar_component = $1;
+        }
+        if ( /^# affinity constant/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $affinity_const = $1;
+        }
+        if ( /^# protein-ligand hydrophobic contacts/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hphob = $1;
+        }
+        if ( /^# protein-ligand H-bond count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_hbond = $1;
+        }
+        if ( /^# protein-ligand salt-bridge count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $pl_saltbridge = $1;
+        }
+        if ( /^# metal-ligand interactions count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $ml_interactions = $1;
+        }
+        if ( /^# unsatisfied interfacial polar atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_polar = $1;
+        }
+        if ( /^# unsatisfied interfacial charged atom count/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $unsat_interfacial_charged = $1;
+        }
+        if ( /^# buried carbons/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $buried = $1;
+        }
+        if ( /^# remaining vdW collisions/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $final_bumps = $1;
+        }
+        if ( /^# total vdW overlap/ )
+        {
+            chop;
+            /\s([0-9.]*)$/;
+            $final_overlap = $1;
+        }
+        if ( /^# anchor fragment translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $anchor_translate = $1;
+        }
+        if ( /^# side-chain mean-field iterations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $iter = $1;
+        }
+        if ( /^# ligand side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $lig_side_chain = $1;
+        }
+        if ( /^# protein side-chain rotations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $prot_side_chain = $1;
+        }
+        if ( /^# number of water translations/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_trans = $1;
+        }
+        if ( /^# number of conserved waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_cons = $1;
+        }
+        if ( /^# number of displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_disp = $1;
+        }
+        if ( /^# number of polar displaced waters/ )
+        {
+            chop;
+            /\s([0-9]*)$/;
+            $wat_pol_disp = $1;
+        }
+#       if ( /^# conserved waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_conserved_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# water translations/ && $score == $best_scores{$base[$i]} )
+#       {
+#           chop;
+#           /\s([0-9]*)$/;
+#           $best_water_translations{$base[$i]} = $1;
+#       }
+#       if ( /^# displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_displaced_waters{$base[$i]} = $#line - 3;
+#       }
+#       if ( /^# polar displaced waters/ && $score == $best_scores{$base[$i]} )
+#       {
+#           @line = split;
+#           $best_polar_displaced_waters{$base[$i]} = $#line - 4;
+#           last;
+#       }
+        if ( /^# affiscore/ )
+        {
+            chop;
+            /\s([\-0-9.]*)$/;
+            $orientscore = $1;
+        }
+        if ( /^# affiscore/ )
+            {
+                chop;
+                /\s([\-0-9.]*)$/;
+                $score = $1;
+                $binding_modes{$base[$i]}++;
+                if ( $score < $best_scores{$base[$i]} )
+                {
+                    $best_scores{$base[$i]} = $score;
+                    $best_affiscore{$base[$i]} = $affiscore;
+                    $best_buried_hphob{$base[$i]} = $buried_hphob;
+                    $best_hphob_comp{$base[$i]} = $hphob_comp;
+                    $best_polar_component{$base[$i]} = $polar_component;
+                    $best_affinity_const{$base[$i]} = $affinity_const;
+                    $best_pl_hphob{$base[$i]} = $pl_hphob;
+                    $best_pl_hbond{$base[$i]} = $pl_hbond;
+                    $best_pl_saltbridge{$base[$i]} = $pl_saltbridge;
+                    $best_ml_interactions{$base[$i]} = $ml_interactions;
+                    $best_unsat_interfacial_polar{$base[$i]} = $unsat_interfacial_polar;
+                    $best_unsat_interfacial_charged{$base[$i]} = $unsat_interfacial_charged;
+                    $best_buried{$base[$i]} = $buried;
+                    $best_final_bumps{$base[$i]} = $final_bumps;
+                    $best_final_overlap{$base[$i]} = $final_overlap;
+                    $best_orientscore{$base[$i]} = $orientscore;
+                    $best_anchor_translate{$base[$i]} = $anchor_translate;
+                    $best_iter{$base[$i]} = $iter;
+                    $best_lig_side_chain{$base[$i]} = $lig_side_chain;
+                    $best_prot_side_chain{$base[$i]} = $prot_side_chain;
+                    $best_wat_trans{$base[$i]} = $wat_trans;
+                    $best_wat_cons{$base[$i]} = $wat_cons;
+                    $best_wat_disp{$base[$i]} = $wat_disp;
+                    $best_wat_pol_disp{$base[$i]} = $wat_pol_disp;
+                    $best_file{$base[$i]} = $files[$i];
+                    $best_file{$base[$i]} =~ s/.mol2$//;
+                }
+            }
+    }
+    close IN;
+}
+	     
+
+$rank = 1;
+print "set mouse insight\n";
+
+foreach $key ( sort sort_by_best_affiscore keys %best_affiscore )
+{
+    $code = $key;
+    if ( $ARGV[2] eq "csd" )	
+    {
+	$code =~ s/_.*$//;
+	$code =~ /^(.)/;
+	$filename = $CSD_SET_DATA_DIR."/".$1.".data";
+	open IN, "$filename";
+	$name = "unknown";
+	while ( <IN> )
+	{
+	    if ( /^CSD-code: $code/ )
+	    {	    
+		$_ = <IN>;
+		chop;
+		s/name: //;
+		$name = $_;
+		last;
+		close IN;
+	    }
+	}
+    }
+    print "zap\n";		 
+    print "load mol2 ".$ligand_dir."/".$best_file{$key}."\n";
+    print "wireframe 0.1\n";
+    print "echo \"\"\n";
+    print "echo \"File:             $best_file{$key}\"\n";
+    print "echo \"Rank:             $rank\"\n";
+    if ( $ARGV[2] eq "csd" )	
+    {
+	print "echo \"CSD-code:         $code\"\n";
+	$len = length ( $name );
+	print "echo \"Compound:         "; 
+	while ( $len > 40 )
+	{
+	    $name =~ s/^\s*(.{40}\S*)//;
+	    print "$1\"\necho \"                  "; 
+	    $name =~ s/^\s+//;
+	    $len = length ( $name );
+	}
+	print "$name\"\n"; 
+    }
+    print "echo \"Affinity Score:                      $best_affiscore{$key}\"\n";
+    print "echo \"Buried Protein Hydrophobic Term:     $best_buried_hphob{$key}\"\n";
+    print "echo \"Hydrophobic Complementarity Term:    $best_hphob_comp{$key}\"\n";
+    print "echo \"Polar Component Term:                $best_polar_component{$key}\"\n";
+    print "echo \"Protein-ligand Hydrophobic Contact:  $best_pl_hbond{$key}\"\n";
+    print "echo \"Protein-ligand H-bonds:              $best_pl_hbond{$key}\"\n";
+    print "echo \"Protein-ligand Salt-bridges:         $best_pl_saltbridge{$key}\"\n";
+    print "echo \"Metal-ligand Interactions:           $best_ml_interactions{$key}\"\n";
+    print "echo \"Unsatisfied Interface Polar Atoms:   $best_unsat_interfacial_polar{$key}\"\n";
+    print "echo \"Unsatisfied Interface Charged Atoms: $best_unsat_interfacial_charged{$key}\"\n";
+    print "echo \"Buried Carbons:                      $best_buried{$key}\"\n";
+    print "echo \"Remaining van der Waals Bumps:       $best_final_bumps{$key}\"\n";
+    print "echo \"van der Waals Overlap:               $best_final_overlap{$key}\"\n";
+    print "echo \"Ligand Side-chain Rotations:         $best_lig_side_chain{$key}\"\n";
+    print "echo \"Protein Side-chain Rotations:        $best_prot_side_chain{$key}\"\n";
+    print "pause\n";
+    $rank++;
+}
+____FILE_END
+____FILE_START: slide_setup.pl
+#!/usr/bin/perl
+# slide_setup.pl    Volker Schnecke  Wed Nov 17 14:36:37 EST 1999
+#
+# Usage:  slide_setup.pl  target template [database]
+#
+# This script creates the directory structure for a screening experiment.
+
+if ( $#ARGV != 1 && $#ARGV != 2 )
+{
+    die "Usage: $0 <target> <template> [<database>]\n";
+}
+ 
+if ( $ENV{"SLIDE_DATA_DIR"} eq "" )
+{
+    print "ERROR: environment variable SLIDE_DATA_DIR not set\n";
+    exit;
+}
+
+$data_dir = $ENV{"SLIDE_DATA_DIR"};
+$target = $ARGV[0];
+$template = $ARGV[1];
+$database = $ARGV[2] if $#ARGV == 2;
+
+print "\nsetting up SLIDE screening directories for:\n";
+print "  - target protein code: $target\n";
+if ( $#ARGV == 1 )
+{
+    print "  - template specifier:  $template\n\n";
+}
+else
+{
+    print "  - template specifier:  $template\n";
+    print "  - screening database:  $database\n\n";
+}
+
+chdir $data_dir;
+if ( ! -e "$target" )
+{
+    mkdir "$target", 0755;
+    print "creating directory $data_dir/$target\n";
+}
+chdir $target;
+if ( ! -e "$template" )
+{
+    mkdir "$template", 0755;
+    print "creating directory $data_dir/$target/$template\n";
+}
+chdir $template;
+if ( ! -e "in" )
+{
+    mkdir "in", 0755;
+    print "creating directory $data_dir/$target/$template/in\n";
+}
+if ( ! -e "log" )
+{
+    mkdir "log", 0755;
+    print "creating directory $data_dir/$target/$template/log\n";
+}
+if ( $#ARGV == 2 && ! -e "$database"."_ligands" )
+{
+    mkdir "$database"."_ligands", 0755;
+#    mkdir "$database"."_waters", 0755;
+    mkdir "$database"."_targets", 0755;
+    print "creating directory $data_dir/$target/$template/$database"."_ligands\n";
+#    print "creating directory $data_dir/$target/$template/$database"."_waters\n";
+    print "creating directory $data_dir/$target/$template/$database"."_targets\n";
+}
+print "\n";
+____FILE_END
+____FILE_START: template_to_pdb.pl
+#!/usr/bin/perl
+#
+# Usage: template_to_pdb.pl <template file> > <pdb file>
+#
+# Converts <template file> to PDB format with BValues indicating type:
+#     A (acceptor) = 0
+#     D (donor) = 50
+#     H (hydrophobic) = 100
+#     N (doneptor) = 25
+# and Occupancies indicating key/nonkey:
+#     Key = 1.00
+#     Nonkey = 0.50
+
+@ARGV == 1 || die "Usage: $0 <template file> > <pdb file>\n";
+
+$fn = $ARGV[0];
+open ( IN, $fn )
+    or die "couldn't open file `$fn` for reading\n";
+
+%BValHash = ("A" => 0,
+	     "D" => 50,
+	     "H" => 100,
+	     "N" => 25 );
+%OccHash = ("*" => 1.0,
+	    "" => 0.5 );
+
+$count = 1;
+while ( <IN> )
+{
+    next if $_ =~ /\#/;
+    @fields = split;
+    printf "HETATM %4d  O   HOH %5d     %7.3f %7.3f %7.3f  %4.2f%6.2f\n", 
+    $count,
+    $count,
+    $fields[1],
+    $fields[2],
+    $fields[3],
+    $OccHash{substr($fields[0],1,1)},
+    $BValHash{substr($fields[0],0,1)};
+    $count++;
+}
+
+close IN;
+
+____FILE_END
+____FILE_START: unmark_key_template_points.pl
+#!/usr/bin/perl
+#
+# Time-stamp: <Paul Sanschagrin -- Tue Jul 17 15:16:14 EDT 2001>
+#
+# unmark_key_template_points.pl: removes the key point marking
+#   from all the points in a template file
+# Usage: unmark_key_template_points.pl <template file>
+#
+
+# check usage
+die "Usage: $0 <template file>\n" unless @ARGV == 1;
+
+# parse CL args and open file
+$fn = $ARGV[0];
+open FILE, $fn or die "Unable to open file: $fn\n";
+
+# process the file
+while (<FILE>) {
+  substr($_,1,1) = " ";
+  print $_;
+}
+
+____FILE_END
+____FILE_START: xyztopdb.pl
+#!/usr/bin/perl
+#
+# Usage: xyztopdb <XYZ file> > <pdb file>
+#
+# Converts <XYZ file> to PDB format of waters
+
+@ARGV == 1 || die "Usage: $0 <coordinate file> ".
+    "(use '-' for stdin)\n";
+
+if ($ARGV[0] eq "-") {
+    open (IN, "-");
+} else {
+    open (IN, $ARGV[0]) or die "Unable to open data file ".$ARGV[0]."\n";
+}
+$count = 1;
+while ( <IN> )
+{
+    s/^\s+//g;
+    @fields = split;
+    printf "HETATM %4d  O   XXX %5d     %7.3f %7.3f %7.3f  %4.2f%6.2f\n",
+    $count,
+    $count,
+    $fields[0],
+    $fields[1],
+    $fields[2],
+    1.0,
+    50.0;
+    $count++;
+}
+
+close IN;
+____FILE_END

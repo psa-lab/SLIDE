@@ -1,0 +1,71 @@
+SLIDE version history (6/29/2011)
+Changes from version 3.3.5 to 3.4
+# Added the ability to direct dockings of molecules into two regions of the binding site (user definition of 2 sets of key points).
+# Added a main Makefile to better handle installation and re-installation.
+# Fixed a bug where the score filter (in slide.parameters) would filter based on Orientscore instead of correctly filtering based on Affiscore.
+# Added the script mol2_rename.pl to handle cases where the input mol2 file does not contain a molecule name under the @TRIPOS<MOLECULE> header, which is used internally in SLIDE
+
+Changes from version 3.3 to 3.3.5
+# Fixed minor bugs that were introduced in version 3.0
+# SLIDE now prints template parameters in the template file, and in the SLIDE output file.
+# Fixed bug where if multiple templates were generated at the same time they would overwrite each other.
+# Updated examples files, and added a new Tutorial
+# Fixed a bug where conformers of the same molecule weren’t being properly grouped together, and cleaned up the logic for grouping conformers
+# Fixed a bug where if conformers were being grouped in a screen, molecules towards the end of a screen would incorrectly fail to meet a score cutoff.
+# Added more checks for incorrect molecule input or format
+# Added a script (mol2_format_name.pl) to automatically remove anything beyond the first space in a molecules name (line after @TRIPOS<MOLECULE>)
+# Added a script (mol2_add_conf_0.pl) to append the conformer ID ‘_0’ to the first molecule of an Omega2.1 generated conformer set, when includeInput is set to “True”.
+# Added a script (pdb_remove_anisou.pl) to automatically remove all ANISOU records from a pdb file.
+# Fixed bug where metal-ligand salt bridges were incorrectly being reported.
+
+Changes from version 3.0.2 to version 3.3
+# Fixed bug where terminal oxygens (OXT) were assigned an incorrect hydrophobicity value.
+# Code cleaned up and optimized, resulting in approximately a 2-fold increase in speed. 
+# Added new features in slide_score (introduced in v3.3), such as interactions tables (useful in matchprint analysis)
+
+Changes from version 3.0 to version 3.0.2
+# Added the ability to restart a screening run from a failed molecule, by editing the slide.parameters file to include the molecule name (following @<TRIPOS>MOLECULE)
+# Added the option “r” to run_slide so that a restarted run can be stored in the same directory without overwriting data prior to the designated molecule.
+# Changed the handling of van der Waals interactions involving metals, allowing any molecule atom to be within the minimum metal hydrogen bond length (previously only hydrogen bond acceptor and doneptor atoms were allowed to be this close to a metal) which improved docking accuracy where previously collisions would be detected for the correct binding pose.
+# Added a tracker that writes out the number of molecules, conformers, and the percentage of the total run which has been completed in real time during a run
+
+Changes from version 2.31 to version 3.0
+# Fixed minor bugs
+# Added new handling of scoring, where the scoring function “Orientscore” is used to predict the binding pose, and the scoring function “Affiscore” is used to predict the binding affinity of the protein-ligand complex.
+# Changed handling of the binding site file (<target>.rad) so that if multiple chains exist in the pdb file, only the residues in the binding site are included.
+# Updated results_table.pl to be compatible with new score output.
+# Added a “ligand efficiency” score, which takes the Affiscore and divides it by the number of heavy atoms in the molecule.
+# Added a check to run_slide to see if a previous run exists in the same <target>/<template>/<database> directory, and whether or not to overwrite the data.
+# Fixed a bug that would result in a seg fault if the proper directory structure did not exist.
+# Error handling improved and clarified, and error logs are now extended instead of overwritten.
+# Added timestamps to the log files.
+# SLIDE no longer handles waters (they are ignored if they exist in the PDB file).
+# Fixed bug where biased templates would fail to be created if the command was run in the /in directory
+# Updated rotatable bond definitions
+# Added the option to force the match of 2 key points into slide.parameters
+# Added the option to group conformers of the same molecule into slide.parameters (the molecule name format must be <name>_<conformer_id>, where the name is everything before the final underscore ‘_’, and the conformer_id is everything after the final underscore.  For conformers to be grouped, the name must be identical for each input conformer.
+# Fixed handling of molecule bond order (previously only cared about number of atoms bound to, not type of bonds)
+# Fixed handling of molecule hydrogens, and will fail a molecule if it is incorrectly protonated
+# Fixed bug where protein-ligand complexes were scored multiple times, which affected the indexing, and caused molecules to be assigned the wrong score on occasion
+# Added a check so that at least half of a molecule’s carbons must be in the interface.
+# Fixed handling of rotatable bonds
+# Added the ability for different triangle matching parameters to be used depending on if the molecule was designated small or large (longest side smaller or larger than 10 Å).
+# Improved handling of hydrogen bonds by allowing molecule hydrogen bonds to adopt the correct position if it is attached to a rotatable atom.
+# Fixed bug where doneptor atoms were converted to acceptor atoms after contributing as a donor in a hydrogen bond.  This is to keep the code consistent, where all hydrogen bonding atom types are allowed to make multiple hydrogen bonds.
+# Split parameters into 3 files.  Slide.parameters for “run-time” options, params.h for “compile-time” options (note, code will need to be re-compiled for these options to take effect.  In the src file directory, type ‘make clean’ and then ‘make’), and defs.h for parameters which should rarely, if ever, be changed (code will also need to be recompiled).
+# Updated van der Waals radii of atoms to be consistent with DOCK, and for atoms that don’t exist in DOCK, to be consistent with the paper Li & Nussinov (1998) “A Set of van der Waals and Coulombic Radii of Protein Atoms for Molecular and Solvent-Accessible Surface Calculation, Packing Evaluation, and Docking”, Proteins 21, 111-127.
+# Improved handling of inter-molecular distance calculations.
+# Added timer functions
+# Added the run-time and compile time parameters to the SLIDE output
+# Added the slide_score program, which allows a score to be calculated for protein and a ligand complex which have already been placed into the correct binding pose.
+# Fixed bug where protein side-chains weren’t properly reset for each new molecule
+# Fixed handling of multi-mol2 files
+# Added the capability to set certain bond types as flexible or rigid in the flex.defn file (in the parameters directory)
+# Added handling of metal atoms in a protein binding site
+# Updated “type” and “charge” assignment of atoms
+# Added the ability to track which template points were used in the triangle match.
+# Fixed bug that rotated certain atom & bond types by the wrong angle.
+# Fixed bug where if a calculated angle was very small, it could be incorrectly be assigned as “NaN” (Not a Number), causing atom positions to be corrupted
+# Updated the formatting of score and terms output in both the output mol2 files and the SLIDE output file.
+# Added automatic detection and handling of metals in template generation
+# Changed the handling if distance calculations so that output would be the same when generated on different computer platforms.

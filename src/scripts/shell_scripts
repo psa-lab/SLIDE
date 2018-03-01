@@ -1,0 +1,511 @@
+____FILE_START: run_slide
+#!/bin/sh
+
+# run_slide           Matt Tonero  Thu FEB 22 2007
+#                     Rajesh Korde Wed Apr  3 14:51:05 EST 2002
+#
+#    Usage: run_slide <target> <template> <database> <sphere_radius> [<outfile>]"
+#
+#	*  extract protein residues checked for bumps
+#	*  check if all the directories are in correct location  
+#	*  runs slide.
+# 
+
+if test $# -ne 4 -a $# -ne 5 -a $# -ne 6
+    then
+    echo "Usage: $0 <target> <template> <database> <sphere_radius> [overwrite existing files? y/n/r] [<outfile>]"
+    exit
+fi
+
+if test -z $SLIDE_DIR
+    then
+    echo "ERROR: environment variable SLIDE_DIR not set"
+    exit
+fi
+
+if test -z $SLIDE_DATA_DIR
+    then
+    echo "ERROR: environment variable SLIDE_DATA_DIR not set"
+    exit
+fi
+
+data_dir=$SLIDE_DATA_DIR
+slide_dir=$SLIDE_DIR
+
+target=$1
+template=$2
+database=$3
+radius=$4
+overwrite=$5
+if test $# -eq 6
+    then
+    outfile=$data_dir/$target/$template/in/$6
+fi
+
+echo "Extract protein residues checked for bumps ..."
+echo
+${slide_dir}/bin/binding_site_residues.pl $target $template $radius
+
+echo "Checking for required directories ..."
+
+echo "$data_dir/$target/"
+if test ! -d $data_dir/$target/
+    then
+    echo "Error: Could not find directory $data_dir/$target/"
+    exit
+fi
+
+echo "$data_dir/$target/$template/"
+if test ! -d $data_dir/$target/$template/
+    then
+    echo "Error: Could not find directory $data_dir/$target/$template/"
+    exit
+fi
+
+echo "$data_dir/$target/$template/${database}_ligands/"
+if test ! -d $data_dir/$target/$template/${database}_ligands/
+    then
+    echo "Error: Could not find directory $data_dir/$target/$template/${database}_ligands/"
+    exit
+fi
+
+echo "$data_dir/$target/$template/${database}_targets/"
+if test ! -d $data_dir/$target/$template/${database}_targets/
+    then
+    echo "Error: Could not find directory $data_dir/$target/$template/${database}_targets/"
+    exit
+fi
+
+#echo "$data_dir/$target/$template/${database}_waters/"
+#if test ! -d $data_dir/$target/$template/${database}_waters/
+#    then
+#    echo "Error: Could not find directory $data_dir/$target/$template/${database}_waters/"
+#    exit
+#fi
+
+#echo $5
+
+if [ $# -lt 5 ]
+    then
+    ls $data_dir/$target/$template/${database}_ligands/ > dir_empty
+    if test -s dir_empty
+	then
+	echo "Error: Directory $data_dir/$target/$template/${database}_ligands/ already contains data"
+	rm -f dir_empty
+	exit
+    fi
+    rm -f dir_empty
+fi
+
+if [ $# -gt 4 ]
+    then
+    if [ $5 == "y" ]
+	then
+	echo "Overwriting previous files"
+	rm -r $data_dir/$target/$template/${database}_ligands
+	rm -r $data_dir/$target/$template/${database}_targets
+	mkdir $data_dir/$target/$template/${database}_ligands
+	mkdir $data_dir/$target/$template/${database}_targets
+    fi
+    if [ $5 != "y" ]
+	then
+	if [ $5 != "n" ]
+	    then
+	    if [ $5 == "r" ]
+		then
+		echo "Restarting SLIDE run. Previous dockings will be kept."
+	    fi
+	    if [ $5 != "r" ]
+		then
+		echo "Usage: $0 <target> <template> <database> <sphere_radius> <overwrite existing files? y/n/r> [<outfile>]" 
+		exit
+	    fi
+	fi
+	if [ $5 == "n" ]
+	    then
+	    ls $data_dir/$target/$template/${database}_ligands/ > dir_empty
+	    if test -s dir_empty
+		then
+		echo "Error: Directory $data_dir/$target/$template/${database}_ligands/ already contains data"
+		rm -f dir_empty
+		exit
+	    fi
+	    rm -f dir_empty
+	    if test $# -eq 6
+		then
+		if test -s $data_dir/$target/$template/in/$6
+		    then
+		    echo "Error: Output file $data_dir/$target/$template/in/$6 already exists"
+		    exit
+		fi
+	    fi
+	fi
+    fi
+fi
+
+echo "Checking for required files ..."
+
+echo "${target}.pdb"
+if test ! -f $data_dir/$target/${target}.pdb
+    then
+    echo "Error: Could not find $data_dir/$target/${target}.pdb"
+    exit
+fi
+
+echo "${target}.rad"
+if test ! -f $data_dir/$target/$template/in/${target}.rad
+    then
+    echo "Error: Could not find $data_dir/$target/$template/in/${target}.rad"
+    exit
+fi
+
+echo "template"
+if test ! -f $data_dir/$target/$template/in/template
+    then
+    echo "Error: Could not find $data_dir/$target/$template/in/template"
+    exit
+fi
+
+echo "${database}.db"
+if test ! -f $data_dir/databases/$database/${database}.db
+    then
+    echo "$data_dir/databases/$database/${database}.db not found, using global ${database}.db"
+    dpath=$slide_dir/databases/$database/${database}.db
+else
+    dpath=$data_dir/databases/$database/${database}.db
+fi
+
+echo
+echo "-----"
+echo "Running slide ..."
+
+#err_log=$data_dir/$target/$template/log/$database.err
+if test $# -eq 6
+    then
+    #((($slide_dir/bin/slide $target $template $database | tee $outfile) 3>&1 1>&2 2>&3 | tee $err_log) 3>&1 1>&2 2>&3) 
+#    $slide_dir/bin/slide $target $template $database 2>$err_log | tee $outfile
+    $slide_dir/bin/slide $target $template $database > $outfile
+    echo "Results stored in $outfile."
+else
+    $slide_dir/bin/slide $target $template $database 
+fi
+
+echo
+
+____FILE_END
+____FILE_START: temp_gen
+#!/bin/sh
+# temp_gen Rajesh Korde Thu Apr 11 14:06:57 EDT 2002
+#
+# script either expects borders.xyz to be in $target/$template/in (box mode)
+# or it creates it (in ligand or sphere mode). Once borders.xyz is in place, it
+# runs the template generation program
+# 
+
+if test $# -lt 1
+then
+    echo "$0: valid swtiches are -[l|c|b|g]"
+    exit
+fi
+
+if test -z $SLIDE_DIR
+then
+    echo "ERROR: environment variable SLIDE_DIR not set"
+    exit
+fi
+
+if test -z $SLIDE_DATA_DIR
+then
+    echo "ERROR: environment variable SLIDE_DATA_DIR not set"
+    exit
+fi
+
+data_dir=$SLIDE_DATA_DIR
+slide_dir=$SLIDE_DIR
+
+lig_box_name_nums=0
+
+## handle the case when slide is run in ligand_based_template mode
+
+## handle the case when slide is running in ligand mode
+if test $1 = "-g"
+    then
+    echo "Running in ligand_based_template mode"
+    if test $# -lt 5
+	then
+	echo "Usage: $0 -g <target> <template> <clustering_threshold> <ligand1.mol2> [<ligand*>.mol2]\n"
+	exit
+    else
+## dehydrogenate the pdb file (in case it hadn't already been done by setup_dbase)
+	target_name=$2
+	echo "Dehydrogenating ${target_name}.pdb file in $data_dir/$target_name/${target_name}.pdb ..."
+	if test -f $data_dir/$target_name/${target_name}.pdb
+	    then
+	    mkdir  $data_dir/$target_name/tmp
+	    $slide_dir/bin/pdbdehydrogen $data_dir/$target_name/${target_name}.pdb >  $data_dir/$target_name/tmp/${target_name}.pdb
+	    mv  $data_dir/$target_name/tmp/${target_name}.pdb $data_dir/$target_name
+	    rm -fr  $data_dir/$target_name/tmp
+	else
+	    echo "Error: Cannot find $data_dir/$target_name/${target_name}.pdb"
+	    exit
+	fi
+	
+        # vanvoor4 * May 4, 2009 *
+        # Removed bogus temporary items -- the C++ code now handles the
+        # template files and writes to the correct template directory.  
+        # Users shouldn't be writing to the same temporary directory so we
+        # shouldn't have the issue of clobbering files.
+	shift
+	target=$1
+	template=$2
+	$slide_dir/bin/ligand_based_template $@
+	exit
+    fi
+elif test $1 = "-l"
+    then
+    echo "Running in Ligand mode"
+    if test $# -lt 7
+	then
+	echo "Usage: $0 -l <target> <template> <Hbonding_point_density> <grid_spacing> <clustering_threshold> <ligand1.mol2> [<ligand*>.mol2]\n"
+	exit
+    else
+## dehydrogenate the pdb file (in case it hadn't already been done by setup_dbase)
+	target_name=$2
+	echo "Dehydrogenating ${target_name}.pdb file in $data_dir/$target_name/${target_name}.pdb ..."
+	if test -f $data_dir/$target_name/${target_name}.pdb
+	    then
+	    mkdir  $data_dir/$target_name/tmp
+	    $slide_dir/bin/pdbdehydrogen $data_dir/$target_name/${target_name}.pdb >  $data_dir/$target_name/tmp/${target_name}.pdb
+	    mv  $data_dir/$target_name/tmp/${target_name}.pdb $data_dir/$target_name
+	    rm -fr  $data_dir/$target_name/tmp
+	else
+	    echo "Error: Cannot find $data_dir/$target_name/${target_name}.pdb"
+	    exit
+	fi
+	shift
+	lig_box_target=$1
+	lig_box_template=$2
+	flocn=$data_dir/$1/$2/in/borders.xyz
+	if test -f $flocn
+	    then
+	    rm -f $flocn
+	fi
+	$slide_dir/bin/gen_lig_box $@ > $flocn
+	lig_box_name_nums=$#
+    fi
+elif test $1 = "-c"
+    then
+    echo "Running in Sphere mode"
+    if test $# -ne 10
+	then
+	echo "Usage: $0 -c <target> <template> <Hbonding_point_density> <grid_spacing> <clustering_threshold> <x> <y> <z> <r>\n"
+	exit
+    else
+## dehydrogenate the pdb file (in case it hadn't already been done by setup_dbase)
+	target_name=$2
+	echo "Dehydrogenating ${target_name}.pdb file in $data_dir/$target_name/${target_name}.pdb ..."
+	if test -f $data_dir/$target_name/${target_name}.pdb
+	    then
+	    mkdir  $data_dir/$target_name/tmp
+	    $slide_dir/bin/pdbdehydrogen $data_dir/$target_name/${target_name}.pdb >  $data_dir/$target_name/tmp/${target_name}.pdb
+	    mv  $data_dir/$target_name/tmp/${target_name}.pdb $data_dir/$target_name
+	    rm -fr  $data_dir/$target_name/tmp
+	else
+	    echo "Error: Cannot find $data_dir/$target_name/${target_name}.pdb"
+	    exit
+	fi
+	shift
+	flocn=$data_dir/$1/$2/in/borders.xyz
+	if test -f $flocn
+	    then
+	    rm -f $flocn
+	fi
+	$slide_dir/bin/gen_sph_box.pl $6 $7 $8 $9 >$flocn
+    fi
+elif test $1 = "-b"
+    then
+    echo "Running in Box mode"
+    if test $# -ne 6
+	then
+	echo "Usage: $0 -b <target> <template> <Hbonding_point_density> <grid_spacing> <clustering_threshold>\n"
+	exit
+    else
+## dehydrogenate the pdb file (in case it hadn't already been done by setup_dbase)
+	target_name=$2
+	echo "Dehydrogenating ${target_name}.pdb file in $data_dir/$target_name/${target_name}.pdb ..."
+	if test -f $data_dir/$target_name/${target_name}.pdb
+	    then
+	    mkdir  $data_dir/$target_name/tmp
+	    $slide_dir/bin/pdbdehydrogen $data_dir/$target_name/${target_name}.pdb >  $data_dir/$target_name/tmp/${target_name}.pdb
+	    mv  $data_dir/$target_name/tmp/${target_name}.pdb $data_dir/$target_name
+	    rm -fr  $data_dir/$target_name/tmp
+	else
+	    echo "Error: Cannot find $data_dir/$target_name/${target_name}.pdb"
+	    exit
+	fi
+	shift
+	if test ! -f $data_dir/$1/$2/in/borders.xyz
+	    then
+	    echo "$0: $data_dir/$1/$2/in/borders.xyz missing\n"
+	    exit
+	fi
+    fi
+else
+    echo "$0: valid swtiches are -[l|c|b|g]"
+    exit
+fi
+
+$slide_dir/bin/template $1 $2 $3 $4 $5
+
+if [ $lig_box_name_nums -ne "0" ];then
+    echo "Pruning template to match ligand size"
+    shift
+    shift
+    shift
+    shift
+    shift
+    lig_box_name_nums=$#
+    mkdir $data_dir/$lig_box_target/$lig_box_template/in/tmp
+    $slide_dir/bin/prune_template.pl 3.0 $data_dir/$lig_box_target/$lig_box_template/in/template $data_dir/$lig_box_target/$lig_box_target.pdb $1 $2 $3 $4 $5 $6 $7 $8 $9 > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template
+    mv $data_dir/$lig_box_target/$lig_box_template/in/template  $data_dir/$lig_box_target/$lig_box_template/in/template_preprune
+    grep \# $data_dir/$lig_box_target/$lig_box_template/in/tmp/template > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_pnd
+    grep -v \# $data_dir/$lig_box_target/$lig_box_template/in/tmp/template > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_nopnd
+    grep A $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_nopnd > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_A
+    grep D $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_nopnd > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_D
+    grep N $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_nopnd > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_N
+    grep H $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_nopnd > $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_H
+    wc -l $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_A | awk '{print $1" acceptor cluster points remain"}'
+    wc -l $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_D | awk '{print $1" donor cluster points remain"}'
+    wc -l $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_N | awk '{print $1" doneptor cluster points remain"}'
+    wc -l $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_H | awk '{print $1" hydrophobic cluster points remain"}'
+    cat $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_pnd $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_A $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_D $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_N $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_H > $data_dir/$lig_box_target/$lig_box_template/in/template
+    mv $data_dir/$lig_box_target/$lig_box_template/in/acceptor.pdb  $data_dir/$lig_box_target/$lig_box_template/in/acceptor_preprune.pdb
+    mv $data_dir/$lig_box_target/$lig_box_template/in/donor.pdb  $data_dir/$lig_box_target/$lig_box_template/in/donor_preprune.pdb
+    mv $data_dir/$lig_box_target/$lig_box_template/in/doneptor.pdb  $data_dir/$lig_box_target/$lig_box_template/in/doneptor_preprune.pdb
+    mv $data_dir/$lig_box_target/$lig_box_template/in/hphob.pdb  $data_dir/$lig_box_target/$lig_box_template/in/hphob_preprune.pdb
+    mv $data_dir/$lig_box_target/$lig_box_template/in/template.pdb  $data_dir/$lig_box_target/$lig_box_template/in/template_preprune.pdb
+    $slide_dir/bin/template_to_pdb.pl $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_A > $data_dir/$lig_box_target/$lig_box_template/in/acceptor.pdb
+    $slide_dir/bin/template_to_pdb.pl $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_D > $data_dir/$lig_box_target/$lig_box_template/in/donor.pdb
+    $slide_dir/bin/template_to_pdb.pl $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_N > $data_dir/$lig_box_target/$lig_box_template/in/doneptor.pdb
+    $slide_dir/bin/template_to_pdb.pl $data_dir/$lig_box_target/$lig_box_template/in/tmp/template_H > $data_dir/$lig_box_target/$lig_box_template/in/hphob.pdb
+    $slide_dir/bin/template_to_pdb.pl $data_dir/$lig_box_target/$lig_box_template/in/template > $data_dir/$lig_box_target/$lig_box_template/in/template.pdb
+    rm -fr $data_dir/$lig_box_target/$lig_box_template/in/tmp
+    exit
+fi
+____FILE_END
+____FILE_START: pdbdehydrogen
+#! /bin/sh
+# pdbdehydrogen: removes hydrogen/deuterium atoms from PDB file
+# Caution: you can't just test column 14 or you will remove
+#   metals like Rh, Cd, Pd, Nd, Gd, Md...
+#
+# example:
+#
+#  pdbdehydrogen rnase.pdb > rnase.noh.pdb
+#
+#
+# --- Mike Pique
+#     The Scripps Research Institute
+#     Department of Molecular Biology/MB4
+#     10550 North Torrey Pines Rd
+#     La Jolla, CA  92037
+#     (619) 784-9775
+#     mp@scripps.edu
+#
+
+if test $# -ne 1
+    then
+    echo "Usage: $0 target.pdb"
+    exit
+fi
+
+awk '{if(! ($1 ~ /ATOM|atom|HETATM|hetatm/ \
+	  && substr($0,13,2) ~ /[ 0-9][HhDd]/ )) print
+	  }' $*
+____FILE_END
+____FILE_START: setup_dbase
+#!/bin/sh
+# setup_dbase    Rajesh Korde Wed Apr  3 14:51:05 EST 2002
+#
+# Usage:  setup_dbase target template database database_locn
+#
+# * creates the directory structure for a screening experiment.
+# * computes interaction centers
+# * creates <database>.db and <database>.pts
+#
+
+if test $# -ne 5 
+then
+    echo "Usage: $0 <target> <template> <database> <database_locn> <pdb_locn>"
+	exit
+fi
+
+if test -z $SLIDE_DIR
+then
+    echo "ERROR: environment variable SLIDE_DIR not set"
+    exit
+fi
+
+if test -z $SLIDE_DATA_DIR
+then
+    echo "ERROR: environment variable SLIDE_DATA_DIR not set"
+    exit
+fi
+
+data_dir=$SLIDE_DATA_DIR
+slide_dir=$SLIDE_DIR
+
+target=$1
+template=$2
+database=$3
+dblocn=$4
+pdblocn=$5
+
+$slide_dir/bin/slide_setup.pl $target $template $database
+
+echo "Dehydrogenating and copying $pdblocn file to $data_dir/$target/${target}.pdb ..."
+if test -f $pdblocn
+then
+	$slide_dir/bin/pdbdehydrogen $pdblocn> /tmp/${target}.pdb
+	mv /tmp/${target}.pdb $data_dir/$target
+else
+	echo "Error: Cannot find $pdblocn"
+	exit
+fi
+
+if test ! -d $data_dir/databases
+then
+	echo "Creating $data_dir/databases ..."
+	mkdir $data_dir/databases
+fi
+
+if test ! -d $data_dir/databases/$database
+then
+	echo "Creating $data_dir/databases/$database ..."
+	mkdir $data_dir/databases/$database
+fi
+
+# Here 7000 is the max no of mol2 files possible in a pts file. This var
+# is also defined in $SLIDE_DIR/src/slide/inc/defs.h as
+# MAX_NUMBER_OF_PTS_COMPOUNDS.
+
+$slide_dir/bin/create_dbase.pl $dblocn $database $slide_dir $data_dir 7000
+
+#echo "Creating ${database}.pts file ..."
+#if test -f $data_dir/databases/${database}.pts
+#then
+#	rm -f $data_dir/databases/${database}.pts
+#	echo "Deleting old pts file"
+#fi
+#touch $data_dir/databases/${database}.pts
+#cd $dblocn
+#for i in `ls *.mol2`
+#do 
+#	$slide_dir/bin/compute_interaction_centers $i>> $data_dir/databases/${database}.pts
+#done
+#cd $data_dir
+#
+#echo "Creating ${database}.db file ..."
+#echo $dblocn ${database}.pts > $data_dir/databases/${database}.db
+
+____FILE_END

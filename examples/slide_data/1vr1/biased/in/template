@@ -1,0 +1,30 @@
+# SLIDE template; version: 3.3.5
+# Command-Line Args:
+# Target :                             1vr1
+# Template type :                      ligand based (biased) template
+# Hydrophobic clustering threshold :   2.00 (A)
+#
+# Local start time: Tue Jul  7 15:43:13 2009
+#
+# Ligands:
+#   /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//ligands_to_be_docked/1a46_ligand.mol2
+#   /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//ligands_to_be_docked/1a61_ligand.mol2
+H*   18.575 -15.933  24.951
+H*   21.601 -16.205  25.555
+H*   20.887 -13.930  25.668
+H*   15.174 -14.517  14.281
+H*   14.358 -12.488  13.092
+H*   18.392 -17.036  22.468
+H*   19.061 -13.023  20.058
+H*   12.749 -11.716  21.470
+H*   16.028 -12.009  15.649
+A*   16.328 -14.049  23.091
+A*   16.514 -13.888  19.598
+A*   13.666 -10.292  17.874
+A*   16.812 -10.945  17.360
+D*   16.048 -16.538  23.302
+D*   15.777 -11.992  20.434
+D*   10.102 -12.997  24.526
+D*   15.019 -11.825  16.185
+D*   11.723 -12.286  23.799
+D*   10.524 -10.763  24.906

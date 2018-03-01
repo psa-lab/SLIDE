@@ -1,0 +1,46 @@
+
+********************************
+   SLIDE screening statistics
+********************************
+
+target                   : 1vr1
+template                 : unbiased
+database                 : mixed_sample_confs
+compounds                : 2458
+
+parameters
+----------
+DME threshold            : 0.3
+RMS threshold            : 0.3
+max anchor translation   : 0.3
+anchor overlap           : 0.3
+side-chain overlap       : 0.3
+intra overlap            : 0.1
+intermediate overlap     : 2.0
+tolerated overlap        : 2.0
+tolerated max bump       : 0.5
+score cutoff             : 0
+
+hashing
+-------
+total template triangles : 36326
+non-empty buckets        : 54581
+total triangle pointers  : 937431
+average triangle pointers: 17
+maximal triangle pointers: 150
+
+filter effectiveness
+--------------------
+triangle match           : 0
+triangle DME             : 0
+RMS deviation            : 0
+anchor unbump            : 7
+side-chain unbump        : 4
+scoring                  : 0
+
+potential ligands        : 11
+
+timing
+------
+host                     : arbol.bch.msu.edu
+finished                 : Tue Jul  7 17:54:28 2009Wall Clock Time (seconds):   484.51

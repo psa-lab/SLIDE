@@ -1,0 +1,88 @@
+# Ligand [name]_[conformer]_[binding mode]: ZINC00000053_0003
+# SLIDE Version: 3.3.5
+# Time stamp: Tue Jul  7 15:44:35 2009
+# Affiscore (kcal/mol), for ranking ligand candidates: -6.460
+# Ligand Efficiency ((Affinity Score - Constant Term) / # non-H atoms): -0.096
+# ===========================================================================
+# Weighted term values
+# hydrophobic complementarity term (kcal/mol)       : -1.363 
+# polar term (kcal/mol)                             : -0.415 
+# unsatisfied polar term (kcal/mol)                 : 0.536 
+# constant term (kcal/mol)                          : -5.218 
+# ===========================================================================
+# protein-ligand hydrophobic contacts         : 21
+# protein-ligand H-bond count                 : 2
+# protein-ligand salt-bridge count            : 3
+# metal-ligand interactions count             : 0
+# unsatisfied interfacial polar atom count    : 4
+# unsatisfied interfacial charged atom count  : 0
+# buried carbons (x 100%)          : 1.000
+# remaining vdW collisions         : 7
+# total vdW overlap (A)            : 1.686
+# anchor fragment translations     : 1
+# side-chain mean-field iterations : 10
+# ligand side-chain rotations      : 0
+# protein side-chain rotations     : 10
+# Orientscore (kcal/mol), used by SLIDE to select binding mode: -5.951
+# ===========================================================================
+# Anchor fragment atoms matched to template:
+# ligand hydrophobic center  0 to template point  5 H
+# ligand hydrophobic center  4 to template point  9 H
+# ligand atom   20  O4   O.co2 to template point 13 A
+# ===========================================================================
+#          |Ligand Atom -- Protein Atom|
+#          |   #  type  -- RES   # type|
+# hbond   1:   4  O.3   -- LYS   60F NZ  (dist: 3.365, D-H-A angle: 179.7)
+# hbond   2:  20  O.co2 -- SER  195  OG  (dist: 2.874, D-H-A angle: 159.6)
+# salt bridge   1 :  12  O.co2 -- HIS   57  NE2 (dist: 4.139)
+# salt bridge   2 :  12  O.co2 -- LYS   60F NZ  (dist: 4.355)
+# salt bridge   3 :  20  O.co2 -- HIS   57  NE2 (dist: 2.618)
+# ===========================================================================
+@<TRIPOS>MOLECULE
+ZINC00000053
+   20    20     0     0     0
+SMALL
+USER_CHARGES
+@<TRIPOS>ATOM
+      1 C1         18.9496  -15.8049   14.7241 C.3       1 <0>       -0.1488 
+      2 C2         17.5949  -15.1626   14.6861 C.2       1 <0>        0.6646 
+      3 O1         16.5433  -15.7633   14.8637 O.2       1 <0>       -0.5537 
+      4 O2         17.7538  -13.8071   14.4170 O.3       1 <0>       -0.3475 
+      5 C3         16.5471  -13.0959   14.3832 C.ar      1 <0>        0.1213 
+      6 C4         15.7628  -13.1927   13.2270 C.ar      1 <0>       -0.1552 
+      7 C5         14.5868  -12.4552   13.1299 C.ar      1 <0>       -0.1518 
+      8 C6         14.2081  -11.6153   14.1747 C.ar      1 <0>       -0.1618 
+      9 C7         15.0074  -11.5079   15.3172 C.ar      1 <0>       -0.1040 
+     10 C8         16.1974  -12.2442   15.4432 C.ar      1 <0>       -0.1096 
+     11 C9         17.0390  -12.0898   16.6837 C.2       1 <0>        0.9173 
+     12 O3         17.7371  -13.0846   17.0527 O.co2     1 <0>       -0.8245 
+     13 H1         18.8390  -16.8704   14.9453 H         1 <0>        0.0522 
+     14 H2         19.4371  -15.6996   13.7517 H         1 <0>        0.0525 
+     15 H3         19.5549  -15.3478   15.5109 H         1 <0>        0.0945 
+     16 H4         16.0657  -13.8370   12.4068 H         1 <0>        0.1185 
+     17 H5         13.9687  -12.5300   12.2402 H         1 <0>        0.1050 
+     18 H6         13.2915  -11.0370   14.1008 H         1 <0>        0.1064 
+     19 H7         14.6870  -10.8402   16.1143 H         1 <0>        0.1546 
+     20 O4         16.9790  -10.9685   17.2797 O.co2     1 <0>       -0.8299 
+@<TRIPOS>BOND
+    1     1     2 1
+    2     1    13 1
+    3     1    14 1
+    4     1    15 1
+    5     2     3 2
+    6     2     4 1
+    7     4     5 1
+    8     5    10 ar
+    9     5     6 ar
+   10     6     7 ar
+   11     6    16 1
+   12     7     8 ar
+   13     7    17 1
+   14     8     9 ar
+   15     8    18 1
+   16     9    10 ar
+   17     9    19 1
+   18    10    11 1
+   19    11    12 2
+   20    11    20 1
+@<TRIPOS>SUBSTRUCTURE

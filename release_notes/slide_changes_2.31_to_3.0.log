@@ -1,0 +1,153 @@
+/**** PERL SCRIPT CHANGES START *****/
+
+binding_side_residues.pl => fixed so only the chains in the binding site get included in the rad file
+
+results_table.pl => updated to be compatible with new score outputs
+
+results_table_del.pl => updated to be compatible with new score outputs
+
+results_table_ligefficient.pl => same as results_table.pl only uses Affiscore/N to rank
+
+/**** PERL SCRIPT CHANGES END *****/
+
+/**** SHELL SCRIPT CHANGES START *****/
+
+run_slide => now checks if overwrite of previous files is desired (checks if data exists in ligands directory)
+	  => now checks to make sure directory structure exists (previously would give seg fault)
+	  => removed handling of err file from here and added into the slide executable
+
+.err file => now doesn't get overwritten with a new run, and will also output real time, instead of getting dumped at the end (made changes to err_handle.c as well as all other applicable .c files).  Also tried to make error messages more understandable and made new error messages where they didn't occur before
+
+water handling => removed all directory structures and checks for waters
+
+temp_gen => fixed bug if biased template was created while in the /in directory
+	 => now dehydrogenates the pdb file before generating the template
+
+/***** SHELL SCRIPT CHANGES END *******/
+
+/***** PARAMETER FILE CHANGES START *******/
+
+flex.defn => updated rotatable bond definitions
+
+slide.parameters => added match_2_key_points and group_conformers, as well as set default score cutoff to 0
+
+/***** PARAMETER FILE CHANGES END *******/
+
+/***** SLIDE CHANGES START *****/
+
+find_carbon_centers.c => fixed bug where "==" was used instead of "="
+
+many .c files => used string.h instead of strings.h
+
+adj_list.c => added bond_order so when the adjacency list is constructed it doesn't just count how many atoms it is bound to, but how many bonds it is making to other atoms
+
+analyze_ligand.c => returns a FAILURE if assign_hydrogens returns FAILURE (to fix H_ADD problem)
+
+assign_hydrogens.c => now uses bond_order to analyze if a molecule is correctly protonated.  If not it will now fail the ligand (previously all atoms that didn't have the correct number of neighbor atoms would get protonated with H_ADDs.  Not only was it calculating it wrong, but H_ADDs were a problem all by themselves)
+
+bump_check.c => changed handling of OUTPUT_ALL_MATCHES so that now the best bump free and best docking with remaining vdW bumps gets saved
+	     => reduce vdW  bumps of ligand atoms that make good interactions with metals
+	     => added handling for group_conformers
+	     => removed redundant score_complex() call which was changing scoring/indexing
+	     => added handling of buried_carbon cutoff
+
+calc_score_from_terms.c => this is a new module that allows interchangeability of scoring functions
+
+check_complementarity.c => module that determines if atoms pairs are involved in H-bonds, salt bridges, repulsive contacts, etc.
+
+count_flexible_bonds.c => counts the number of flexible ligand and interfacial target bonds
+
+err_handle.c => made changes to allow for real-time err file handling
+
+find_all_bumps.c => adjusted vdW radii for ligand-metal bond bumps
+
+find_flexible_bonds.c => fixed bug where flexibility bonds were assigned based solely on one atom's ruleset, even if the other atom failed, which previously resulted in too many flexible bonds.
+
+hashing.c => changes to allow for adjustable triangle parameters based on ligand size
+	  => changes to allow for match_2_key_points
+
+hbond_check.c => improves checking of hbonds by allowing ligand hydrogens to adopt correct alternate positions (ie rotatable groups).  Also will reposition hydrogens in output file to reflect bonding positions (many changes in code, but this is what its purpose was)
+	      => fixed bug where DONEPTORS were being converted to ACCEPTORS if the H was previously used in a bond (this is to keep in line with the rest of the code where all potential hbonds are counted, even if redundant)
+
+defs.h => this should now include only the definitions that shouldn't be changed, or should rarely be changed
+       => updated and added new definitions as was needed
+
+params.h => this should include compile time options which may be changed, but not often
+
+vdwrad.h => fixed radii of certain atoms (mostly alpha carbons in the protein) to match Li & Nussinov (1998) "A Set of van der Waals and Coulombic Radii of Protein Atoms for Molecular and Solvent-Accessible Surface Calculation, Packing Evaluation, and Docking", Proteins 21, 111-127.
+
+initialize_distance_tables.c => calculates and stores inter-molecular and intra-target distances so they can be referenced later
+
+intra_hbonds_flag.c => similar to intra_hbonds.c, only now ataoms forming hbonds are recorded in an array (to be used by scoring function), and also includes intra_ligand_hbonds_flag() and ligand_to_water_hbonds_flag().
+
+main.c => added timer functions
+       => made changes for error reporting
+       => now prints out important run-time and compile time parameters for recreating a run
+       => removed handling of waters
+
+main_score.c => the main function for the slide_score module.  Varies from main.c in that much less needs to be calculated, and side chains aren't rotated and bumps aren't checked
+
+match_triangles.c => For the stdout now it is possible to only output the scoring data for an orientation of a ligand only if it scores better than all previous orientations (bump and bump free still handled separately).  Many changes to the code here to allow for this.
+		  => changes to code to allow for "switching" between triangle parameters based on ligand size.
+		  => fixed bug where reset_target_and_waters wasn't called properly, so newly loaded ligands/conformers would be using the adjusted positions of previous ligand/conformer
+		  => fixed handling of multimol2 files
+
+read_flex_defn.c => modified code to allow reading of new flex.defn file where a definition can identify a flexible or a rigid bond
+
+read_mol2.c => broke up the code into various subfunctions that assign type, radius, and orbits
+	    
+read_parameter_file.c => modified to handle the new slide.parameters file format and sections, as well as to provide error messages if wrong file is used
+
+read_pdb.c => added in handling of metals
+	   => modified assignment of type and charge
+
+read_pts_file.c => added error messages
+		
+read_template.c => fixed indexing of Doneptor points so when they get split to Donor and Acceptor it is possible to track back to wich Doneptor point it was
+		
+score_complex.c => numerous changes to allow for the new scoring function terms, as well as printing out of the score line (code went from 279 lines to 1326 lines)
+
+slide_itimer.c => adds timing functions to SLIDE
+
+sum_charges.c => processes the partial charges which were added into the mol2 file by QuACPAK or other program
+
+transform_molecule.c => removed multimol2 file handling from here (placed into match_triangels.c)
+
+trans_rotate.c => fixed errors where angles were set to 0.0 instead of the correct M_PI/2
+
+unbump_side_chains.c => fixed error where if angle was small, result could potentially be NaN, causing atom positions to become NaN
+
+write_ligand_mol2.c => revamped the output format significantly
+
+/*************** END OF SLIDE DIFFS **********/
+
+/*************** BEGINNING OF TEMPLATE DIFFS ***/
+
+assign_hphil.c => changes to allow for automatic detection and handling of metals in a template file
+
+create_mathcad_input.c => changes to allow for metal points in template
+
+create_mathcad_input_minimal.c => changes to allow for metal points in template
+
+create_mathcad_input_sparse.c => changes to allow for metal points in template
+
+find_hbond_template_points.c => changes to allow for automatic detection and handling of metals in a template file
+
+find_metal_template_points.c => added to allow for automatic detection and handling of metals in a template file
+
+find_select_atoms.c => changes to allow for automatic detection and handling of metals in a template file
+		    => fix for Proline
+
+defs.h => added metal radii
+
+main_ligand_based.c => => fixed bug if biased template was created while in the /in directory
+
+main_template.c => changes to allow for automatic detection and handling of metals in a template file
+
+metal_template.c => (No longer necessary with fixes made to main_template, but made changes to allow for easier metal template generation)
+
+read_pdb2.c => changes to allow for automatic detection and handling of metals in a template file
+
+read_pdb_file.c => changes to allow for automatic detection and handling of metals in a template file
+
+/**** END CHANGE LIST ****/

@@ -1,0 +1,5056 @@
+
+Command-Line Args: /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//bin/slide 1vr1 unbiased mixed_sample_confs 
+
+SLIDE Version: 3.3.5
+
+started on arbol.bch.msu.edu at Tue Jul  7 17:46:24 2009
+SLIDE_DIR = /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5/
+SLIDE_DATA_DIR = /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data/
+
+
+Reading the default parameters set:
+reading parameter-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//params/slide.parameters
+> DME_THRESHOLD (A):              0.30
+> RMS_THRESHOLD (A):              0.30
+> ANCHOR_TRANSLATION (A):         0.30
+> ANCHOR_OVERLAP (A):             0.30
+> SIDE_CHAIN_OVERLAP (A):         0.30
+> INTRA_OVERLAP (A):              0.10
+> INTERMEDIATE_OVERLAP (A):       2.00
+> FINALLY_TOLERATED_MAX_BUMP (A): 0.50
+> FINALLY_TOLERATED_OVERLAP (A):  2.00
+> SCORE_CUTOFF (kcal/mol):        0.00
+> MAX_TEMPLATE_TRIANGLES (#):     1500000
+NOTE: Only the best conformer of a ligand will be output.
+
+Compile-time parameters as defined in: /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//src/slide/inc/params.h
+> TRIANGLE_MIN_PERIMETER (A):           7.00
+> TRIANGLE_MAX_PERIMETER (A):          30.00
+> TRIANGLE_MIN_SHORTEST_SIDE (A):       2.00
+> TRIANGLE_MAX_SHORTEST_SIDE (A):      10.00
+> TRIANGLE_MAX_LONGEST_SIDE (A):       12.00
+> SMALL_TRIANGLE_MIN_LONGEST_SIDE (A):  3.00
+> LARGE_TRIANGLE_MIN_LONGEST_SIDE (A):  5.00
+> SMALL_LIGAND_DIAMETER (A):           10.00
+
+reading flex-bond definition file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//params/flex.defn
+reading target-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/unbiased/in/1vr1.rad
+reading template-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/unbiased/in/template
+
+Template Parameters:
+# SLIDE template; version: 3.3.5
+# Command-Line Args:
+#   Target :                             1vr1
+#   Template type :                      unbiased template
+#   Hydrogen bond points density :       dense
+#   Grid spacing :                       0.50 (A)
+#   Hydrophobic clustering threshold :   3.50 (A)
+#
+#
+# Local start time: Tue Jul  7 15:50:37 2009
+
+CHECK: template file read
+   0: ACCEPTOR    13.657  -16.522   23.107
+   1: ACCEPTOR    14.026  -18.670   23.374
+   2: ACCEPTOR    14.479  -18.630   24.311
+Water handling disabled in current version of SLIDE => #waters = 0
+
+target: 99 residues, 799 atoms, 0 waters
+template: 126 points, 11 key points
+database: 2458 total input molecules or conformers
+internal H-bonds: 76 intra-target, 0 to water
+
+multi-level hashing:
+36326 template triangles
+937431 triangle pointers
+475339 empty buckets
+54581 non-empty buckets
+17 triangles per bucket on average
+150 maximal number of triangles
+
+reading database-definition file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//databases/mixed_sample_confs/mixed_sample_confs.db
+
+********************************************************************************
+1)  [Ligand Name]_[Conformer]_[Orientation]
+2)  Orientation Score
+3)  Affinity Score / # Heavy Ligand Atoms (Ligand Efficiency)
+4)  Affinity Score
+5)  Buried Protein Hydrophobic Term
+6)  Hydrophobic Complementarity Term
+7)  Polar Component Term
+8)  Number of Protein-Ligand Hydrophobic Contacts
+9)  Number of Protein-Ligand H-bonds
+10) Number of Protein-Ligand Salt-bridges
+11) Number of Metal-Ligand Bonds
+12) Number of Interfacial Unsatisfied Polar Atoms
+13) Number of Interfacial Unsatisfied Charged Atoms
+14) Buried Carbons
+15) Remaining van der Waals Collisions
+16) Remaining van der Waals Overlap
+********************************************************************************
+
+  1                  2      3       4      5       6   7   8   9  10  11  12    13  14
+1a2c_ligand_0
+New Molecule
+Large ligand
+1a2c_ligand_1
+Large ligand
+1a2c_ligand_2
+Large ligand
+1a2c_ligand_3
+Large ligand
+1a2c_ligand_4
+Large ligand
+1a2c_ligand_5
+Large ligand
+1a2c_ligand_6
+Large ligand
+1a2c_ligand_7
+Large ligand
+1a2c_ligand_8
+Large ligand
+1a2c_ligand_9
+Large ligand
+1a2c_ligand_10
+Large ligand
+1a2c_ligand_11
+Large ligand
+1a2c_ligand_12
+Large ligand
+1a2c_ligand_13
+Large ligand
+1a2c_ligand_14
+Large ligand
+1a2c_ligand_15
+Large ligand
+1a2c_ligand_16
+Large ligand
+1a2c_ligand_17
+Large ligand
+1a2c_ligand_18
+Large ligand
+1a2c_ligand_19
+Large ligand
+1a2c_ligand_20
+Large ligand
+1a2c_ligand_21
+Large ligand
+1a2c_ligand_22
+Large ligand
+1a2c_ligand_23
+Large ligand
+1a2c_ligand_24
+Large ligand
+1a2c_ligand_25
+Large ligand
+1a2c_ligand_26
+Large ligand
+1a2c_ligand_27
+Large ligand
+1a2c_ligand_28
+Large ligand
+1a2c_ligand_29
+Large ligand
+1a2c_ligand_30
+Large ligand
+1a2c_ligand_31
+Large ligand
+1a2c_ligand_32
+Large ligand
+1a2c_ligand_33
+Large ligand
+1a2c_ligand_34
+Large ligand
+1a2c_ligand_35
+Large ligand
+1a2c_ligand_36
+Large ligand
+1a2c_ligand_37
+Large ligand
+1a2c_ligand_38
+Large ligand
+1a2c_ligand_39
+Large ligand
+1a2c_ligand_40
+Large ligand
+1a2c_ligand_41
+Large ligand
+1a2c_ligand_42
+Large ligand
+1a2c_ligand_43
+Large ligand
+1a2c_ligand_44
+Large ligand
+1a2c_ligand_45
+Large ligand
+1a2c_ligand_46
+Large ligand
+1a2c_ligand_47
+Large ligand
+1a2c_ligand_48
+Large ligand
+1a2c_ligand_49
+Large ligand
+1a2c_ligand_50
+Large ligand
+1a2c_ligand_51
+Large ligand
+1a2c_ligand_52
+Large ligand
+1a2c_ligand_53
+Large ligand
+1a2c_ligand_54
+Large ligand
+1a2c_ligand_55
+Large ligand
+1a2c_ligand_56
+Large ligand
+1a2c_ligand_57
+Large ligand
+1a2c_ligand_58
+Large ligand
+1a2c_ligand_59
+Large ligand
+1a2c_ligand_60
+Large ligand
+1a2c_ligand_61
+Large ligand
+1a2c_ligand_62
+Large ligand
+1a2c_ligand_63
+Large ligand
+1a2c_ligand_64
+Large ligand
+1a2c_ligand_65
+Large ligand
+1a2c_ligand_66
+Large ligand
+1a2c_ligand_67
+Large ligand
+1a2c_ligand_68
+Large ligand
+1a2c_ligand_69
+Large ligand
+1a2c_ligand_70
+Large ligand
+1a2c_ligand_71
+Large ligand
+1a2c_ligand_72
+Large ligand
+1a2c_ligand_73
+Large ligand
+1a2c_ligand_74
+Large ligand
+1a2c_ligand_75
+Large ligand
+1a2c_ligand_76
+Large ligand
+1a2c_ligand_77
+Large ligand
+1a2c_ligand_78
+Large ligand
+1a2c_ligand_79
+Large ligand
+1a2c_ligand_80
+Large ligand
+1a2c_ligand_81
+Large ligand
+1a2c_ligand_82
+Large ligand
+1a2c_ligand_83
+Large ligand
+1a2c_ligand_84
+Large ligand
+1a2c_ligand_85
+Large ligand
+1a2c_ligand_86
+Large ligand
+1a2c_ligand_87
+Large ligand
+1a2c_ligand_88
+Large ligand
+1a2c_ligand_89
+Large ligand
+1a2c_ligand_90
+Large ligand
+1a2c_ligand_91
+Large ligand
+1a2c_ligand_92
+Large ligand
+1a2c_ligand_93
+Large ligand
+1a2c_ligand_94
+Large ligand
+1a2c_ligand_95
+Large ligand
+1a2c_ligand_96
+Large ligand
+1a2c_ligand_97
+Large ligand
+1a2c_ligand_98
+Large ligand
+1a2c_ligand_99
+Large ligand
+1a2c_ligand_100
+Large ligand
+1a2c_ligand_101
+Large ligand
+1a2c_ligand_102
+Large ligand
+1a2c_ligand_103
+Large ligand
+1a2c_ligand_104
+Large ligand
+1a2c_ligand_105
+Large ligand
+1a2c_ligand_106
+Large ligand
+1a2c_ligand_107
+Large ligand
+1a2c_ligand_108
+Large ligand
+1a2c_ligand_109
+Large ligand
+1a2c_ligand_110
+Large ligand
+1a2c_ligand_111
+Large ligand
+1a2c_ligand_112
+Large ligand
+1a2c_ligand_113
+Large ligand
+1a2c_ligand_114
+Large ligand
+1a2c_ligand_115
+Large ligand
+1a2c_ligand_116
+Large ligand
+1a2c_ligand_117
+Large ligand
+1a2c_ligand_118
+Large ligand
+1a2c_ligand_119
+Large ligand
+1a2c_ligand_120
+Large ligand
+1a2c_ligand_121
+Large ligand
+1a2c_ligand_122
+Large ligand
+1a2c_ligand_123
+Large ligand
+1a2c_ligand_124
+Large ligand
+1a2c_ligand_125
+Large ligand
+1a2c_ligand_126
+Large ligand
+1a2c_ligand_127
+Large ligand
+1a2c_ligand_128
+Large ligand
+1a2c_ligand_129
+Large ligand
+1a2c_ligand_130
+Large ligand
+1a2c_ligand_131
+Large ligand
+1a2c_ligand_132
+Large ligand
+1a2c_ligand_133
+Large ligand
+1a2c_ligand_134
+Large ligand
+1a2c_ligand_135
+Large ligand
+1a2c_ligand_136
+Large ligand
+1a2c_ligand_137
+Large ligand
+1a2c_ligand_138
+Large ligand
+1a2c_ligand_139
+Large ligand
+1a2c_ligand_140
+Large ligand
+1a2c_ligand_141
+Large ligand
+1a2c_ligand_142
+Large ligand
+1a2c_ligand_143
+Large ligand
+1a2c_ligand_144
+Large ligand
+1a2c_ligand_145
+Large ligand
+1a2c_ligand_146
+Large ligand
+1a2c_ligand_147
+Large ligand
+1a2c_ligand_148
+Large ligand
+1a2c_ligand_149
+Large ligand
+1a2c_ligand_150
+Large ligand
+1a2c_ligand_151
+Large ligand
+1a2c_ligand_152
+Large ligand
+1a2c_ligand_153
+Large ligand
+1a2c_ligand_154
+Large ligand
+1a2c_ligand_155
+Large ligand
+1a2c_ligand_156
+Large ligand
+1a2c_ligand_157
+Large ligand
+1a2c_ligand_158
+Large ligand
+1a2c_ligand_159
+Large ligand
+1a2c_ligand_160
+Large ligand
+1a2c_ligand_161
+Large ligand
+1a2c_ligand_162
+Large ligand
+1a2c_ligand_163
+Large ligand
+1a2c_ligand_164
+Large ligand
+1a2c_ligand_165
+Large ligand
+1a2c_ligand_166
+Large ligand
+1a2c_ligand_167
+Large ligand
+1a2c_ligand_168
+Large ligand
+1a2c_ligand_169
+Large ligand
+1a2c_ligand_170
+Large ligand
+1a2c_ligand_171
+Large ligand
+1a2c_ligand_172
+Large ligand
+1a2c_ligand_173
+Large ligand
+1a2c_ligand_174
+Large ligand
+1a2c_ligand_175
+Large ligand
+1a2c_ligand_176
+Large ligand
+1a2c_ligand_177
+Large ligand
+1a2c_ligand_178
+Large ligand
+1a2c_ligand_179
+Large ligand
+1a2c_ligand_180
+Large ligand
+1a2c_ligand_181
+Large ligand
+1a2c_ligand_182
+Large ligand
+1a2c_ligand_183
+Large ligand
+1a2c_ligand_184
+Large ligand
+1a2c_ligand_185
+Large ligand
+1a2c_ligand_186
+Large ligand
+1a2c_ligand_187
+Large ligand
+1a2c_ligand_188
+Large ligand
+1a2c_ligand_189
+Large ligand
+1a2c_ligand_190
+Large ligand
+1a2c_ligand_191
+Large ligand
+1a2c_ligand_192
+Large ligand
+1a2c_ligand_193
+Large ligand
+1a2c_ligand_194
+Large ligand
+1a2c_ligand_195
+Large ligand
+1a2c_ligand_196
+Large ligand
+1a2c_ligand_197
+Large ligand
+1a2c_ligand_198
+Large ligand
+1a2c_ligand_199
+Large ligand
+1a2c_ligand_200
+Large ligand
+1a2c_ligand_201
+Large ligand
+1a2c_ligand_202
+Large ligand
+1a2c_ligand_203
+Large ligand
+1a2c_ligand_204
+Large ligand
+1a2c_ligand_205
+Large ligand
+1a2c_ligand_206
+Large ligand
+1a2c_ligand_207
+Large ligand
+1a2c_ligand_208
+Large ligand
+1a2c_ligand_209
+Large ligand
+1a2c_ligand_210
+Large ligand
+1a2c_ligand_211
+Large ligand
+1a2c_ligand_212
+Large ligand
+1a2c_ligand_213
+Large ligand
+1a2c_ligand_214
+Large ligand
+1a2c_ligand_215
+Large ligand
+1a2c_ligand_216
+Large ligand
+1a2c_ligand_217
+Large ligand
+1a2c_ligand_218
+Large ligand
+1a2c_ligand_219
+Large ligand
+1a2c_ligand_220
+Large ligand
+1a2c_ligand_221
+Large ligand
+1a2c_ligand_222
+Large ligand
+1a2c_ligand_223
+Large ligand
+1a2c_ligand_224
+Large ligand
+1a2c_ligand_225
+Large ligand
+1a2c_ligand_226
+Large ligand
+1a2c_ligand_227
+Large ligand
+1a2c_ligand_228
+Large ligand
+1a2c_ligand_229
+Large ligand
+1a2c_ligand_230
+Large ligand
+1a2c_ligand_231
+Large ligand
+1a2c_ligand_232
+Large ligand
+1a2c_ligand_233
+Large ligand
+1a2c_ligand_234
+Large ligand
+1a2c_ligand_235
+Large ligand
+1a2c_ligand_236
+Large ligand
+1a2c_ligand_237
+Large ligand
+1a2c_ligand_238
+Large ligand
+1a2c_ligand_239
+Large ligand
+1a2c_ligand_240
+Large ligand
+1a2c_ligand_241
+Large ligand
+1a2c_ligand_242
+Large ligand
+1a2c_ligand_243
+Large ligand
+1a2c_ligand_244
+Large ligand
+1a2c_ligand_245
+Large ligand
+1a2c_ligand_246
+Large ligand
+1a2c_ligand_247
+Large ligand
+1a2c_ligand_248
+Large ligand
+1a2c_ligand_249
+Large ligand
+1a2c_ligand_250
+Large ligand
+1a2c_ligand_251
+Large ligand
+1a2c_ligand_252
+Large ligand
+1a2c_ligand_253
+Large ligand
+1a2c_ligand_254
+Large ligand
+1a2c_ligand_255
+Large ligand
+1a2c_ligand_256
+Large ligand
+1a2c_ligand_257
+Large ligand
+1a2c_ligand_258
+Large ligand
+1a2c_ligand_259
+Large ligand
+1a2c_ligand_260
+Large ligand
+1a2c_ligand_261
+Large ligand
+1a2c_ligand_262
+Large ligand
+1a2c_ligand_263
+Large ligand
+1a2c_ligand_264
+Large ligand
+1a2c_ligand_265
+Large ligand
+1a2c_ligand_266
+Large ligand
+1a2c_ligand_267
+Large ligand
+1a2c_ligand_268
+Large ligand
+1a2c_ligand_269
+Large ligand
+1a2c_ligand_270
+Large ligand
+1a2c_ligand_271
+Large ligand
+1a2c_ligand_272
+Large ligand
+1a2c_ligand_273
+Large ligand
+1a2c_ligand_274
+Large ligand
+1a2c_ligand_275
+Large ligand
+1a2c_ligand_276
+Large ligand
+1a2c_ligand_277
+Large ligand
+1a2c_ligand_278
+Large ligand
+1a2c_ligand_279
+Large ligand
+1a2c_ligand_280
+Large ligand
+1a2c_ligand_281
+Large ligand
+1a2c_ligand_282
+Large ligand
+1a2c_ligand_283
+Large ligand
+1a2c_ligand_284
+Large ligand
+1a2c_ligand_285
+Large ligand
+1a2c_ligand_286
+Large ligand
+1a2c_ligand_287
+Large ligand
+1a2c_ligand_288
+Large ligand
+1a2c_ligand_289
+Large ligand
+1a2c_ligand_290
+Large ligand
+1a2c_ligand_291
+Large ligand
+1a2c_ligand_292
+Large ligand
+1a2c_ligand_293
+Large ligand
+1a2c_ligand_294
+Large ligand
+1a2c_ligand_295
+Large ligand
+1a2c_ligand_296
+Large ligand
+1a2c_ligand_297
+Large ligand
+1a2c_ligand_298
+Large ligand
+1a2c_ligand_299
+Large ligand
+1a2c_ligand_300
+Large ligand
+1a2c_ligand_301
+Large ligand
+1a2c_ligand_0000: O: -9.396 A/N: -0.072 A: -8.320 [-5.469 -0.581 2.948]   87   3   4   0  13   9 0.900   1 0.200
+1a46_ligand_0
+New Molecule
+Large ligand
+1a46_ligand_1
+Large ligand
+1a46_ligand_2
+Large ligand
+1a46_ligand_3
+Large ligand
+1a46_ligand_4
+Large ligand
+1a46_ligand_5
+Large ligand
+1a46_ligand_6
+Large ligand
+1a46_ligand_7
+Large ligand
+1a46_ligand_8
+Large ligand
+1a46_ligand_9
+Large ligand
+1a46_ligand_10
+Large ligand
+1a46_ligand_11
+Large ligand
+1a46_ligand_12
+Large ligand
+1a46_ligand_13
+Large ligand
+1a46_ligand_14
+Large ligand
+1a46_ligand_15
+Large ligand
+1a46_ligand_16
+Large ligand
+1a46_ligand_17
+Large ligand
+1a46_ligand_18
+Large ligand
+1a46_ligand_19
+Large ligand
+1a46_ligand_20
+Large ligand
+1a46_ligand_21
+Large ligand
+1a46_ligand_22
+Large ligand
+1a46_ligand_23
+Large ligand
+1a46_ligand_24
+Large ligand
+1a46_ligand_25
+Large ligand
+1a46_ligand_26
+Large ligand
+1a46_ligand_27
+Large ligand
+1a46_ligand_28
+Large ligand
+1a46_ligand_29
+Large ligand
+1a46_ligand_30
+Large ligand
+1a46_ligand_31
+Large ligand
+1a46_ligand_32
+Large ligand
+1a46_ligand_33
+Large ligand
+1a46_ligand_34
+Large ligand
+1a46_ligand_35
+Large ligand
+1a46_ligand_36
+Large ligand
+1a46_ligand_37
+Large ligand
+1a46_ligand_38
+Large ligand
+1a46_ligand_39
+Large ligand
+1a46_ligand_40
+Large ligand
+1a46_ligand_41
+Large ligand
+1a46_ligand_42
+Large ligand
+1a46_ligand_43
+Large ligand
+1a46_ligand_44
+Large ligand
+1a46_ligand_45
+Large ligand
+1a46_ligand_46
+Large ligand
+1a46_ligand_47
+Large ligand
+1a46_ligand_48
+Large ligand
+1a46_ligand_49
+Large ligand
+1a46_ligand_50
+Large ligand
+1a46_ligand_51
+Large ligand
+1a46_ligand_52
+Large ligand
+1a46_ligand_53
+Large ligand
+1a46_ligand_54
+Large ligand
+1a46_ligand_55
+Large ligand
+1a46_ligand_56
+Large ligand
+1a46_ligand_57
+Large ligand
+1a46_ligand_58
+Large ligand
+1a46_ligand_59
+Large ligand
+1a46_ligand_60
+Large ligand
+1a46_ligand_61
+Large ligand
+1a46_ligand_62
+Large ligand
+1a46_ligand_63
+Large ligand
+1a46_ligand_64
+Large ligand
+1a46_ligand_65
+Large ligand
+1a46_ligand_66
+Large ligand
+1a46_ligand_67
+Large ligand
+1a46_ligand_68
+Large ligand
+1a46_ligand_69
+Large ligand
+1a46_ligand_70
+Large ligand
+1a46_ligand_71
+Large ligand
+1a46_ligand_72
+Large ligand
+1a46_ligand_73
+Large ligand
+1a46_ligand_74
+Large ligand
+1a46_ligand_75
+Large ligand
+1a46_ligand_76
+Large ligand
+1a46_ligand_77
+Large ligand
+1a46_ligand_78
+Large ligand
+1a46_ligand_79
+Large ligand
+1a46_ligand_80
+Large ligand
+1a46_ligand_81
+Large ligand
+1a46_ligand_82
+Large ligand
+1a46_ligand_83
+Large ligand
+1a46_ligand_84
+Large ligand
+1a46_ligand_85
+Large ligand
+1a46_ligand_86
+Large ligand
+1a46_ligand_87
+Large ligand
+1a46_ligand_88
+Large ligand
+1a46_ligand_89
+Large ligand
+1a46_ligand_90
+Large ligand
+1a46_ligand_91
+Large ligand
+1a46_ligand_92
+Large ligand
+1a46_ligand_93
+Large ligand
+1a46_ligand_94
+Large ligand
+1a46_ligand_95
+Large ligand
+1a46_ligand_96
+Large ligand
+1a46_ligand_97
+Large ligand
+1a46_ligand_98
+Large ligand
+1a46_ligand_99
+Large ligand
+1a46_ligand_100
+Large ligand
+1a46_ligand_101
+Large ligand
+1a46_ligand_102
+Large ligand
+1a46_ligand_103
+Large ligand
+1a46_ligand_104
+Large ligand
+1a46_ligand_105
+Large ligand
+1a46_ligand_106
+Large ligand
+1a46_ligand_107
+Large ligand
+1a46_ligand_108
+Large ligand
+1a46_ligand_109
+Large ligand
+1a46_ligand_110
+Large ligand
+1a46_ligand_111
+Large ligand
+1a46_ligand_112
+Large ligand
+1a46_ligand_113
+Large ligand
+1a46_ligand_114
+Large ligand
+1a46_ligand_115
+Large ligand
+1a46_ligand_116
+Large ligand
+1a46_ligand_117
+Large ligand
+1a46_ligand_118
+Large ligand
+1a46_ligand_119
+Large ligand
+1a46_ligand_120
+Large ligand
+1a46_ligand_121
+Large ligand
+1a46_ligand_122
+Large ligand
+1a46_ligand_123
+Large ligand
+1a46_ligand_124
+Large ligand
+1a46_ligand_125
+Large ligand
+1a46_ligand_126
+Large ligand
+1a46_ligand_127
+Large ligand
+1a46_ligand_128
+Large ligand
+1a46_ligand_129
+Large ligand
+1a46_ligand_130
+Large ligand
+1a46_ligand_131
+Large ligand
+1a46_ligand_132
+Large ligand
+1a46_ligand_133
+Large ligand
+1a46_ligand_134
+Large ligand
+1a46_ligand_135
+Large ligand
+1a46_ligand_136
+Large ligand
+1a46_ligand_137
+Large ligand
+1a46_ligand_138
+Large ligand
+1a46_ligand_139
+Large ligand
+1a46_ligand_140
+Large ligand
+1a46_ligand_141
+Large ligand
+1a46_ligand_142
+Large ligand
+1a46_ligand_143
+Large ligand
+1a46_ligand_144
+Large ligand
+1a46_ligand_145
+Large ligand
+1a46_ligand_146
+Large ligand
+1a46_ligand_147
+Large ligand
+1a46_ligand_148
+Large ligand
+1a46_ligand_149
+Large ligand
+1a46_ligand_150
+Large ligand
+1a46_ligand_151
+Large ligand
+1a46_ligand_152
+Large ligand
+1a46_ligand_153
+Large ligand
+1a46_ligand_154
+Large ligand
+1a46_ligand_155
+Large ligand
+1a46_ligand_156
+Large ligand
+1a46_ligand_157
+Large ligand
+1a46_ligand_158
+Large ligand
+1a46_ligand_159
+Large ligand
+1a46_ligand_160
+Large ligand
+1a46_ligand_161
+Large ligand
+1a46_ligand_162
+Large ligand
+1a46_ligand_163
+Large ligand
+1a46_ligand_164
+Large ligand
+1a46_ligand_165
+Large ligand
+1a46_ligand_166
+Large ligand
+1a46_ligand_167
+Large ligand
+1a46_ligand_168
+Large ligand
+1a46_ligand_169
+Large ligand
+1a46_ligand_170
+Large ligand
+1a46_ligand_171
+Large ligand
+1a46_ligand_172
+Large ligand
+1a46_ligand_173
+Large ligand
+1a46_ligand_174
+Large ligand
+1a46_ligand_175
+Large ligand
+1a46_ligand_176
+Large ligand
+1a46_ligand_177
+Large ligand
+1a46_ligand_178
+Large ligand
+1a46_ligand_179
+Large ligand
+1a46_ligand_180
+Large ligand
+1a46_ligand_181
+Large ligand
+1a46_ligand_182
+Large ligand
+1a46_ligand_183
+Large ligand
+1a46_ligand_184
+Large ligand
+1a46_ligand_185
+Large ligand
+1a46_ligand_186
+Large ligand
+1a46_ligand_187
+Large ligand
+1a46_ligand_188
+Large ligand
+1a46_ligand_189
+Large ligand
+1a46_ligand_190
+Large ligand
+1a46_ligand_191
+Large ligand
+1a46_ligand_192
+Large ligand
+1a46_ligand_193
+Large ligand
+1a46_ligand_194
+Large ligand
+1a46_ligand_195
+Large ligand
+1a46_ligand_196
+Large ligand
+1a46_ligand_197
+Large ligand
+1a46_ligand_198
+Large ligand
+1a46_ligand_199
+Large ligand
+1a46_ligand_200
+Large ligand
+1a46_ligand_201
+Large ligand
+1a46_ligand_202
+Large ligand
+1a46_ligand_203
+Large ligand
+1a46_ligand_204
+Large ligand
+1a46_ligand_205
+Large ligand
+1a46_ligand_206
+Large ligand
+1a46_ligand_207
+Large ligand
+1a46_ligand_208
+Large ligand
+1a46_ligand_209
+Large ligand
+1a46_ligand_210
+Large ligand
+1a46_ligand_211
+Large ligand
+1a46_ligand_212
+Large ligand
+1a46_ligand_213
+Large ligand
+1a46_ligand_214
+Large ligand
+1a46_ligand_215
+Large ligand
+1a46_ligand_216
+Large ligand
+1a46_ligand_217
+Large ligand
+1a46_ligand_218
+Large ligand
+1a46_ligand_219
+Large ligand
+1a46_ligand_220
+Large ligand
+1a46_ligand_221
+Large ligand
+1a46_ligand_222
+Large ligand
+1a46_ligand_223
+Large ligand
+1a46_ligand_224
+Large ligand
+1a46_ligand_225
+Large ligand
+1a46_ligand_226
+Large ligand
+1a46_ligand_227
+Large ligand
+1a46_ligand_228
+Large ligand
+1a46_ligand_229
+Large ligand
+1a46_ligand_230
+Large ligand
+1a46_ligand_231
+Large ligand
+1a46_ligand_232
+Large ligand
+1a46_ligand_233
+Large ligand
+1a46_ligand_234
+Large ligand
+1a46_ligand_235
+Large ligand
+1a46_ligand_236
+Large ligand
+1a46_ligand_237
+Large ligand
+1a46_ligand_238
+Large ligand
+1a46_ligand_239
+Large ligand
+1a46_ligand_240
+Large ligand
+1a46_ligand_241
+Large ligand
+1a46_ligand_242
+Large ligand
+1a46_ligand_243
+Large ligand
+1a46_ligand_244
+Large ligand
+1a46_ligand_245
+Large ligand
+1a46_ligand_246
+Large ligand
+1a46_ligand_247
+Large ligand
+1a46_ligand_248
+Large ligand
+1a46_ligand_249
+Large ligand
+1a46_ligand_250
+Large ligand
+1a46_ligand_251
+Large ligand
+1a46_ligand_252
+Large ligand
+1a46_ligand_253
+Large ligand
+1a46_ligand_254
+Large ligand
+1a46_ligand_255
+Large ligand
+1a46_ligand_256
+Large ligand
+1a46_ligand_257
+Large ligand
+1a46_ligand_258
+Large ligand
+1a46_ligand_259
+Large ligand
+1a46_ligand_260
+Large ligand
+1a46_ligand_261
+Large ligand
+1a46_ligand_262
+Large ligand
+1a46_ligand_263
+Large ligand
+1a46_ligand_264
+Large ligand
+1a46_ligand_265
+Large ligand
+1a46_ligand_266
+Large ligand
+1a46_ligand_267
+Large ligand
+1a46_ligand_268
+Large ligand
+1a46_ligand_269
+Large ligand
+1a46_ligand_270
+Large ligand
+1a46_ligand_271
+Large ligand
+1a46_ligand_272
+Large ligand
+1a46_ligand_273
+Large ligand
+1a46_ligand_274
+Large ligand
+1a46_ligand_275
+Large ligand
+1a46_ligand_276
+Large ligand
+1a46_ligand_277
+Large ligand
+1a46_ligand_278
+Large ligand
+1a46_ligand_279
+Large ligand
+1a46_ligand_280
+Large ligand
+1a46_ligand_281
+Large ligand
+1a46_ligand_282
+Large ligand
+1a46_ligand_283
+Large ligand
+1a46_ligand_284
+Large ligand
+1a46_ligand_285
+Large ligand
+1a46_ligand_286
+Large ligand
+1a46_ligand_287
+Large ligand
+1a46_ligand_288
+Large ligand
+1a46_ligand_289
+Large ligand
+1a46_ligand_290
+Large ligand
+1a46_ligand_291
+Large ligand
+1a46_ligand_292
+Large ligand
+1a46_ligand_293
+Large ligand
+1a46_ligand_294
+Large ligand
+1a46_ligand_295
+Large ligand
+1a46_ligand_296
+Large ligand
+1a46_ligand_297
+Large ligand
+1a46_ligand_298
+Large ligand
+1a46_ligand_299
+Large ligand
+1a46_ligand_300
+Large ligand
+1a46_ligand_301
+Large ligand
+1a46_ligand_302
+Large ligand
+1a46_ligand_303
+Large ligand
+1a46_ligand_304
+Large ligand
+1a46_ligand_305
+Large ligand
+1a46_ligand_306
+Large ligand
+1a46_ligand_307
+Large ligand
+1a46_ligand_308
+Large ligand
+1a46_ligand_309
+Large ligand
+1a46_ligand_310
+Large ligand
+1a46_ligand_311
+Large ligand
+1a46_ligand_312
+Large ligand
+1a46_ligand_313
+Large ligand
+1a46_ligand_314
+Large ligand
+1a46_ligand_315
+Large ligand
+1a46_ligand_316
+Large ligand
+1a46_ligand_317
+Large ligand
+1a46_ligand_318
+Large ligand
+1a46_ligand_319
+Large ligand
+1a46_ligand_320
+Large ligand
+1a46_ligand_321
+Large ligand
+1a46_ligand_322
+Large ligand
+1a46_ligand_323
+Large ligand
+1a46_ligand_324
+Large ligand
+1a46_ligand_325
+Large ligand
+1a46_ligand_326
+Large ligand
+1a46_ligand_327
+Large ligand
+1a46_ligand_328
+Large ligand
+1a46_ligand_329
+Large ligand
+1a46_ligand_330
+Large ligand
+1a46_ligand_331
+Large ligand
+1a46_ligand_332
+Large ligand
+1a46_ligand_333
+Large ligand
+1a46_ligand_334
+Large ligand
+1a46_ligand_335
+Large ligand
+1a46_ligand_336
+Large ligand
+1a46_ligand_337
+Large ligand
+1a46_ligand_338
+Large ligand
+1a46_ligand_339
+Large ligand
+1a46_ligand_340
+Large ligand
+1a46_ligand_341
+Large ligand
+1a46_ligand_342
+Large ligand
+1a46_ligand_343
+Large ligand
+1a46_ligand_344
+Large ligand
+1a46_ligand_345
+Large ligand
+1a46_ligand_346
+Large ligand
+1a46_ligand_347
+Large ligand
+1a46_ligand_348
+Large ligand
+1a46_ligand_349
+Large ligand
+1a46_ligand_350
+Large ligand
+1a46_ligand_351
+Large ligand
+1a46_ligand_352
+Large ligand
+1a46_ligand_353
+Large ligand
+1a46_ligand_354
+Large ligand
+1a46_ligand_355
+Large ligand
+1a46_ligand_356
+Large ligand
+1a46_ligand_357
+Large ligand
+1a46_ligand_358
+Large ligand
+1a46_ligand_359
+Large ligand
+1a46_ligand_360
+Large ligand
+1a46_ligand_361
+Large ligand
+1a46_ligand_362
+Large ligand
+1a46_ligand_363
+Large ligand
+1a46_ligand_364
+Large ligand
+1a46_ligand_365
+Large ligand
+1a46_ligand_366
+Large ligand
+1a46_ligand_367
+Large ligand
+1a46_ligand_368
+Large ligand
+1a46_ligand_369
+Large ligand
+1a46_ligand_370
+Large ligand
+1a46_ligand_371
+Large ligand
+1a46_ligand_372
+Large ligand
+1a46_ligand_373
+Large ligand
+1a46_ligand_374
+Large ligand
+1a46_ligand_375
+Large ligand
+1a46_ligand_376
+Large ligand
+1a46_ligand_377
+Large ligand
+1a46_ligand_378
+Large ligand
+1a46_ligand_379
+Large ligand
+1a46_ligand_380
+Large ligand
+1a46_ligand_381
+Large ligand
+1a46_ligand_382
+Large ligand
+1a46_ligand_383
+Large ligand
+1a46_ligand_384
+Large ligand
+1a46_ligand_385
+Large ligand
+1a46_ligand_386
+Large ligand
+1a46_ligand_387
+Large ligand
+1a46_ligand_388
+Large ligand
+1a46_ligand_389
+Large ligand
+1a46_ligand_390
+Large ligand
+1a46_ligand_391
+Large ligand
+1a46_ligand_392
+Large ligand
+1a46_ligand_393
+Large ligand
+1a46_ligand_394
+Large ligand
+1a46_ligand_395
+Large ligand
+1a46_ligand_396
+Large ligand
+1a46_ligand_397
+Large ligand
+1a46_ligand_398
+Large ligand
+1a46_ligand_399
+Large ligand
+1a46_ligand_400
+Large ligand
+1a46_ligand_0000: O: -8.703 A/N: -0.107 A: -9.292 [-5.803 -0.415 2.144]   91   5   0   0  15   1 1.000   5 1.830
+1a4w_ligand_0
+New Molecule
+Large ligand
+1a4w_ligand_1
+Large ligand
+1a4w_ligand_2
+Large ligand
+1a4w_ligand_3
+Large ligand
+1a4w_ligand_4
+Large ligand
+1a4w_ligand_5
+Large ligand
+1a4w_ligand_6
+Large ligand
+1a4w_ligand_7
+Large ligand
+1a4w_ligand_8
+Large ligand
+1a4w_ligand_9
+Large ligand
+1a4w_ligand_10
+Large ligand
+1a4w_ligand_11
+Large ligand
+1a4w_ligand_12
+Large ligand
+1a4w_ligand_13
+Large ligand
+1a4w_ligand_14
+Large ligand
+1a4w_ligand_15
+Large ligand
+1a4w_ligand_16
+Large ligand
+1a4w_ligand_17
+Large ligand
+1a4w_ligand_18
+Large ligand
+1a4w_ligand_19
+Large ligand
+1a4w_ligand_20
+Large ligand
+1a4w_ligand_21
+Large ligand
+1a4w_ligand_22
+Large ligand
+1a4w_ligand_23
+Large ligand
+1a4w_ligand_24
+Large ligand
+1a4w_ligand_25
+Large ligand
+1a4w_ligand_26
+Large ligand
+1a4w_ligand_27
+Large ligand
+1a4w_ligand_28
+Large ligand
+1a4w_ligand_29
+Large ligand
+1a4w_ligand_30
+Large ligand
+1a4w_ligand_31
+Large ligand
+1a4w_ligand_32
+Large ligand
+1a4w_ligand_33
+Large ligand
+1a4w_ligand_34
+Large ligand
+1a4w_ligand_35
+Large ligand
+1a4w_ligand_36
+Large ligand
+1a4w_ligand_37
+Large ligand
+1a4w_ligand_38
+Large ligand
+1a4w_ligand_39
+Large ligand
+1a4w_ligand_40
+Large ligand
+1a4w_ligand_41
+Large ligand
+1a4w_ligand_42
+Large ligand
+1a4w_ligand_43
+Large ligand
+1a4w_ligand_44
+Large ligand
+1a4w_ligand_45
+Large ligand
+1a4w_ligand_46
+Large ligand
+1a4w_ligand_47
+Large ligand
+1a4w_ligand_48
+Large ligand
+1a4w_ligand_49
+Large ligand
+1a4w_ligand_50
+Large ligand
+1a4w_ligand_51
+Large ligand
+1a4w_ligand_52
+Large ligand
+1a4w_ligand_53
+Large ligand
+1a4w_ligand_54
+Large ligand
+1a4w_ligand_55
+Large ligand
+1a4w_ligand_56
+Large ligand
+1a4w_ligand_57
+Large ligand
+1a4w_ligand_58
+Large ligand
+1a4w_ligand_59
+Large ligand
+1a4w_ligand_60
+Large ligand
+1a4w_ligand_61
+Large ligand
+1a4w_ligand_62
+Large ligand
+1a4w_ligand_63
+Large ligand
+1a4w_ligand_64
+Large ligand
+1a4w_ligand_65
+Large ligand
+1a4w_ligand_66
+Large ligand
+1a4w_ligand_67
+Large ligand
+1a4w_ligand_68
+Large ligand
+1a4w_ligand_69
+Large ligand
+1a4w_ligand_70
+Large ligand
+1a4w_ligand_71
+Large ligand
+1a4w_ligand_72
+Large ligand
+1a4w_ligand_73
+Large ligand
+1a4w_ligand_74
+Large ligand
+1a4w_ligand_75
+Large ligand
+1a4w_ligand_76
+Large ligand
+1a4w_ligand_77
+Large ligand
+1a4w_ligand_78
+Large ligand
+1a4w_ligand_79
+Large ligand
+1a4w_ligand_80
+Large ligand
+1a4w_ligand_81
+Large ligand
+1a4w_ligand_82
+Large ligand
+1a4w_ligand_83
+Large ligand
+1a4w_ligand_84
+Large ligand
+1a4w_ligand_85
+Large ligand
+1a4w_ligand_86
+Large ligand
+1a4w_ligand_87
+Large ligand
+1a4w_ligand_88
+Large ligand
+1a4w_ligand_89
+Large ligand
+1a4w_ligand_90
+Large ligand
+1a4w_ligand_91
+Large ligand
+1a4w_ligand_92
+Large ligand
+1a4w_ligand_93
+Large ligand
+1a4w_ligand_94
+Large ligand
+1a4w_ligand_95
+Large ligand
+1a4w_ligand_96
+Large ligand
+1a4w_ligand_97
+Large ligand
+1a4w_ligand_98
+Large ligand
+1a4w_ligand_99
+Large ligand
+1a4w_ligand_100
+Large ligand
+1a4w_ligand_101
+Large ligand
+1a4w_ligand_102
+Large ligand
+1a4w_ligand_103
+Large ligand
+1a4w_ligand_104
+Large ligand
+1a4w_ligand_105
+Large ligand
+1a4w_ligand_106
+Large ligand
+1a4w_ligand_107
+Large ligand
+1a4w_ligand_108
+Large ligand
+1a4w_ligand_109
+Large ligand
+1a4w_ligand_110
+Large ligand
+1a4w_ligand_111
+Large ligand
+1a4w_ligand_112
+Large ligand
+1a4w_ligand_113
+Large ligand
+1a4w_ligand_114
+Large ligand
+1a4w_ligand_115
+Large ligand
+1a4w_ligand_116
+Large ligand
+1a4w_ligand_117
+Large ligand
+1a4w_ligand_118
+Large ligand
+1a4w_ligand_119
+Large ligand
+1a4w_ligand_120
+Large ligand
+1a4w_ligand_121
+Large ligand
+1a4w_ligand_122
+Large ligand
+1a4w_ligand_123
+Large ligand
+1a4w_ligand_124
+Large ligand
+1a4w_ligand_125
+Large ligand
+1a4w_ligand_126
+Large ligand
+1a4w_ligand_127
+Large ligand
+1a4w_ligand_128
+Large ligand
+1a4w_ligand_129
+Large ligand
+1a4w_ligand_130
+Large ligand
+1a4w_ligand_131
+Large ligand
+1a4w_ligand_132
+Large ligand
+1a4w_ligand_133
+Large ligand
+1a4w_ligand_134
+Large ligand
+1a4w_ligand_135
+Large ligand
+1a4w_ligand_136
+Large ligand
+1a4w_ligand_137
+Large ligand
+1a4w_ligand_138
+Large ligand
+1a4w_ligand_139
+Large ligand
+1a4w_ligand_140
+Large ligand
+1a4w_ligand_141
+Large ligand
+1a4w_ligand_142
+Large ligand
+1a4w_ligand_143
+Large ligand
+1a4w_ligand_144
+Large ligand
+1a4w_ligand_145
+Large ligand
+1a4w_ligand_146
+Large ligand
+1a4w_ligand_147
+Large ligand
+1a4w_ligand_148
+Large ligand
+1a4w_ligand_149
+Large ligand
+1a4w_ligand_150
+Large ligand
+1a4w_ligand_151
+Large ligand
+1a4w_ligand_152
+Large ligand
+1a4w_ligand_153
+Large ligand
+1a4w_ligand_154
+Large ligand
+1a4w_ligand_155
+Large ligand
+1a4w_ligand_156
+Large ligand
+1a4w_ligand_157
+Large ligand
+1a4w_ligand_158
+Large ligand
+1a4w_ligand_159
+Large ligand
+1a4w_ligand_160
+Large ligand
+1a4w_ligand_161
+Large ligand
+1a4w_ligand_162
+Large ligand
+1a4w_ligand_163
+Large ligand
+1a4w_ligand_164
+Large ligand
+1a4w_ligand_165
+Large ligand
+1a4w_ligand_166
+Large ligand
+1a4w_ligand_167
+Large ligand
+1a4w_ligand_168
+Large ligand
+1a4w_ligand_169
+Large ligand
+1a4w_ligand_170
+Large ligand
+1a4w_ligand_171
+Large ligand
+1a4w_ligand_172
+Large ligand
+1a4w_ligand_173
+Large ligand
+1a4w_ligand_174
+Large ligand
+1a4w_ligand_175
+Large ligand
+1a4w_ligand_176
+Large ligand
+1a4w_ligand_177
+Large ligand
+1a4w_ligand_178
+Large ligand
+1a4w_ligand_179
+Large ligand
+1a4w_ligand_0000: O: -8.475 A/N: -0.109 A: -9.798 [-5.556 -0.498 1.474]   81   4   2   0  10   1 0.862   4 0.913
+1a61_ligand_0
+New Molecule
+Large ligand
+1a61_ligand_1
+Large ligand
+1a61_ligand_2
+Large ligand
+1a61_ligand_3
+Large ligand
+1a61_ligand_4
+Large ligand
+1a61_ligand_5
+Large ligand
+1a61_ligand_6
+Large ligand
+1a61_ligand_7
+Large ligand
+1a61_ligand_8
+Large ligand
+1a61_ligand_9
+Large ligand
+1a61_ligand_10
+Large ligand
+1a61_ligand_11
+Large ligand
+1a61_ligand_12
+Large ligand
+1a61_ligand_13
+Large ligand
+1a61_ligand_14
+Large ligand
+1a61_ligand_15
+Large ligand
+1a61_ligand_16
+Large ligand
+1a61_ligand_17
+Large ligand
+1a61_ligand_18
+Large ligand
+1a61_ligand_19
+Large ligand
+1a61_ligand_20
+Large ligand
+1a61_ligand_21
+Large ligand
+1a61_ligand_22
+Large ligand
+1a61_ligand_23
+Large ligand
+1a61_ligand_24
+Large ligand
+1a61_ligand_25
+Large ligand
+1a61_ligand_26
+Large ligand
+1a61_ligand_27
+Large ligand
+1a61_ligand_28
+Large ligand
+1a61_ligand_29
+Large ligand
+1a61_ligand_30
+Large ligand
+1a61_ligand_31
+Large ligand
+1a61_ligand_32
+Large ligand
+1a61_ligand_33
+Large ligand
+1a61_ligand_34
+Large ligand
+1a61_ligand_35
+Large ligand
+1a61_ligand_36
+Large ligand
+1a61_ligand_37
+Large ligand
+1a61_ligand_38
+Large ligand
+1a61_ligand_39
+Large ligand
+1a61_ligand_40
+Large ligand
+1a61_ligand_41
+Large ligand
+1a61_ligand_42
+Large ligand
+1a61_ligand_43
+Large ligand
+1a61_ligand_44
+Large ligand
+1a61_ligand_45
+Large ligand
+1a61_ligand_46
+Large ligand
+1a61_ligand_47
+Large ligand
+1a61_ligand_48
+Large ligand
+1a61_ligand_49
+Large ligand
+1a61_ligand_50
+Large ligand
+1a61_ligand_51
+Large ligand
+1a61_ligand_52
+Large ligand
+1a61_ligand_53
+Large ligand
+1a61_ligand_54
+Large ligand
+1a61_ligand_55
+Large ligand
+1a61_ligand_56
+Large ligand
+1a61_ligand_57
+Large ligand
+1a61_ligand_58
+Large ligand
+1a61_ligand_59
+Large ligand
+1a61_ligand_60
+Large ligand
+1a61_ligand_61
+Large ligand
+1a61_ligand_62
+Large ligand
+1a61_ligand_63
+Large ligand
+1a61_ligand_64
+Large ligand
+1a61_ligand_65
+Large ligand
+1a61_ligand_66
+Large ligand
+1a61_ligand_67
+Large ligand
+1a61_ligand_68
+Large ligand
+1a61_ligand_69
+Large ligand
+1a61_ligand_70
+Large ligand
+1a61_ligand_71
+Large ligand
+1a61_ligand_72
+Large ligand
+1a61_ligand_73
+Large ligand
+1a61_ligand_74
+Large ligand
+1a61_ligand_75
+Large ligand
+1a61_ligand_76
+Large ligand
+1a61_ligand_77
+Large ligand
+1a61_ligand_78
+Large ligand
+1a61_ligand_79
+Large ligand
+1a61_ligand_80
+Large ligand
+1a61_ligand_81
+Large ligand
+1a61_ligand_82
+Large ligand
+1a61_ligand_83
+Large ligand
+1a61_ligand_84
+Large ligand
+1a61_ligand_85
+Large ligand
+1a61_ligand_86
+Large ligand
+1a61_ligand_87
+Large ligand
+1a61_ligand_88
+Large ligand
+1a61_ligand_89
+Large ligand
+1a61_ligand_90
+Large ligand
+1a61_ligand_91
+Large ligand
+1a61_ligand_92
+Large ligand
+1a61_ligand_93
+Large ligand
+1a61_ligand_94
+Large ligand
+1a61_ligand_95
+Large ligand
+1a61_ligand_96
+Large ligand
+1a61_ligand_97
+Large ligand
+1a61_ligand_98
+Large ligand
+1a61_ligand_99
+Large ligand
+1a61_ligand_100
+Large ligand
+1a61_ligand_101
+Large ligand
+1a61_ligand_102
+Large ligand
+1a61_ligand_103
+Large ligand
+1a61_ligand_104
+Large ligand
+1a61_ligand_105
+Large ligand
+1a61_ligand_106
+Large ligand
+1a61_ligand_107
+Large ligand
+1a61_ligand_108
+Large ligand
+1a61_ligand_109
+Large ligand
+1a61_ligand_110
+Large ligand
+1a61_ligand_111
+Large ligand
+1a61_ligand_112
+Large ligand
+1a61_ligand_113
+Large ligand
+1a61_ligand_114
+Large ligand
+1a61_ligand_115
+Large ligand
+1a61_ligand_116
+Large ligand
+1a61_ligand_117
+Large ligand
+1a61_ligand_118
+Large ligand
+1a61_ligand_119
+Large ligand
+1a61_ligand_120
+Large ligand
+1a61_ligand_121
+Large ligand
+1a61_ligand_122
+Large ligand
+1a61_ligand_123
+Large ligand
+1a61_ligand_124
+Large ligand
+1a61_ligand_125
+Large ligand
+1a61_ligand_126
+Large ligand
+1a61_ligand_127
+Large ligand
+1a61_ligand_128
+Large ligand
+1a61_ligand_129
+Large ligand
+1a61_ligand_130
+Large ligand
+1a61_ligand_131
+Large ligand
+1a61_ligand_132
+Large ligand
+1a61_ligand_133
+Large ligand
+1a61_ligand_134
+Large ligand
+1a61_ligand_135
+Large ligand
+1a61_ligand_136
+Large ligand
+1a61_ligand_137
+Large ligand
+1a61_ligand_138
+Large ligand
+1a61_ligand_139
+Large ligand
+1a61_ligand_140
+Large ligand
+1a61_ligand_141
+Large ligand
+1a61_ligand_142
+Large ligand
+1a61_ligand_143
+Large ligand
+1a61_ligand_144
+Large ligand
+1a61_ligand_145
+Large ligand
+1a61_ligand_146
+Large ligand
+1a61_ligand_147
+Large ligand
+1a61_ligand_148
+Large ligand
+1a61_ligand_149
+Large ligand
+1a61_ligand_150
+Large ligand
+1a61_ligand_151
+Large ligand
+1a61_ligand_152
+Large ligand
+1a61_ligand_153
+Large ligand
+1a61_ligand_154
+Large ligand
+1a61_ligand_155
+Large ligand
+1a61_ligand_156
+Large ligand
+1a61_ligand_157
+Large ligand
+1a61_ligand_158
+Large ligand
+1a61_ligand_159
+Large ligand
+1a61_ligand_160
+Large ligand
+1a61_ligand_161
+Large ligand
+1a61_ligand_162
+Large ligand
+1a61_ligand_163
+Large ligand
+1a61_ligand_164
+Large ligand
+1a61_ligand_165
+Large ligand
+1a61_ligand_166
+Large ligand
+1a61_ligand_167
+Large ligand
+1a61_ligand_168
+Large ligand
+1a61_ligand_169
+Large ligand
+1a61_ligand_170
+Large ligand
+1a61_ligand_171
+Large ligand
+1a61_ligand_172
+Large ligand
+1a61_ligand_173
+Large ligand
+1a61_ligand_174
+Large ligand
+1a61_ligand_175
+Large ligand
+1a61_ligand_176
+Large ligand
+1a61_ligand_177
+Large ligand
+1a61_ligand_178
+Large ligand
+1a61_ligand_179
+Large ligand
+1a61_ligand_180
+Large ligand
+1a61_ligand_181
+Large ligand
+1a61_ligand_182
+Large ligand
+1a61_ligand_183
+Large ligand
+1a61_ligand_184
+Large ligand
+1a61_ligand_185
+Large ligand
+1a61_ligand_186
+Large ligand
+1a61_ligand_187
+Large ligand
+1a61_ligand_188
+Large ligand
+1a61_ligand_189
+Large ligand
+1a61_ligand_190
+Large ligand
+1a61_ligand_191
+Large ligand
+1a61_ligand_192
+Large ligand
+1a61_ligand_193
+Large ligand
+1a61_ligand_194
+Large ligand
+1a61_ligand_195
+Large ligand
+1a61_ligand_196
+Large ligand
+1a61_ligand_197
+Large ligand
+1a61_ligand_198
+Large ligand
+1a61_ligand_199
+Large ligand
+1a61_ligand_200
+Large ligand
+1a61_ligand_201
+Large ligand
+1a61_ligand_202
+Large ligand
+1a61_ligand_203
+Large ligand
+1a61_ligand_204
+Large ligand
+1a61_ligand_205
+Large ligand
+1a61_ligand_206
+Large ligand
+1a61_ligand_207
+Large ligand
+1a61_ligand_208
+Large ligand
+1a61_ligand_209
+Large ligand
+1a61_ligand_210
+Large ligand
+1a61_ligand_211
+Large ligand
+1a61_ligand_212
+Large ligand
+1a61_ligand_213
+Large ligand
+1a61_ligand_214
+Large ligand
+1a61_ligand_215
+Large ligand
+1a61_ligand_216
+Large ligand
+1a61_ligand_217
+Large ligand
+1a61_ligand_218
+Large ligand
+1a61_ligand_219
+Large ligand
+1a61_ligand_220
+Large ligand
+1a61_ligand_221
+Large ligand
+1a61_ligand_222
+Large ligand
+1a61_ligand_223
+Large ligand
+1a61_ligand_224
+Large ligand
+1a61_ligand_225
+Large ligand
+1a61_ligand_226
+Large ligand
+1a61_ligand_227
+Large ligand
+1a61_ligand_228
+Large ligand
+1a61_ligand_229
+Large ligand
+1a61_ligand_230
+Large ligand
+1a61_ligand_231
+Large ligand
+1a61_ligand_232
+Large ligand
+1a61_ligand_233
+Large ligand
+1a61_ligand_234
+Large ligand
+1a61_ligand_235
+Large ligand
+1a61_ligand_236
+Large ligand
+1a61_ligand_237
+Large ligand
+1a61_ligand_238
+Large ligand
+1a61_ligand_239
+Large ligand
+1a61_ligand_240
+Large ligand
+1a61_ligand_241
+Large ligand
+1a61_ligand_242
+Large ligand
+1a61_ligand_243
+Large ligand
+1a61_ligand_244
+Large ligand
+1a61_ligand_245
+Large ligand
+1a61_ligand_246
+Large ligand
+1a61_ligand_247
+Large ligand
+1a61_ligand_248
+Large ligand
+1a61_ligand_249
+Large ligand
+1a61_ligand_250
+Large ligand
+1a61_ligand_251
+Large ligand
+1a61_ligand_252
+Large ligand
+1a61_ligand_253
+Large ligand
+1a61_ligand_254
+Large ligand
+1a61_ligand_255
+Large ligand
+1a61_ligand_256
+Large ligand
+1a61_ligand_257
+Large ligand
+1a61_ligand_258
+Large ligand
+1a61_ligand_259
+Large ligand
+1a61_ligand_260
+Large ligand
+1a61_ligand_261
+Large ligand
+1a61_ligand_262
+Large ligand
+1a61_ligand_263
+Large ligand
+1a61_ligand_264
+Large ligand
+1a61_ligand_265
+Large ligand
+1a61_ligand_266
+Large ligand
+1a61_ligand_267
+Large ligand
+1a61_ligand_268
+Large ligand
+1a61_ligand_269
+Large ligand
+1a61_ligand_270
+Large ligand
+1a61_ligand_271
+Large ligand
+1a61_ligand_272
+Large ligand
+1a61_ligand_273
+Large ligand
+1a61_ligand_274
+Large ligand
+1a61_ligand_275
+Large ligand
+1a61_ligand_276
+Large ligand
+1a61_ligand_277
+Large ligand
+1a61_ligand_278
+Large ligand
+1a61_ligand_279
+Large ligand
+1a61_ligand_280
+Large ligand
+1a61_ligand_281
+Large ligand
+1a61_ligand_282
+Large ligand
+1a61_ligand_283
+Large ligand
+1a61_ligand_284
+Large ligand
+1a61_ligand_285
+Large ligand
+1a61_ligand_286
+Large ligand
+1a61_ligand_287
+Large ligand
+1a61_ligand_288
+Large ligand
+1a61_ligand_289
+Large ligand
+1a61_ligand_290
+Large ligand
+1a61_ligand_291
+Large ligand
+1a61_ligand_292
+Large ligand
+1a61_ligand_293
+Large ligand
+1a61_ligand_294
+Large ligand
+1a61_ligand_295
+Large ligand
+1a61_ligand_296
+Large ligand
+1a61_ligand_297
+Large ligand
+1a61_ligand_298
+Large ligand
+1a61_ligand_299
+Large ligand
+1a61_ligand_300
+Large ligand
+1a61_ligand_301
+Large ligand
+1a61_ligand_302
+Large ligand
+1a61_ligand_303
+Large ligand
+1a61_ligand_304
+Large ligand
+1a61_ligand_305
+Large ligand
+1a61_ligand_306
+Large ligand
+1a61_ligand_307
+Large ligand
+1a61_ligand_308
+Large ligand
+1a61_ligand_309
+Large ligand
+1a61_ligand_310
+Large ligand
+1a61_ligand_311
+Large ligand
+1a61_ligand_312
+Large ligand
+1a61_ligand_313
+Large ligand
+1a61_ligand_314
+Large ligand
+1a61_ligand_315
+Large ligand
+1a61_ligand_316
+Large ligand
+1a61_ligand_317
+Large ligand
+1a61_ligand_318
+Large ligand
+1a61_ligand_319
+Large ligand
+1a61_ligand_320
+Large ligand
+1a61_ligand_321
+Large ligand
+1a61_ligand_322
+Large ligand
+1a61_ligand_323
+Large ligand
+1a61_ligand_324
+Large ligand
+1a61_ligand_325
+Large ligand
+1a61_ligand_326
+Large ligand
+1a61_ligand_327
+Large ligand
+1a61_ligand_328
+Large ligand
+1a61_ligand_329
+Large ligand
+1a61_ligand_330
+Large ligand
+1a61_ligand_331
+Large ligand
+1a61_ligand_332
+Large ligand
+1a61_ligand_333
+Large ligand
+1a61_ligand_334
+Large ligand
+1a61_ligand_335
+Large ligand
+1a61_ligand_336
+Large ligand
+1a61_ligand_337
+Large ligand
+1a61_ligand_338
+Large ligand
+1a61_ligand_339
+Large ligand
+1a61_ligand_340
+Large ligand
+1a61_ligand_341
+Large ligand
+1a61_ligand_342
+Large ligand
+1a61_ligand_343
+Large ligand
+1a61_ligand_344
+Large ligand
+1a61_ligand_345
+Large ligand
+1a61_ligand_346
+Large ligand
+1a61_ligand_347
+Large ligand
+1a61_ligand_348
+Large ligand
+1a61_ligand_349
+Large ligand
+1a61_ligand_350
+Large ligand
+1a61_ligand_351
+Large ligand
+1a61_ligand_352
+Large ligand
+1a61_ligand_353
+Large ligand
+1a61_ligand_354
+Large ligand
+1a61_ligand_355
+Large ligand
+1a61_ligand_356
+Large ligand
+1a61_ligand_357
+Large ligand
+1a61_ligand_358
+Large ligand
+1a61_ligand_359
+Large ligand
+1a61_ligand_360
+Large ligand
+1a61_ligand_361
+Large ligand
+1a61_ligand_362
+Large ligand
+1a61_ligand_363
+Large ligand
+1a61_ligand_364
+Large ligand
+1a61_ligand_365
+Large ligand
+1a61_ligand_366
+Large ligand
+1a61_ligand_367
+Large ligand
+1a61_ligand_368
+Large ligand
+1a61_ligand_369
+Large ligand
+1a61_ligand_370
+Large ligand
+1a61_ligand_371
+Large ligand
+1a61_ligand_372
+Large ligand
+1a61_ligand_373
+Large ligand
+1a61_ligand_374
+Large ligand
+1a61_ligand_375
+Large ligand
+1a61_ligand_376
+Large ligand
+1a61_ligand_377
+Large ligand
+1a61_ligand_378
+Large ligand
+1a61_ligand_379
+Large ligand
+1a61_ligand_380
+Large ligand
+1a61_ligand_381
+Large ligand
+1a61_ligand_382
+Large ligand
+1a61_ligand_383
+Large ligand
+1a61_ligand_384
+Large ligand
+1a61_ligand_385
+Large ligand
+1a61_ligand_386
+Large ligand
+1a61_ligand_387
+Large ligand
+1a61_ligand_388
+Large ligand
+1a61_ligand_389
+Large ligand
+1a61_ligand_390
+Large ligand
+1a61_ligand_391
+Large ligand
+1a61_ligand_392
+Large ligand
+1a61_ligand_393
+Large ligand
+1a61_ligand_394
+Large ligand
+1a61_ligand_395
+Large ligand
+1a61_ligand_396
+Large ligand
+1a61_ligand_397
+Large ligand
+1a61_ligand_398
+Large ligand
+1a61_ligand_399
+Large ligand
+1a61_ligand_400
+Large ligand
+1a61_ligand_0000: O: -9.155 A/N: -0.083 A: -8.218 [-4.346 -0.664 2.010]   77   4   4   0   9   6 0.875   7 0.584
+1ad8_ligand_0
+New Molecule
+Large ligand
+1ad8_ligand_1
+Large ligand
+1ad8_ligand_2
+Large ligand
+1ad8_ligand_3
+Large ligand
+1ad8_ligand_4
+Large ligand
+1ad8_ligand_5
+Large ligand
+1ad8_ligand_6
+Large ligand
+1ad8_ligand_7
+Large ligand
+1ad8_ligand_8
+Large ligand
+1ad8_ligand_9
+Large ligand
+1ad8_ligand_10
+Large ligand
+1ad8_ligand_11
+Large ligand
+1ad8_ligand_12
+Large ligand
+1ad8_ligand_13
+Large ligand
+1ad8_ligand_14
+Large ligand
+1ad8_ligand_15
+Large ligand
+1ad8_ligand_16
+Large ligand
+1ad8_ligand_17
+Large ligand
+1ad8_ligand_18
+Large ligand
+1ad8_ligand_19
+Large ligand
+1ad8_ligand_20
+Large ligand
+1ad8_ligand_21
+Large ligand
+1ad8_ligand_22
+Large ligand
+1ad8_ligand_23
+Large ligand
+1ad8_ligand_24
+Large ligand
+1ad8_ligand_25
+Large ligand
+1ad8_ligand_26
+Large ligand
+1ad8_ligand_27
+Large ligand
+1ad8_ligand_28
+Large ligand
+1ad8_ligand_29
+Large ligand
+1ad8_ligand_30
+Large ligand
+1ad8_ligand_31
+Large ligand
+1ad8_ligand_32
+Large ligand
+1ad8_ligand_33
+Large ligand
+1ad8_ligand_34
+Large ligand
+1ad8_ligand_35
+Large ligand
+1ad8_ligand_36
+Large ligand
+1ad8_ligand_37
+Large ligand
+1ad8_ligand_38
+Large ligand
+1ad8_ligand_39
+Large ligand
+1ad8_ligand_40
+Large ligand
+1ad8_ligand_41
+Large ligand
+1ad8_ligand_42
+Large ligand
+1ad8_ligand_43
+Large ligand
+1ad8_ligand_44
+Large ligand
+1ad8_ligand_45
+Large ligand
+1ad8_ligand_46
+Large ligand
+1ad8_ligand_47
+Large ligand
+1ad8_ligand_48
+Large ligand
+1ad8_ligand_49
+Large ligand
+1ad8_ligand_50
+Large ligand
+1ad8_ligand_51
+Large ligand
+1ad8_ligand_52
+Large ligand
+1ad8_ligand_53
+Large ligand
+1ad8_ligand_54
+Large ligand
+1ad8_ligand_55
+Large ligand
+1ad8_ligand_56
+Small ligand
+1ad8_ligand_57
+Large ligand
+1ad8_ligand_58
+Large ligand
+1ad8_ligand_59
+Large ligand
+1ad8_ligand_60
+Large ligand
+1ad8_ligand_61
+Large ligand
+1ad8_ligand_62
+Large ligand
+1ad8_ligand_63
+Large ligand
+1ad8_ligand_64
+Large ligand
+1ad8_ligand_65
+Large ligand
+1ad8_ligand_66
+Large ligand
+1ad8_ligand_67
+Large ligand
+1ad8_ligand_68
+Large ligand
+1ad8_ligand_69
+Large ligand
+1ad8_ligand_70
+Large ligand
+1ad8_ligand_71
+Large ligand
+1ad8_ligand_72
+Large ligand
+1ad8_ligand_73
+Large ligand
+1ad8_ligand_74
+Large ligand
+1ad8_ligand_75
+Large ligand
+1ad8_ligand_76
+Large ligand
+1ad8_ligand_77
+Large ligand
+1ad8_ligand_78
+Large ligand
+1ad8_ligand_79
+Large ligand
+1ad8_ligand_80
+Large ligand
+1ad8_ligand_81
+Large ligand
+1ad8_ligand_82
+Large ligand
+1ad8_ligand_83
+Large ligand
+1ad8_ligand_84
+Large ligand
+1ad8_ligand_85
+Large ligand
+1ad8_ligand_86
+Large ligand
+1ad8_ligand_87
+Large ligand
+1ad8_ligand_88
+Large ligand
+1ad8_ligand_89
+Large ligand
+1ad8_ligand_90
+Large ligand
+1ad8_ligand_91
+Large ligand
+1ad8_ligand_92
+Large ligand
+1ad8_ligand_93
+Large ligand
+1ad8_ligand_94
+Large ligand
+1ad8_ligand_95
+Large ligand
+1ad8_ligand_96
+Large ligand
+1ad8_ligand_97
+Large ligand
+1ad8_ligand_98
+Large ligand
+1ad8_ligand_99
+Large ligand
+1ad8_ligand_100
+Large ligand
+1ad8_ligand_101
+Large ligand
+1ad8_ligand_102
+Large ligand
+1ad8_ligand_103
+Large ligand
+1ad8_ligand_104
+Large ligand
+1ad8_ligand_105
+Large ligand
+1ad8_ligand_106
+Large ligand
+1ad8_ligand_107
+Large ligand
+1ad8_ligand_108
+Large ligand
+1ad8_ligand_109
+Large ligand
+1ad8_ligand_110
+Large ligand
+1ad8_ligand_111
+Large ligand
+1ad8_ligand_112
+Large ligand
+1ad8_ligand_113
+Large ligand
+1ad8_ligand_114
+Large ligand
+1ad8_ligand_115
+Large ligand
+1ad8_ligand_116
+Large ligand
+1ad8_ligand_117
+Large ligand
+1ad8_ligand_118
+Large ligand
+1ad8_ligand_119
+Large ligand
+1ad8_ligand_120
+Large ligand
+1ad8_ligand_121
+Large ligand
+1ad8_ligand_122
+Large ligand
+1ad8_ligand_123
+Large ligand
+1ad8_ligand_124
+Large ligand
+1ad8_ligand_125
+Large ligand
+1ad8_ligand_126
+Large ligand
+1ad8_ligand_127
+Large ligand
+1ad8_ligand_128
+Large ligand
+1ad8_ligand_129
+Large ligand
+1ad8_ligand_130
+Large ligand
+1ad8_ligand_131
+Large ligand
+1ad8_ligand_132
+Large ligand
+1ad8_ligand_133
+Large ligand
+1ad8_ligand_134
+Large ligand
+1ad8_ligand_135
+Large ligand
+1ad8_ligand_136
+Large ligand
+1ad8_ligand_137
+Large ligand
+1ad8_ligand_138
+Large ligand
+1ad8_ligand_139
+Large ligand
+1ad8_ligand_140
+Large ligand
+1ad8_ligand_141
+Large ligand
+1ad8_ligand_142
+Large ligand
+1ad8_ligand_143
+Large ligand
+1ad8_ligand_144
+Large ligand
+1ad8_ligand_145
+Large ligand
+1ad8_ligand_146
+Large ligand
+1ad8_ligand_147
+Large ligand
+1ad8_ligand_148
+Large ligand
+1ad8_ligand_149
+Large ligand
+1ad8_ligand_150
+Large ligand
+1ad8_ligand_151
+Large ligand
+1ad8_ligand_152
+Large ligand
+1ad8_ligand_153
+Large ligand
+1ad8_ligand_154
+Large ligand
+1ad8_ligand_155
+Large ligand
+1ad8_ligand_156
+Large ligand
+1ad8_ligand_157
+Large ligand
+1ad8_ligand_158
+Large ligand
+1ad8_ligand_159
+Large ligand
+1ad8_ligand_160
+Large ligand
+1ad8_ligand_161
+Large ligand
+1ad8_ligand_162
+Large ligand
+1ad8_ligand_163
+Large ligand
+1ad8_ligand_164
+Large ligand
+1ad8_ligand_165
+Large ligand
+1ad8_ligand_166
+Large ligand
+1ad8_ligand_167
+Large ligand
+1ad8_ligand_168
+Large ligand
+1ad8_ligand_169
+Large ligand
+1ad8_ligand_170
+Large ligand
+1ad8_ligand_171
+Large ligand
+1ad8_ligand_172
+Large ligand
+1ad8_ligand_173
+Large ligand
+1ad8_ligand_174
+Large ligand
+1ad8_ligand_175
+Large ligand
+1ad8_ligand_176
+Large ligand
+1ad8_ligand_177
+Large ligand
+1ad8_ligand_178
+Large ligand
+1ad8_ligand_179
+Large ligand
+1ad8_ligand_180
+Large ligand
+1ad8_ligand_181
+Large ligand
+1ad8_ligand_182
+Large ligand
+1ad8_ligand_183
+Large ligand
+1ad8_ligand_184
+Large ligand
+1ad8_ligand_185
+Large ligand
+1ad8_ligand_186
+Large ligand
+1ad8_ligand_187
+Large ligand
+1ad8_ligand_188
+Large ligand
+1ad8_ligand_189
+Large ligand
+1ad8_ligand_190
+Large ligand
+1ad8_ligand_191
+Large ligand
+1ad8_ligand_192
+Large ligand
+1ad8_ligand_193
+Large ligand
+1ad8_ligand_194
+Large ligand
+1ad8_ligand_195
+Large ligand
+1ad8_ligand_196
+Large ligand
+1ad8_ligand_197
+Large ligand
+1ad8_ligand_198
+Large ligand
+1ad8_ligand_199
+Large ligand
+1ad8_ligand_200
+Large ligand
+1ad8_ligand_201
+Large ligand
+1ad8_ligand_202
+Large ligand
+1ad8_ligand_203
+Large ligand
+1ad8_ligand_204
+Large ligand
+1ad8_ligand_205
+Large ligand
+1ad8_ligand_206
+Large ligand
+1ad8_ligand_207
+Large ligand
+1ad8_ligand_208
+Large ligand
+1ad8_ligand_209
+Large ligand
+1ad8_ligand_210
+Large ligand
+1ad8_ligand_211
+Large ligand
+1ad8_ligand_212
+Large ligand
+1ad8_ligand_213
+Large ligand
+1ad8_ligand_214
+Large ligand
+1ad8_ligand_215
+Large ligand
+1ad8_ligand_216
+Large ligand
+1ad8_ligand_217
+Large ligand
+1ad8_ligand_218
+Large ligand
+1ad8_ligand_219
+Large ligand
+1ad8_ligand_219: failed side-chain unbumping
+1dwc_ligand_0
+New Molecule
+Large ligand
+1dwc_ligand_1
+Large ligand
+1dwc_ligand_2
+Large ligand
+1dwc_ligand_3
+Large ligand
+1dwc_ligand_4
+Large ligand
+1dwc_ligand_5
+Large ligand
+1dwc_ligand_6
+Large ligand
+1dwc_ligand_7
+Large ligand
+1dwc_ligand_8
+Large ligand
+1dwc_ligand_9
+Large ligand
+1dwc_ligand_10
+Large ligand
+1dwc_ligand_11
+Large ligand
+1dwc_ligand_12
+Large ligand
+1dwc_ligand_13
+Large ligand
+1dwc_ligand_14
+Large ligand
+1dwc_ligand_15
+Large ligand
+1dwc_ligand_16
+Large ligand
+1dwc_ligand_17
+Large ligand
+1dwc_ligand_18
+Large ligand
+1dwc_ligand_19
+Large ligand
+1dwc_ligand_20
+Large ligand
+1dwc_ligand_21
+Large ligand
+1dwc_ligand_22
+Large ligand
+1dwc_ligand_23
+Large ligand
+1dwc_ligand_24
+Large ligand
+1dwc_ligand_25
+Large ligand
+1dwc_ligand_26
+Large ligand
+1dwc_ligand_27
+Large ligand
+1dwc_ligand_28
+Large ligand
+1dwc_ligand_29
+Large ligand
+1dwc_ligand_30
+Large ligand
+1dwc_ligand_31
+Large ligand
+1dwc_ligand_32
+Large ligand
+1dwc_ligand_33
+Large ligand
+1dwc_ligand_34
+Large ligand
+1dwc_ligand_35
+Large ligand
+1dwc_ligand_36
+Large ligand
+1dwc_ligand_37
+Large ligand
+1dwc_ligand_38
+Large ligand
+1dwc_ligand_39
+Large ligand
+1dwc_ligand_40
+Large ligand
+1dwc_ligand_41
+Large ligand
+1dwc_ligand_42
+Large ligand
+1dwc_ligand_43
+Large ligand
+1dwc_ligand_44
+Large ligand
+1dwc_ligand_45
+Large ligand
+1dwc_ligand_46
+Large ligand
+1dwc_ligand_47
+Large ligand
+1dwc_ligand_48
+Large ligand
+1dwc_ligand_49
+Large ligand
+1dwc_ligand_50
+Large ligand
+1dwc_ligand_51
+Large ligand
+1dwc_ligand_52
+Large ligand
+1dwc_ligand_53
+Large ligand
+1dwc_ligand_54
+Large ligand
+1dwc_ligand_55
+Large ligand
+1dwc_ligand_56
+Large ligand
+1dwc_ligand_57
+Large ligand
+1dwc_ligand_58
+Large ligand
+1dwc_ligand_59
+Large ligand
+1dwc_ligand_60
+Large ligand
+1dwc_ligand_61
+Large ligand
+1dwc_ligand_62
+Large ligand
+1dwc_ligand_63
+Large ligand
+1dwc_ligand_64
+Large ligand
+1dwc_ligand_65
+Large ligand
+1dwc_ligand_66
+Large ligand
+1dwc_ligand_67
+Large ligand
+1dwc_ligand_68
+Large ligand
+1dwc_ligand_69
+Large ligand
+1dwc_ligand_70
+Large ligand
+1dwc_ligand_71
+Large ligand
+1dwc_ligand_72
+Large ligand
+1dwc_ligand_73
+Large ligand
+1dwc_ligand_74
+Large ligand
+1dwc_ligand_75
+Large ligand
+1dwc_ligand_76
+Large ligand
+1dwc_ligand_77
+Large ligand
+1dwc_ligand_78
+Large ligand
+1dwc_ligand_79
+Large ligand
+1dwc_ligand_80
+Large ligand
+1dwc_ligand_81
+Large ligand
+1dwc_ligand_82
+Large ligand
+1dwc_ligand_83
+Large ligand
+1dwc_ligand_84
+Large ligand
+1dwc_ligand_85
+Large ligand
+1dwc_ligand_86
+Large ligand
+1dwc_ligand_87
+Large ligand
+1dwc_ligand_88
+Large ligand
+1dwc_ligand_89
+Large ligand
+1dwc_ligand_90
+Large ligand
+1dwc_ligand_91
+Large ligand
+1dwc_ligand_92
+Large ligand
+1dwc_ligand_93
+Large ligand
+1dwc_ligand_94
+Large ligand
+1dwc_ligand_95
+Large ligand
+1dwc_ligand_96
+Large ligand
+1dwc_ligand_97
+Large ligand
+1dwc_ligand_98
+Large ligand
+1dwc_ligand_99
+Large ligand
+1dwc_ligand_100
+Large ligand
+1dwc_ligand_101
+Large ligand
+1dwc_ligand_102
+Large ligand
+1dwc_ligand_103
+Large ligand
+1dwc_ligand_104
+Large ligand
+1dwc_ligand_105
+Large ligand
+1dwc_ligand_106
+Large ligand
+1dwc_ligand_107
+Large ligand
+1dwc_ligand_108
+Large ligand
+1dwc_ligand_109
+Large ligand
+1dwc_ligand_110
+Large ligand
+1dwc_ligand_111
+Large ligand
+1dwc_ligand_112
+Large ligand
+1dwc_ligand_113
+Large ligand
+1dwc_ligand_114
+Large ligand
+1dwc_ligand_115
+Large ligand
+1dwc_ligand_116
+Large ligand
+1dwc_ligand_117
+Large ligand
+1dwc_ligand_118
+Large ligand
+1dwc_ligand_119
+Large ligand
+1dwc_ligand_120
+Large ligand
+1dwc_ligand_121
+Large ligand
+1dwc_ligand_122
+Large ligand
+1dwc_ligand_123
+Large ligand
+1dwc_ligand_124
+Large ligand
+1dwc_ligand_125
+Large ligand
+1dwc_ligand_126
+Large ligand
+1dwc_ligand_127
+Large ligand
+1dwc_ligand_128
+Large ligand
+1dwc_ligand_129
+Large ligand
+1dwc_ligand_130
+Large ligand
+1dwc_ligand_131
+Large ligand
+1dwc_ligand_132
+Large ligand
+1dwc_ligand_133
+Large ligand
+1dwc_ligand_134
+Large ligand
+1dwc_ligand_135
+Large ligand
+1dwc_ligand_136
+Large ligand
+1dwc_ligand_137
+Large ligand
+1dwc_ligand_138
+Large ligand
+1dwc_ligand_139
+Large ligand
+1dwc_ligand_140
+Large ligand
+1dwc_ligand_141
+Large ligand
+1dwc_ligand_142
+Large ligand
+1dwc_ligand_143
+Large ligand
+1dwc_ligand_144
+Large ligand
+1dwc_ligand_145
+Large ligand
+1dwc_ligand_146
+Large ligand
+1dwc_ligand_147
+Large ligand
+1dwc_ligand_148
+Large ligand
+1dwc_ligand_149
+Large ligand
+1dwc_ligand_150
+Large ligand
+1dwc_ligand_151
+Large ligand
+1dwc_ligand_152
+Large ligand
+1dwc_ligand_153
+Large ligand
+1dwc_ligand_154
+Large ligand
+1dwc_ligand_155
+Large ligand
+1dwc_ligand_156
+Large ligand
+1dwc_ligand_157
+Large ligand
+1dwc_ligand_158
+Large ligand
+1dwc_ligand_159
+Large ligand
+1dwc_ligand_160
+Large ligand
+1dwc_ligand_161
+Large ligand
+1dwc_ligand_162
+Large ligand
+1dwc_ligand_163
+Large ligand
+1dwc_ligand_164
+Large ligand
+1dwc_ligand_165
+Large ligand
+1dwc_ligand_166
+Large ligand
+1dwc_ligand_167
+Large ligand
+1dwc_ligand_168
+Large ligand
+1dwc_ligand_169
+Large ligand
+1dwc_ligand_170
+Large ligand
+1dwc_ligand_171
+Large ligand
+1dwc_ligand_172
+Large ligand
+1dwc_ligand_173
+Large ligand
+1dwc_ligand_174
+Large ligand
+1dwc_ligand_175
+Large ligand
+1dwc_ligand_176
+Large ligand
+1dwc_ligand_177
+Large ligand
+1dwc_ligand_178
+Large ligand
+1dwc_ligand_179
+Large ligand
+1dwc_ligand_180
+Large ligand
+1dwc_ligand_181
+Large ligand
+1dwc_ligand_182
+Large ligand
+1dwc_ligand_183
+Large ligand
+1dwc_ligand_184
+Large ligand
+1dwc_ligand_185
+Large ligand
+1dwc_ligand_186
+Large ligand
+1dwc_ligand_187
+Large ligand
+1dwc_ligand_188
+Large ligand
+1dwc_ligand_189
+Large ligand
+1dwc_ligand_190
+Large ligand
+1dwc_ligand_191
+Large ligand
+1dwc_ligand_192
+Large ligand
+1dwc_ligand_193
+Large ligand
+1dwc_ligand_194
+Large ligand
+1dwc_ligand_195
+Large ligand
+1dwc_ligand_196
+Large ligand
+1dwc_ligand_197
+Large ligand
+1dwc_ligand_198
+Large ligand
+1dwc_ligand_199
+Large ligand
+1dwc_ligand_200
+Large ligand
+1dwc_ligand_201
+Large ligand
+1dwc_ligand_202
+Large ligand
+1dwc_ligand_203
+Large ligand
+1dwc_ligand_204
+Large ligand
+1dwc_ligand_205
+Large ligand
+1dwc_ligand_206
+Large ligand
+1dwc_ligand_207
+Large ligand
+1dwc_ligand_208
+Large ligand
+1dwc_ligand_209
+Large ligand
+1dwc_ligand_210
+Large ligand
+1dwc_ligand_211
+Large ligand
+1dwc_ligand_212
+Large ligand
+1dwc_ligand_213
+Large ligand
+1dwc_ligand_214
+Large ligand
+1dwc_ligand_215
+Large ligand
+1dwc_ligand_216
+Large ligand
+1dwc_ligand_217
+Large ligand
+1dwc_ligand_218
+Large ligand
+1dwc_ligand_219
+Large ligand
+1dwc_ligand_220
+Large ligand
+1dwc_ligand_221
+Large ligand
+1dwc_ligand_222
+Large ligand
+1dwc_ligand_223
+Large ligand
+1dwc_ligand_224
+Large ligand
+1dwc_ligand_225
+Large ligand
+1dwc_ligand_226
+Large ligand
+1dwc_ligand_227
+Large ligand
+1dwc_ligand_228
+Large ligand
+1dwc_ligand_229
+Large ligand
+1dwc_ligand_230
+Large ligand
+1dwc_ligand_231
+Large ligand
+1dwc_ligand_232
+Large ligand
+1dwc_ligand_233
+Large ligand
+1dwc_ligand_234
+Large ligand
+1dwc_ligand_235
+Large ligand
+1dwc_ligand_236
+Large ligand
+1dwc_ligand_237
+Large ligand
+1dwc_ligand_238
+Large ligand
+1dwc_ligand_239
+Large ligand
+1dwc_ligand_240
+Large ligand
+1dwc_ligand_241
+Large ligand
+1dwc_ligand_242
+Large ligand
+1dwc_ligand_243
+Large ligand
+1dwc_ligand_244
+Large ligand
+1dwc_ligand_245
+Large ligand
+1dwc_ligand_246
+Large ligand
+1dwc_ligand_247
+Large ligand
+1dwc_ligand_248
+Large ligand
+1dwc_ligand_249
+Large ligand
+1dwc_ligand_250
+Large ligand
+1dwc_ligand_251
+Large ligand
+1dwc_ligand_252
+Large ligand
+1dwc_ligand_253
+Large ligand
+1dwc_ligand_254
+Large ligand
+1dwc_ligand_255
+Large ligand
+1dwc_ligand_256
+Large ligand
+1dwc_ligand_257
+Large ligand
+1dwc_ligand_258
+Large ligand
+1dwc_ligand_259
+Large ligand
+1dwc_ligand_260
+Large ligand
+1dwc_ligand_261
+Large ligand
+1dwc_ligand_262
+Large ligand
+1dwc_ligand_263
+Large ligand
+1dwc_ligand_264
+Large ligand
+1dwc_ligand_265
+Large ligand
+1dwc_ligand_266
+Large ligand
+1dwc_ligand_267
+Large ligand
+1dwc_ligand_268
+Large ligand
+1dwc_ligand_269
+Large ligand
+1dwc_ligand_270
+Large ligand
+1dwc_ligand_271
+Large ligand
+1dwc_ligand_272
+Large ligand
+1dwc_ligand_273
+Large ligand
+1dwc_ligand_274
+Large ligand
+1dwc_ligand_275
+Large ligand
+1dwc_ligand_276
+Large ligand
+1dwc_ligand_277
+Large ligand
+1dwc_ligand_278
+Large ligand
+1dwc_ligand_279
+Large ligand
+1dwc_ligand_280
+Large ligand
+1dwc_ligand_281
+Large ligand
+1dwc_ligand_282
+Large ligand
+1dwc_ligand_283
+Large ligand
+1dwc_ligand_284
+Large ligand
+1dwc_ligand_285
+Large ligand
+1dwc_ligand_286
+Large ligand
+1dwc_ligand_287
+Large ligand
+1dwc_ligand_288
+Large ligand
+1dwc_ligand_289
+Large ligand
+1dwc_ligand_290
+Large ligand
+1dwc_ligand_291
+Large ligand
+1dwc_ligand_292
+Large ligand
+1dwc_ligand_293
+Large ligand
+1dwc_ligand_294
+Large ligand
+1dwc_ligand_295
+Large ligand
+1dwc_ligand_296
+Large ligand
+1dwc_ligand_297
+Large ligand
+1dwc_ligand_298
+Large ligand
+1dwc_ligand_299
+Large ligand
+1dwc_ligand_300
+Large ligand
+1dwc_ligand_301
+Large ligand
+1dwc_ligand_302
+Large ligand
+1dwc_ligand_303
+Large ligand
+1dwc_ligand_304
+Large ligand
+1dwc_ligand_305
+Large ligand
+1dwc_ligand_306
+Large ligand
+1dwc_ligand_307
+Large ligand
+1dwc_ligand_308
+Large ligand
+1dwc_ligand_309
+Large ligand
+1dwc_ligand_310
+Large ligand
+1dwc_ligand_311
+Large ligand
+1dwc_ligand_312
+Large ligand
+1dwc_ligand_313
+Large ligand
+1dwc_ligand_314
+Large ligand
+1dwc_ligand_315
+Large ligand
+1dwc_ligand_316
+Large ligand
+1dwc_ligand_317
+Large ligand
+1dwc_ligand_318
+Large ligand
+1dwc_ligand_319
+Large ligand
+1dwc_ligand_320
+Large ligand
+1dwc_ligand_321
+Large ligand
+1dwc_ligand_322
+Large ligand
+1dwc_ligand_323
+Large ligand
+1dwc_ligand_324
+Large ligand
+1dwc_ligand_325
+Large ligand
+1dwc_ligand_326
+Large ligand
+1dwc_ligand_327
+Large ligand
+1dwc_ligand_328
+Large ligand
+1dwc_ligand_329
+Large ligand
+1dwc_ligand_330
+Large ligand
+1dwc_ligand_331
+Large ligand
+1dwc_ligand_332
+Large ligand
+1dwc_ligand_333
+Large ligand
+1dwc_ligand_334
+Large ligand
+1dwc_ligand_335
+Large ligand
+1dwc_ligand_336
+Large ligand
+1dwc_ligand_337
+Large ligand
+1dwc_ligand_338
+Large ligand
+1dwc_ligand_339
+Large ligand
+1dwc_ligand_340
+Large ligand
+1dwc_ligand_341
+Large ligand
+1dwc_ligand_342
+Large ligand
+1dwc_ligand_343
+Large ligand
+1dwc_ligand_344
+Large ligand
+1dwc_ligand_345
+Large ligand
+1dwc_ligand_346
+Large ligand
+1dwc_ligand_347
+Large ligand
+1dwc_ligand_348
+Large ligand
+1dwc_ligand_349
+Large ligand
+1dwc_ligand_350
+Large ligand
+1dwc_ligand_351
+Large ligand
+1dwc_ligand_352
+Large ligand
+1dwc_ligand_353
+Large ligand
+1dwc_ligand_354
+Large ligand
+1dwc_ligand_355
+Large ligand
+1dwc_ligand_356
+Large ligand
+1dwc_ligand_357
+Large ligand
+1dwc_ligand_358
+Large ligand
+1dwc_ligand_359
+Large ligand
+1dwc_ligand_360
+Large ligand
+1dwc_ligand_361
+Large ligand
+1dwc_ligand_362
+Large ligand
+1dwc_ligand_363
+Large ligand
+1dwc_ligand_364
+Large ligand
+1dwc_ligand_365
+Large ligand
+1dwc_ligand_366
+Large ligand
+1dwc_ligand_367
+Large ligand
+1dwc_ligand_368
+Large ligand
+1dwc_ligand_369
+Large ligand
+1dwc_ligand_370
+Large ligand
+1dwc_ligand_371
+Large ligand
+1dwc_ligand_372
+Large ligand
+1dwc_ligand_373
+Large ligand
+1dwc_ligand_374
+Large ligand
+1dwc_ligand_375
+Large ligand
+1dwc_ligand_376
+Large ligand
+1dwc_ligand_377
+Large ligand
+1dwc_ligand_378
+Large ligand
+1dwc_ligand_379
+Large ligand
+1dwc_ligand_380
+Large ligand
+1dwc_ligand_381
+Large ligand
+1dwc_ligand_382
+Large ligand
+1dwc_ligand_383
+Large ligand
+1dwc_ligand_384
+Large ligand
+1dwc_ligand_385
+Large ligand
+1dwc_ligand_386
+Large ligand
+1dwc_ligand_387
+Large ligand
+1dwc_ligand_388
+Large ligand
+1dwc_ligand_389
+Large ligand
+1dwc_ligand_390
+Large ligand
+1dwc_ligand_391
+Large ligand
+1dwc_ligand_392
+Large ligand
+1dwc_ligand_393
+Large ligand
+1dwc_ligand_394
+Large ligand
+1dwc_ligand_395
+Large ligand
+1dwc_ligand_396
+Large ligand
+1dwc_ligand_397
+Large ligand
+1dwc_ligand_398
+Large ligand
+1dwc_ligand_399
+Large ligand
+1dwc_ligand_400
+Large ligand
+1dwc_ligand_0000: O: -9.873 A/N: -0.113 A: -9.179 [-4.656 -0.913 1.608]   83   5   6   0   9   3 0.957   2 0.371
+1tbz_ligand_0
+New Molecule
+Large ligand
+1tbz_ligand_1
+Large ligand
+1tbz_ligand_2
+Large ligand
+1tbz_ligand_3
+Large ligand
+1tbz_ligand_4
+Large ligand
+1tbz_ligand_5
+Large ligand
+1tbz_ligand_6
+Large ligand
+1tbz_ligand_7
+Large ligand
+1tbz_ligand_8
+Large ligand
+1tbz_ligand_9
+Large ligand
+1tbz_ligand_10
+Large ligand
+1tbz_ligand_11
+Large ligand
+1tbz_ligand_12
+Large ligand
+1tbz_ligand_13
+Large ligand
+1tbz_ligand_14
+Large ligand
+1tbz_ligand_15
+Large ligand
+1tbz_ligand_16
+Large ligand
+1tbz_ligand_17
+Large ligand
+1tbz_ligand_18
+Large ligand
+1tbz_ligand_19
+Large ligand
+1tbz_ligand_20
+Large ligand
+1tbz_ligand_21
+Large ligand
+1tbz_ligand_22
+Large ligand
+1tbz_ligand_23
+Large ligand
+1tbz_ligand_24
+Large ligand
+1tbz_ligand_25
+Large ligand
+1tbz_ligand_26
+Large ligand
+1tbz_ligand_27
+Large ligand
+1tbz_ligand_28
+Large ligand
+1tbz_ligand_29
+Large ligand
+1tbz_ligand_30
+Large ligand
+1tbz_ligand_31
+Large ligand
+1tbz_ligand_32
+Large ligand
+1tbz_ligand_33
+Large ligand
+1tbz_ligand_34
+Large ligand
+1tbz_ligand_35
+Large ligand
+1tbz_ligand_36
+Large ligand
+1tbz_ligand_37
+Large ligand
+1tbz_ligand_38
+Large ligand
+1tbz_ligand_39
+Large ligand
+1tbz_ligand_40
+Large ligand
+1tbz_ligand_41
+Large ligand
+1tbz_ligand_42
+Large ligand
+1tbz_ligand_43
+Large ligand
+1tbz_ligand_44
+Large ligand
+1tbz_ligand_45
+Large ligand
+1tbz_ligand_46
+Large ligand
+1tbz_ligand_47
+Large ligand
+1tbz_ligand_48
+Large ligand
+1tbz_ligand_49
+Large ligand
+1tbz_ligand_50
+Large ligand
+1tbz_ligand_51
+Large ligand
+1tbz_ligand_52
+Large ligand
+1tbz_ligand_53
+Large ligand
+1tbz_ligand_54
+Large ligand
+1tbz_ligand_55
+Large ligand
+1tbz_ligand_56
+Large ligand
+1tbz_ligand_57
+Large ligand
+1tbz_ligand_58
+Large ligand
+1tbz_ligand_59
+Large ligand
+1tbz_ligand_60
+Large ligand
+1tbz_ligand_61
+Large ligand
+1tbz_ligand_62
+Large ligand
+1tbz_ligand_63
+Large ligand
+1tbz_ligand_64
+Large ligand
+1tbz_ligand_65
+Large ligand
+1tbz_ligand_66
+Large ligand
+1tbz_ligand_67
+Large ligand
+1tbz_ligand_68
+Large ligand
+1tbz_ligand_69
+Large ligand
+1tbz_ligand_70
+Large ligand
+1tbz_ligand_71
+Large ligand
+1tbz_ligand_72
+Large ligand
+1tbz_ligand_73
+Large ligand
+1tbz_ligand_74
+Large ligand
+1tbz_ligand_75
+Large ligand
+1tbz_ligand_76
+Large ligand
+1tbz_ligand_77
+Large ligand
+1tbz_ligand_78
+Large ligand
+1tbz_ligand_79
+Large ligand
+1tbz_ligand_80
+Large ligand
+1tbz_ligand_81
+Large ligand
+1tbz_ligand_82
+Large ligand
+1tbz_ligand_83
+Large ligand
+1tbz_ligand_84
+Large ligand
+1tbz_ligand_85
+Large ligand
+1tbz_ligand_86
+Large ligand
+1tbz_ligand_87
+Large ligand
+1tbz_ligand_88
+Large ligand
+1tbz_ligand_89
+Large ligand
+1tbz_ligand_90
+Large ligand
+1tbz_ligand_91
+Large ligand
+1tbz_ligand_92
+Large ligand
+1tbz_ligand_93
+Large ligand
+1tbz_ligand_94
+Large ligand
+1tbz_ligand_95
+Large ligand
+1tbz_ligand_96
+Large ligand
+1tbz_ligand_97
+Large ligand
+1tbz_ligand_98
+Large ligand
+1tbz_ligand_99
+Large ligand
+1tbz_ligand_100
+Large ligand
+1tbz_ligand_101
+Large ligand
+1tbz_ligand_102
+Large ligand
+1tbz_ligand_103
+Large ligand
+1tbz_ligand_104
+Large ligand
+1tbz_ligand_105
+Large ligand
+1tbz_ligand_106
+Large ligand
+1tbz_ligand_107
+Large ligand
+1tbz_ligand_108
+Large ligand
+1tbz_ligand_109
+Large ligand
+1tbz_ligand_110
+Large ligand
+1tbz_ligand_111
+Large ligand
+1tbz_ligand_112
+Large ligand
+1tbz_ligand_113
+Large ligand
+1tbz_ligand_114
+Large ligand
+1tbz_ligand_115
+Large ligand
+1tbz_ligand_116
+Large ligand
+1tbz_ligand_117
+Large ligand
+1tbz_ligand_118
+Large ligand
+1tbz_ligand_119
+Large ligand
+1tbz_ligand_120
+Large ligand
+1tbz_ligand_121
+Large ligand
+1tbz_ligand_122
+Large ligand
+1tbz_ligand_123
+Large ligand
+1tbz_ligand_124
+Large ligand
+1tbz_ligand_125
+Large ligand
+1tbz_ligand_126
+Large ligand
+1tbz_ligand_127
+Large ligand
+1tbz_ligand_128
+Large ligand
+1tbz_ligand_129
+Large ligand
+1tbz_ligand_130
+Large ligand
+1tbz_ligand_131
+Large ligand
+1tbz_ligand_132
+Large ligand
+1tbz_ligand_133
+Large ligand
+1tbz_ligand_134
+Large ligand
+1tbz_ligand_135
+Large ligand
+1tbz_ligand_136
+Large ligand
+1tbz_ligand_137
+Large ligand
+1tbz_ligand_138
+Large ligand
+1tbz_ligand_139
+Large ligand
+1tbz_ligand_140
+Large ligand
+1tbz_ligand_141
+Large ligand
+1tbz_ligand_142
+Large ligand
+1tbz_ligand_143
+Large ligand
+1tbz_ligand_144
+Large ligand
+1tbz_ligand_145
+Large ligand
+1tbz_ligand_146
+Large ligand
+1tbz_ligand_147
+Large ligand
+1tbz_ligand_148
+Large ligand
+1tbz_ligand_149
+Large ligand
+1tbz_ligand_150
+Large ligand
+1tbz_ligand_151
+Large ligand
+1tbz_ligand_152
+Large ligand
+1tbz_ligand_153
+Large ligand
+1tbz_ligand_154
+Large ligand
+1tbz_ligand_155
+Large ligand
+1tbz_ligand_156
+Large ligand
+1tbz_ligand_157
+Large ligand
+1tbz_ligand_158
+Large ligand
+1tbz_ligand_159
+Large ligand
+1tbz_ligand_160
+Large ligand
+1tbz_ligand_161
+Large ligand
+1tbz_ligand_162
+Large ligand
+1tbz_ligand_163
+Large ligand
+1tbz_ligand_164
+Large ligand
+1tbz_ligand_165
+Large ligand
+1tbz_ligand_166
+Large ligand
+1tbz_ligand_167
+Large ligand
+1tbz_ligand_168
+Large ligand
+1tbz_ligand_169
+Large ligand
+1tbz_ligand_170
+Large ligand
+1tbz_ligand_171
+Large ligand
+1tbz_ligand_172
+Large ligand
+1tbz_ligand_173
+Large ligand
+1tbz_ligand_174
+Large ligand
+1tbz_ligand_175
+Large ligand
+1tbz_ligand_176
+Large ligand
+1tbz_ligand_177
+Large ligand
+1tbz_ligand_178
+Large ligand
+1tbz_ligand_179
+Large ligand
+1tbz_ligand_180
+Large ligand
+1tbz_ligand_181
+Large ligand
+1tbz_ligand_182
+Large ligand
+1tbz_ligand_183
+Large ligand
+1tbz_ligand_184
+Large ligand
+1tbz_ligand_185
+Large ligand
+1tbz_ligand_186
+Large ligand
+1tbz_ligand_187
+Large ligand
+1tbz_ligand_188
+Large ligand
+1tbz_ligand_189
+Large ligand
+1tbz_ligand_190
+Large ligand
+1tbz_ligand_191
+Large ligand
+1tbz_ligand_192
+Large ligand
+1tbz_ligand_193
+Large ligand
+1tbz_ligand_194
+Large ligand
+1tbz_ligand_195
+Large ligand
+1tbz_ligand_196
+Large ligand
+1tbz_ligand_197
+Large ligand
+1tbz_ligand_198
+Large ligand
+1tbz_ligand_199
+Large ligand
+1tbz_ligand_200
+Large ligand
+1tbz_ligand_201
+Large ligand
+1tbz_ligand_202
+Large ligand
+1tbz_ligand_203
+Large ligand
+1tbz_ligand_204
+Large ligand
+1tbz_ligand_205
+Large ligand
+1tbz_ligand_206
+Large ligand
+1tbz_ligand_207
+Large ligand
+1tbz_ligand_208
+Large ligand
+1tbz_ligand_209
+Large ligand
+1tbz_ligand_210
+Large ligand
+1tbz_ligand_211
+Large ligand
+1tbz_ligand_212
+Large ligand
+1tbz_ligand_213
+Large ligand
+1tbz_ligand_214
+Large ligand
+1tbz_ligand_215
+Large ligand
+1tbz_ligand_216
+Large ligand
+1tbz_ligand_217
+Large ligand
+1tbz_ligand_218
+Large ligand
+1tbz_ligand_219
+Large ligand
+1tbz_ligand_220
+Large ligand
+1tbz_ligand_221
+Large ligand
+1tbz_ligand_222
+Large ligand
+1tbz_ligand_223
+Large ligand
+1tbz_ligand_224
+Large ligand
+1tbz_ligand_225
+Large ligand
+1tbz_ligand_226
+Large ligand
+1tbz_ligand_227
+Large ligand
+1tbz_ligand_228
+Large ligand
+1tbz_ligand_229
+Large ligand
+1tbz_ligand_230
+Large ligand
+1tbz_ligand_231
+Large ligand
+1tbz_ligand_232
+Large ligand
+1tbz_ligand_233
+Large ligand
+1tbz_ligand_234
+Large ligand
+1tbz_ligand_235
+Large ligand
+1tbz_ligand_236
+Large ligand
+1tbz_ligand_237
+Large ligand
+1tbz_ligand_238
+Large ligand
+1tbz_ligand_239
+Large ligand
+1tbz_ligand_240
+Large ligand
+1tbz_ligand_241
+Large ligand
+1tbz_ligand_242
+Large ligand
+1tbz_ligand_243
+Large ligand
+1tbz_ligand_244
+Large ligand
+1tbz_ligand_245
+Large ligand
+1tbz_ligand_246
+Large ligand
+1tbz_ligand_247
+Large ligand
+1tbz_ligand_248
+Large ligand
+1tbz_ligand_249
+Large ligand
+1tbz_ligand_250
+Large ligand
+1tbz_ligand_251
+Large ligand
+1tbz_ligand_252
+Large ligand
+1tbz_ligand_253
+Large ligand
+1tbz_ligand_254
+Large ligand
+1tbz_ligand_255
+Large ligand
+1tbz_ligand_256
+Large ligand
+1tbz_ligand_257
+Large ligand
+1tbz_ligand_258
+Large ligand
+1tbz_ligand_259
+Large ligand
+1tbz_ligand_260
+Large ligand
+1tbz_ligand_261
+Large ligand
+1tbz_ligand_262
+Large ligand
+1tbz_ligand_263
+Large ligand
+1tbz_ligand_264
+Large ligand
+1tbz_ligand_265
+Large ligand
+1tbz_ligand_266
+Large ligand
+1tbz_ligand_267
+Large ligand
+1tbz_ligand_268
+Large ligand
+1tbz_ligand_269
+Large ligand
+1tbz_ligand_270
+Large ligand
+1tbz_ligand_271
+Large ligand
+1tbz_ligand_272
+Large ligand
+1tbz_ligand_273
+Large ligand
+1tbz_ligand_274
+Large ligand
+1tbz_ligand_275
+Large ligand
+1tbz_ligand_276
+Large ligand
+1tbz_ligand_277
+Large ligand
+1tbz_ligand_278
+Large ligand
+1tbz_ligand_279
+Large ligand
+1tbz_ligand_280
+Large ligand
+1tbz_ligand_281
+Large ligand
+1tbz_ligand_282
+Large ligand
+1tbz_ligand_283
+Large ligand
+1tbz_ligand_284
+Large ligand
+1tbz_ligand_285
+Large ligand
+1tbz_ligand_286
+Large ligand
+1tbz_ligand_287
+Large ligand
+1tbz_ligand_288
+Large ligand
+1tbz_ligand_289
+Large ligand
+1tbz_ligand_290
+Large ligand
+1tbz_ligand_291
+Large ligand
+1tbz_ligand_292
+Large ligand
+1tbz_ligand_293
+Large ligand
+1tbz_ligand_294
+Large ligand
+1tbz_ligand_295
+Large ligand
+1tbz_ligand_296
+Large ligand
+1tbz_ligand_297
+Large ligand
+1tbz_ligand_298
+Large ligand
+1tbz_ligand_299
+Large ligand
+1tbz_ligand_300
+Large ligand
+1tbz_ligand_301
+Large ligand
+1tbz_ligand_302
+Large ligand
+1tbz_ligand_303
+Large ligand
+1tbz_ligand_304
+Large ligand
+1tbz_ligand_305
+Large ligand
+1tbz_ligand_306
+Large ligand
+1tbz_ligand_307
+Large ligand
+1tbz_ligand_308
+Large ligand
+1tbz_ligand_309
+Large ligand
+1tbz_ligand_310
+Large ligand
+1tbz_ligand_311
+Large ligand
+1tbz_ligand_312
+Large ligand
+1tbz_ligand_313
+Large ligand
+1tbz_ligand_314
+Large ligand
+1tbz_ligand_315
+Large ligand
+1tbz_ligand_316
+Large ligand
+1tbz_ligand_317
+Large ligand
+1tbz_ligand_318
+Large ligand
+1tbz_ligand_319
+Large ligand
+1tbz_ligand_320
+Large ligand
+1tbz_ligand_321
+Large ligand
+1tbz_ligand_322
+Large ligand
+1tbz_ligand_323
+Large ligand
+1tbz_ligand_324
+Large ligand
+1tbz_ligand_325
+Large ligand
+1tbz_ligand_326
+Large ligand
+1tbz_ligand_327
+Large ligand
+1tbz_ligand_328
+Large ligand
+1tbz_ligand_329
+Large ligand
+1tbz_ligand_330
+Large ligand
+1tbz_ligand_331
+Large ligand
+1tbz_ligand_332
+Large ligand
+1tbz_ligand_333
+Large ligand
+1tbz_ligand_334
+Large ligand
+1tbz_ligand_335
+Large ligand
+1tbz_ligand_336
+Large ligand
+1tbz_ligand_337
+Large ligand
+1tbz_ligand_338
+Large ligand
+1tbz_ligand_339
+Large ligand
+1tbz_ligand_340
+Large ligand
+1tbz_ligand_341
+Large ligand
+1tbz_ligand_342
+Large ligand
+1tbz_ligand_343
+Large ligand
+1tbz_ligand_344
+Large ligand
+1tbz_ligand_345
+Large ligand
+1tbz_ligand_346
+Large ligand
+1tbz_ligand_347
+Large ligand
+1tbz_ligand_348
+Large ligand
+1tbz_ligand_349
+Large ligand
+1tbz_ligand_350
+Large ligand
+1tbz_ligand_351
+Large ligand
+1tbz_ligand_352
+Large ligand
+1tbz_ligand_353
+Large ligand
+1tbz_ligand_354
+Large ligand
+1tbz_ligand_355
+Large ligand
+1tbz_ligand_356
+Large ligand
+1tbz_ligand_357
+Large ligand
+1tbz_ligand_358
+Large ligand
+1tbz_ligand_359
+Large ligand
+1tbz_ligand_360
+Large ligand
+1tbz_ligand_361
+Large ligand
+1tbz_ligand_362
+Large ligand
+1tbz_ligand_363
+Large ligand
+1tbz_ligand_364
+Large ligand
+1tbz_ligand_365
+Large ligand
+1tbz_ligand_366
+Large ligand
+1tbz_ligand_367
+Large ligand
+1tbz_ligand_368
+Large ligand
+1tbz_ligand_369
+Large ligand
+1tbz_ligand_370
+Large ligand
+1tbz_ligand_371
+Large ligand
+1tbz_ligand_372
+Large ligand
+1tbz_ligand_373
+Large ligand
+1tbz_ligand_374
+Large ligand
+1tbz_ligand_375
+Large ligand
+1tbz_ligand_376
+Large ligand
+1tbz_ligand_377
+Large ligand
+1tbz_ligand_378
+Large ligand
+1tbz_ligand_379
+Large ligand
+1tbz_ligand_380
+Large ligand
+1tbz_ligand_381
+Large ligand
+1tbz_ligand_382
+Large ligand
+1tbz_ligand_383
+Large ligand
+1tbz_ligand_384
+Large ligand
+1tbz_ligand_385
+Large ligand
+1tbz_ligand_386
+Large ligand
+1tbz_ligand_387
+Large ligand
+1tbz_ligand_388
+Large ligand
+1tbz_ligand_389
+Large ligand
+1tbz_ligand_390
+Large ligand
+1tbz_ligand_391
+Large ligand
+1tbz_ligand_392
+Large ligand
+1tbz_ligand_393
+Large ligand
+1tbz_ligand_394
+Large ligand
+1tbz_ligand_395
+Large ligand
+1tbz_ligand_396
+Large ligand
+1tbz_ligand_397
+Large ligand
+1tbz_ligand_398
+Large ligand
+1tbz_ligand_399
+Large ligand
+1tbz_ligand_400
+Large ligand
+1tbz_ligand_0000: O: -9.781 A/N: -0.135 A: -10.362 [-6.222 -0.664 1.742]   95   5   3   0  12   1 1.000   8 1.873
+ZINC00000024_0
+New Molecule
+Small ligand
+ZINC00000024_1
+Small ligand
+ZINC00000024_0000: O: -6.686 A/N: -0.077 A: -6.829 [-3.238 -0.249 1.876]   49   3   0   0  10   4 1.000   2 0.396
+ZINC00000025_0
+New Molecule
+Small ligand
+ZINC00000025_1
+Large ligand
+ZINC00000025_2
+Small ligand
+ZINC00000025_3
+Small ligand
+ZINC00000025_4
+Small ligand
+ZINC00000025_5
+Large ligand
+ZINC00000025_6
+Small ligand
+ZINC00000025_7
+Small ligand
+ZINC00000025_8
+Large ligand
+ZINC00000025_9
+Large ligand
+ZINC00000025_9: failed side-chain unbumping
+ZINC00092235_0
+New Molecule
+Large ligand
+ZINC00092235_1
+Large ligand
+ZINC00092235_2
+Large ligand
+ZINC00092235_3
+Large ligand
+ZINC00092235_4
+Large ligand
+ZINC00092235_5
+Large ligand
+ZINC00092235_6
+Large ligand
+ZINC00092235_7
+Large ligand
+ZINC00092235_8
+Large ligand
+ZINC00092235_9
+Large ligand
+ZINC00092235_10
+Large ligand
+ZINC00092235_11
+Large ligand
+ZINC00092235_12
+Large ligand
+ZINC00092235_13
+Large ligand
+ZINC00092235_14
+Large ligand
+ZINC00092235_15
+Large ligand
+ZINC00092235_16
+Large ligand
+ZINC00092235_17
+Large ligand
+ZINC00092235_18
+Large ligand
+ZINC00092235_19
+Large ligand
+ZINC00092235_20
+Large ligand
+ZINC00092235_21
+Large ligand
+ZINC00092235_22
+Large ligand
+ZINC00092235_23
+Large ligand
+ZINC00092235_24
+Large ligand
+ZINC00092235_25
+Large ligand
+ZINC00092235_26
+Large ligand
+ZINC00092235_27
+Large ligand
+ZINC00092235_28
+Small ligand
+ZINC00092235_29
+Small ligand
+ZINC00092235_30
+Large ligand
+ZINC00092235_31
+Large ligand
+ZINC00092235_32
+Large ligand
+ZINC00092235_33
+Large ligand
+ZINC00092235_34
+Large ligand
+ZINC00092235_35
+Large ligand
+ZINC00092235_36
+Large ligand
+ZINC00092235_37
+Large ligand
+ZINC00092235_38
+Large ligand
+ZINC00092235_39
+Large ligand
+ZINC00092235_40
+Large ligand
+ZINC00092235_41
+Large ligand
+ZINC00092235_42
+Large ligand
+ZINC00092235_43
+Large ligand
+ZINC00092235_44
+Large ligand
+ZINC00092235_45
+Large ligand
+ZINC00092235_46
+Large ligand
+ZINC00092235_47
+Large ligand
+ZINC00092235_48
+Large ligand
+ZINC00092235_49
+Large ligand
+ZINC00092235_50
+Large ligand
+ZINC00092235_51
+Large ligand
+ZINC00092235_52
+Large ligand
+ZINC00092235_53
+Large ligand
+ZINC00092235_54
+Large ligand
+ZINC00092235_55
+Large ligand
+ZINC00092235_56
+Large ligand
+ZINC00092235_57
+Large ligand
+ZINC00092235_58
+Large ligand
+ZINC00092235_59
+Large ligand
+ZINC00092235_60
+Large ligand
+ZINC00092235_61
+Large ligand
+ZINC00092235_62
+Large ligand
+ZINC00092235_0000: O: -8.036 A/N: -0.129 A: -8.584 [-4.891 -0.083 1.608]  103   1   0   0  10   2 0.955   3 0.218
+ZINC00171204_0
+New Molecule
+Large ligand
+ZINC00171204_1
+Large ligand
+ZINC00171204_2
+Small ligand
+ZINC00171204_3
+Large ligand
+ZINC00171204_4
+Large ligand
+ZINC00171204_5
+Large ligand
+ZINC00171204_0000: O: -7.474 A/N: -0.162 A: -8.615 [-3.652 -0.415 0.670]   57   5   0   0   5   0 1.000   0 0.000
+ZINC00538219_0
+New Molecule
+Large ligand
+ZINC00538219_1
+Large ligand
+ZINC00538219_2
+Large ligand
+ZINC00538219_3
+Large ligand
+ZINC00538219_4
+Large ligand
+ZINC00538219_5
+Large ligand
+ZINC00538219_6
+Large ligand
+ZINC00538219_7
+Large ligand
+ZINC00538219_8
+Large ligand
+ZINC00538219_9
+Small ligand
+ZINC00538219_10
+Large ligand
+ZINC00538219_11
+Large ligand
+ZINC00538219_12
+Large ligand
+ZINC00538219_13
+Small ligand
+ZINC00538219_14
+Large ligand
+ZINC00538219_15
+Large ligand
+ZINC00538219_16
+Large ligand
+ZINC00538219_17
+Large ligand
+ZINC00538219_18
+Large ligand
+ZINC00538219_19
+Large ligand
+ZINC00538219_20
+Large ligand
+ZINC00538219_21
+Large ligand
+ZINC00538219_0000: O: -6.279 A/N: -0.092 A: -7.711 [-3.265 -0.166 0.938]   48   2   0   0   6   1 0.783   7 1.792
+ZINC00000036_0
+New Molecule
+Small ligand
+ZINC00000036_1
+Small ligand
+ZINC00000036_2
+Small ligand
+ZINC00000036_2: failed side-chain unbumping
+ZINC00000048
+Small ligand
+ZINC00000048_1
+Small ligand
+ZINC00000048_2
+Small ligand
+ZINC00000048_3
+Small ligand
+ZINC00000048_4
+Small ligand
+ZINC00000048_5
+Small ligand
+ZINC00000048_6
+Small ligand
+ZINC00000048_6: failed anchor unbumping
+ZINC00000052
+Small ligand
+ZINC00000052_1
+Small ligand
+ZINC00000052_1: failed anchor unbumping
+ZINC00000053
+Small ligand
+ZINC00000053_1
+Small ligand
+ZINC00000053_2
+Small ligand
+ZINC00000053_3
+Small ligand
+ZINC00000053_4
+Small ligand
+ZINC00000053_4: failed anchor unbumping
+ZINC00000111
+Small ligand
+ZINC00000111_1
+Large ligand
+ZINC00000111_2
+Large ligand
+ZINC00000111_3
+Small ligand
+ZINC00000111_4
+Small ligand
+ZINC00000111_5
+Large ligand
+ZINC00000111_5: failed anchor unbumping
+ZINC00000181
+Large ligand
+ZINC00000181_1
+Large ligand
+ZINC00000181_1: failed anchor unbumping
+ZINC00000185
+Large ligand
+ZINC00000185_1
+Large ligand
+ZINC00000185_2
+Large ligand
+ZINC00000185_0000: O: -8.061 A/N: -0.131 A: -8.488 [-3.927 -0.415 1.072]   68   3   2   0   7   1 0.857   8 1.840
+ZINC00000199
+Small ligand
+ZINC00000199_1
+Small ligand
+ZINC00000199_2
+Small ligand
+ZINC00000199_3
+Small ligand
+ZINC00000199_4
+Small ligand
+ZINC00000199_5
+Small ligand
+ZINC00000199_6
+Small ligand
+ZINC00000199_7
+Small ligand
+ZINC00000199_8
+Small ligand
+ZINC00000199_9
+Small ligand
+ZINC00000199_10
+Small ligand
+ZINC00000199_10: failed side-chain unbumping
+ZINC00000204
+Small ligand
+ZINC00000204_1
+Small ligand
+ZINC00000204_2
+Small ligand
+ZINC00000204_2: failed anchor unbumping
+ZINC00000212
+Small ligand
+ZINC00000212_1
+Small ligand
+ZINC00000212_2
+Small ligand
+ZINC00000212_3
+Small ligand
+ZINC00000212_4
+Small ligand
+ZINC00000212_5
+Small ligand
+ZINC00000212_6
+Small ligand
+ZINC00000212_6: failed anchor unbumping
+
+writing log-file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/unbiased/log/mixed_sample_confs.log
+
+For each ligand that passed the testing criteria the top scoring orientation was saved.
+
+Please check the error file /psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//1vr1/unbiased/log/mixed_sample_confs.err to identify any problems with the current run.
+
+run finished at Tue Jul  7 17:54:28 2009
+Screening time for 22 molecules (2458 conformers)
+	Wall Clock Time:  		  484.52 sec
+	System Time:      		  482.80 sec
+	User Space Time:  		  481.52 sec
+	Kernel Space Time:		    1.28 sec

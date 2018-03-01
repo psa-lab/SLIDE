@@ -1,0 +1,16 @@
+
+SLIDE template; version: 3.3.5
+Command-Line Args: 
+	/psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/slide_v3.3.5//bin/ligand_based_template
+	1vr1
+	biased
+	2.0
+	/psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//ligands_to_be_docked/1a46_ligand.mol2
+	/psa/astra_tmp/toneroma/slide_v3.3/slide_v3.3.2/distribution/slide_v3.3.5/examples/slide_data//ligands_to_be_docked/1a61_ligand.mol2
+Local start time: Tue Jul  7 15:43:13 2009
+18 hydrophobic points
+17 initial h-bonding points (8 A, 9 D, 0 N)
+9 hydrophobic cluster points
+4 acceptor cluster points
+6 donor cluster points
+0 doneptor cluster points

@@ -1,0 +1,85 @@
+# Ligand [name]_[conformer]_[binding mode]: ZINC00000204_0002
+# SLIDE Version: 3.3.5
+# Time stamp: Tue Jul  7 15:44:35 2009
+# Affiscore (kcal/mol), for ranking ligand candidates: -6.007
+# Ligand Efficiency ((Affinity Score - Constant Term) / # non-H atoms): -0.066
+# ===========================================================================
+# Weighted term values
+# hydrophobic complementarity term (kcal/mol)       : -1.159 
+# polar term (kcal/mol)                             : -0.166 
+# unsatisfied polar term (kcal/mol)                 : 0.536 
+# constant term (kcal/mol)                          : -5.218 
+# ===========================================================================
+# protein-ligand hydrophobic contacts         : 16
+# protein-ligand H-bond count                 : 2
+# protein-ligand salt-bridge count            : 0
+# metal-ligand interactions count             : 0
+# unsatisfied interfacial polar atom count    : 3
+# unsatisfied interfacial charged atom count  : 1
+# buried carbons (x 100%)          : 0.875
+# remaining vdW collisions         : 1
+# total vdW overlap (A)            : 0.035
+# anchor fragment translations     : 0
+# side-chain mean-field iterations : 10
+# ligand side-chain rotations      : 0
+# protein side-chain rotations     : 11
+# Orientscore (kcal/mol), used by SLIDE to select binding mode: -4.981
+# ===========================================================================
+# Anchor fragment atoms matched to template:
+# ligand hydrophobic center  0 to template point  9 H
+# ligand atom   11  O4   O.2   to template point 11 A
+# ligand atom    5  O1   O.3   to template point 13 A
+# ===========================================================================
+#          |Ligand Atom -- Protein Atom|
+#          |   #  type  -- RES   # type|
+# hbond   1:   5  O.3   -- HIS   57  NE2 (dist: 2.658, D-H-A angle: 125.2)
+# hbond   2:   5  O.3   -- SER  195  OG  (dist: 2.708, D-H-A angle: 147.1)
+# ===========================================================================
+@<TRIPOS>MOLECULE
+ZINC00000204
+   20    20     0     0     0
+SMALL
+USER_CHARGES
+@<TRIPOS>ATOM
+      1 C1         15.0328  -13.0497   13.3994 C.3       1 <0>       -0.0730 
+      2 C2         15.6055  -13.0809   14.7771 C.2       1 <0>        0.1852 
+      3 C3         15.9819  -11.9950   15.4613 C.2       1 <0>       -0.2911 
+      4 C4         16.5178  -12.1413   16.7856 C.2       1 <0>        0.2720 
+      5 O1         16.8204  -10.9425   17.3884 O.3       1 <0>       -0.4727 
+      6 C5         16.6710  -13.3586   17.3340 C.2       1 <0>       -0.4173 
+      7 C6         16.2483  -14.5660   16.5808 C.2       1 <0>        0.7559 
+      8 O2         16.3726  -15.6891   17.0591 O.2       1 <0>       -0.5560 
+      9 O3         15.7273  -14.3764   15.3290 O.3       1 <0>       -0.3309 
+     10 C7         17.2287  -13.4961   18.7051 C.2       1 <0>        0.5881 
+     11 O4         16.5194  -13.8947   19.6259 O.2       1 <0>       -0.4934 
+     12 C8         18.6831  -13.1611   18.9095 C.3       1 <0>       -0.2079 
+     13 H1         14.0300  -13.4884   13.3968 H         1 <0>        0.0782 
+     14 H2         14.9557  -12.0292   13.0101 H         1 <0>        0.0647 
+     15 H3         15.6637  -13.6251   12.7146 H         1 <0>        0.0768 
+     16 H4         15.8886  -10.9994   15.0404 H         1 <0>        0.1755 
+     17 H5         16.0479  -10.6140   17.8543 H         1 <0>        0.4379 
+     18 H6         19.1921  -14.0287   19.3379 H         1 <0>        0.0862 
+     19 H7         19.1699  -12.9132   17.9621 H         1 <0>        0.0583 
+     20 H8         18.7666  -12.3061   19.5850 H         1 <0>        0.0635 
+@<TRIPOS>BOND
+    1     1     2 1
+    2     1    13 1
+    3     1    14 1
+    4     1    15 1
+    5     2     9 1
+    6     2     3 2
+    7     3     4 1
+    8     3    16 1
+    9     4     6 2
+   10     4     5 1
+   11     5    17 1
+   12     6     7 1
+   13     6    10 1
+   14     7     8 2
+   15     7     9 1
+   16    10    12 1
+   17    10    11 2
+   18    12    18 1
+   19    12    19 1
+   20    12    20 1
+@<TRIPOS>SUBSTRUCTURE

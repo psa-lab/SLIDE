@@ -1,0 +1,6 @@
+Included in the misc directory is templatepts.spect, which is a
+spectrum file to color template points as:
+  green = hydrophobic
+  red = hbond acceptor
+  blue = hbond donor
+  white = hbond donor or acceptor (doneptor)

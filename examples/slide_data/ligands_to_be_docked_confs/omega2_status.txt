@@ -1,0 +1,11 @@
+Status : Finished
+Run time : 24sec
+Number of objects read 10
+Number of objects objects succesfully processed 10
+Number of objects objects unsuccesfully processed 0
+Last message : 
+Last warning : 
+Last error   : 
+++++++++++++++
+++Task Stack++
+++++++++++++++

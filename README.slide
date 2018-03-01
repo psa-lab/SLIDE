@@ -1,0 +1,95 @@
+########################################################
+
+	Protein Structure Analysis and Design Lab
+	Michigan State University
+	Jun 19, 2008
+
+########################################################
+
+SLIDE runs on various Unix systems (Linux with kernel 2.4.18 or higher,
+Sun SPARC running Solaris 2.5 or higher, Intel running Solaris 5.8 or higher, 
+and SGI Octane running Irix64).
+
+Before installing and compiling SLIDE, the tar file has to be placed 
+in the directory that will contain the root directory of the global SLIDE 
+installation (e.g. /usr/soft/). 
+
+To install SLIDE:
+
+1. Set the environment variable SLIDE_DIR to the root directory of 
+   the global SLIDE installation (e.g. /usr/soft/slide).
+
+2. Unzip and untar the slidev2.31.tar.gz using the commands:
+
+	gunzip slide_v3.0.tar.gz
+	tar -xfv slide_v3.0.tar
+
+   Before you do this, please remember to backup any existing versions of slide
+   you might have in the directory with a different name than "slide"..
+
+3. Check the location of your system's Perl executable using the command:
+
+	which perl
+
+   Edit the first line of the  install_slide.pl file from the directory 
+   SLIDE_DIR to point to the correct location for your system's Perl 
+   executable. If you don't have Perl, you can download it free of charge
+   from www.cpan.org.
+
+4. By default, install_slide.pl will look for a gcc compiler to compile SLIDE.
+   If you are using a cc compiler, change line 13 from 
+	CC = gcc to CC = cc 
+   in the following files:
+
+	/slide/src/template/Makefile
+	/slide/src/interactions/Makefile
+	/slide/src/slide/Makefile
+
+	NOTE: 
+	-----
+	Compiling SLIDE as described above *may* result in some compilation
+        errors/warnings on a machine with 64-bit architecture, in which case 
+	please compile it in 32-bit compatibility mode. SLIDE should currently
+	be compatible with 64-bit architecture, but if you are having problems
+	then do this, 
+	follow these steps:
+
+	i) While using the gcc compiler that is native to the x86 64-bit 
+	machine, use the "-m32" option.  Do this as follows.
+
+	Change each of the following makefiles:
+
+	$SLIDE_DIR/src/template/Makefile
+	$SLIDE_DIR/src/interactions/Makefile
+	$SLIDE_DIR/src/slide/Makefile
+
+	to include the -m32 option by inserting this command before 
+	the gcc command:
+
+	COPTS = -O2 -m32
+
+	ii) Add the library files needed for 32-bit compatibility mode. 
+	The procedure for this is:
+
+	a) Make a tar file of the needed libraries (called libs-added below)
+	on a 32-bit machine using these two commands:
+
+	rpm -q --list glibc glibc-devel | grep "/lib/" > /tmp/libs-added
+	tar cvf 32_bit_libs.tar -T /tmp/libs-added --absolute-names
+
+
+	b) Copy the libraries onto the 64-bit machine by running the 
+	following command as ROOT user in the root directory:
+
+	tar xf 32_bit_libs.tar --keep-old-files
+
+	c) Check that the library files listed in the libs-added file above
+	are now installed in the root directory.
+
+	iii) Now, compile SLIDE by running the installation script, 
+	install_slide.pl
+
+
+5. Run "make" in the directory SLIDE_DIR.
+
+6. To clean the distribution, run "make clean" in the directory SLIDE_DIR.
